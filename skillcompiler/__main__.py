@@ -73,6 +73,8 @@ def _cmd_compile(args: argparse.Namespace) -> int:
         print(f"wrote {args.output}", file=sys.stderr)
     else:
         print(json.dumps(plan, indent=2, ensure_ascii=False))
+    for warning in plan.get("warnings", []):
+        print(f"warning: {warning}", file=sys.stderr)
     print(f"{len(plan['steps'])} steps", file=sys.stderr)
     return 0
 

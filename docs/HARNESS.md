@@ -28,7 +28,7 @@ SKILL.md -> splitter -> plan.json -> runner -> [ step prompt -> model -> checker
 | File | Role |
 |---|---|
 | `llm.py` | `call_llm()` with 3 tries and exponential backoff; counts calls, latency, errors, cache hits (`llm.stats`). |
-| `splitter.py` | `compile_skill()`: model plan first (one retry on bad JSON), rule-based fallback (numbered list, then headings, then paragraphs). `validate_steps()` enforces the contract. |
+| `splitter.py` | `compile_skill()`: model plan first (one retry on bad JSON), rule-based fallback (numbered list, then headings, then paragraphs). `validate_steps()` enforces the contract. A coverage check compares the plan with the skill: every number and quoted phrase in the skill must appear somewhere in the plan, otherwise the model gets one retry listing what is missing, and any leftover is recorded in an optional `warnings` list in the plan (the CLI prints it). |
 | `checker.py` | `check_step()` returns `(format_ok, verified, note)`. See section 4. |
 | `runner.py` | `run_skill()`: the step loop, prompts, retries, trace. |
 | `plan_io.py` | `save_plan()` / `load_plan()` for `.json`, `.yaml`, `.yml`. Loading validates. |
@@ -36,7 +36,7 @@ SKILL.md -> splitter -> plan.json -> runner -> [ step prompt -> model -> checker
 | `providers.py` | `gemini` (default) or `openai-compatible` (Ollama, vLLM, llama.cpp). |
 | `__main__.py` | CLI: `compile` and `run`. |
 | `examples/` | Three sample skills with inputs (6, 8 and 12 steps). |
-| `tests/` | 98 tests; none needs an API key. |
+| `tests/` | 104 tests; none needs an API key. |
 
 ## 3. How one step runs
 
@@ -173,6 +173,7 @@ So the harness runs on another model, but it does not make every model reliable.
 
 - **It costs more.** About `2N + 1` calls and tens of seconds per skill, against one call without the harness (see `benchmark/overhead.md` when available).
 - **A model verifier can be wrong** in both directions. A verifier outage is accepted (the trace note says so), and a repeated answer overrules the verifier, so a stubborn wrong answer can be accepted.
+- **The splitter coverage check is narrow.** It looks only at digits and quoted phrases (not number words such as "sixty", and not meaning), and on the eight skills tried so far the model's first plan always passed it, so the retry path has been tested with a fake model only.
 - **Rate limits.** At the free-tier 30 requests per minute a long skill takes longer because the limiter paces calls. A benchmark of many tasks needs that time budget.
 - **Rule checks are narrow.** Only the format kinds above and the begin-with and forbidden-word patterns are enforced; other constraints rely on the verifier.
 - **Wording gaps pass.** Contradictions between steps or an invented claim (for example "I have initiated a refund") are not detected.
@@ -190,7 +191,7 @@ So the harness runs on another model, but it does not make every model reliable.
 ## 12. Tests
 
 ```bash
-python -m pytest skillcompiler/tests      # 98 tests, no API key, about 9 seconds
+python -m pytest skillcompiler/tests      # 104 tests, no API key, about 9 seconds
 ```
 
 A fake model replaces the API in the unit tests. Provider tests use a small local HTTP server. Live runs are manual (sections 6 to 9).

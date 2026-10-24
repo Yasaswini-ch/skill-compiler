@@ -118,9 +118,44 @@ def rule_based_steps(body: str) -> list[dict]:
     return validate_steps(steps)
 
 
-def _model_steps(body: str, model: str | None) -> list[dict]:
+LEADING_MARK_RE = re.compile(r"^\s*(?:\d+[.)]|[-*])\s+")
+QUOTED_RE = re.compile(r"[\"“]([^\"”]{2,60})[\"”]")
+NUMBER_RE = re.compile(r"(?<![\w.])\d+(?:\.\d+)?(?![\w])")
+
+RESPLIT_NOTE = """
+Your previous plan left out these items from the skill: {missing}
+Return the full plan again and include each item, exactly as written, in the step it belongs to.
+"""
+
+
+def requirement_tokens(body: str) -> list[str]:
+    """Numbers and quoted phrases in the skill text (limits, allowed values, required wording).
+    List numbering such as '3.' at the start of a line is ignored."""
+    found: list[str] = []
+    for line in body.splitlines():
+        line = LEADING_MARK_RE.sub("", line)
+        found += QUOTED_RE.findall(line) + NUMBER_RE.findall(QUOTED_RE.sub("", line))
+    return list(dict.fromkeys(f.strip() for f in found if f.strip()))
+
+
+def missing_requirements(body: str, steps: list[dict]) -> list[str]:
+    """Requirement tokens from the skill that appear nowhere in the plan."""
+    haystack = " ".join(
+        f"{s['title']} {s['instruction']} {s['expected_output']} {s['output_format']}"
+        for s in steps).lower()
+    missing = []
+    for token in requirement_tokens(body):
+        if re.fullmatch(r"\d+(?:\.\d+)?", token):
+            if not re.search(r"(?<![\d.])" + re.escape(token) + r"(?!\d)", haystack):
+                missing.append(token)
+        elif token.lower() not in haystack:
+            missing.append(f'"{token}"')
+    return missing
+
+
+def _model_steps(body: str, model: str | None, extra: str = "") -> list[dict]:
     """Ask the model for a plan; retry once on bad JSON."""
-    prompt = SPLITTER_PROMPT.format(skill_text=body)
+    prompt = SPLITTER_PROMPT.format(skill_text=body) + extra
     last: Exception | None = None
     for _ in range(2):
         raw = llm.call_llm(prompt, model=model)
@@ -135,12 +170,27 @@ def compile_skill(skill_text: str, model: str | None = None,
                   source_file: str = "") -> dict:
     """SKILL.md text -> plan.json dict. Model first, rule-based fallback."""
     fields, body = _parse_frontmatter(skill_text)
+    warnings: list[str] = []
     try:
         steps = _model_steps(body, model)
+        missing = missing_requirements(body, steps)
+        if missing:  # the model dropped a limit or a required phrase: ask once more
+            note = RESPLIT_NOTE.format(missing=", ".join(missing))
+            try:
+                steps = _model_steps(body, model, extra=note)
+            except (ValueError, RuntimeError):
+                pass  # keep the first plan
+            missing = missing_requirements(body, steps)
+        if missing:
+            warnings.append("The plan does not mention these items from the skill: "
+                            + ", ".join(missing))
     except (ValueError, RuntimeError):
-        steps = rule_based_steps(body)
-    return {
+        steps = rule_based_steps(body)  # copies the skill text, so nothing is dropped
+    plan = {
         "skill_name": fields.get("name", "skill"),
         "source_file": source_file,
         "steps": steps,
     }
+    if warnings:
+        plan["warnings"] = warnings  # optional contract field
+    return plan

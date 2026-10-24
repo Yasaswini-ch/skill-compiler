@@ -11,7 +11,9 @@ VERIFIER_PROMPT = """Instruction given to an assistant:
 Required output: {expected_output}
 {context_block}Assistant's output:
 {output}
-Does the output follow the instruction exactly? Reply on ONE line:
+Does the output follow the instruction? Answer FAIL only if the output clearly breaks
+the instruction or a stated rule. If more than one answer is reasonable, answer PASS.
+Reply on ONE line, 25 words at most:
 PASS or FAIL: <short reason>
 """
 
@@ -88,6 +90,8 @@ def parse_verdict(reply: str) -> tuple[bool | None, str]:
         if match:
             passed = match.group(1).upper() == "PASS"
             reason = match.group(2).strip()
+            if len(reason) > 200:
+                reason = reason[:200].rstrip() + "..."
             return passed, reason or ("ok" if passed else "Verifier said FAIL")
     return None, ""
 

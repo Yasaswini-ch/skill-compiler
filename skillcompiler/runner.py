@@ -14,7 +14,7 @@ STEP_PROMPT = """You are completing ONE step of a larger task. Do only this step
 Step {id}: {title}
 Instruction: {instruction}
 Required output: {expected_output}
-Output format: {output_format}
+Answer format: {format_hint}
 
 Original input:
 {user_input}
@@ -30,6 +30,22 @@ Fix the problem and answer again.
 """
 
 
+def format_hint(output_format: str) -> str:
+    """Plain-words description of an output_format, so the model does not copy the label."""
+    fmt = output_format or "text"
+    if fmt.startswith("one_of:"):
+        options = ", ".join(o for o in fmt[len("one_of:"):].split("|") if o)
+        return f"exactly one of these values and nothing else: {options}"
+    if fmt.startswith("max_words:"):
+        return f"at most {fmt[len('max_words:'):]} words"
+    return {
+        "text": "plain text",
+        "json": "valid JSON only",
+        "list": "a list, one item per line",
+        "number": "a single number and nothing else",
+    }.get(fmt, fmt)
+
+
 def _earlier_block(step: dict, outputs: dict[int, str], titles: dict[int, str]) -> str:
     """Text listing the outputs of the steps this step depends on."""
     lines = [f"Step {d} ({titles[d]}): {outputs[d]}" for d in step["depends_on"]
@@ -43,7 +59,7 @@ def build_prompt(step: dict, user_input: str, earlier: str,
     prompt = STEP_PROMPT.format(
         id=step["id"], title=step["title"], instruction=step["instruction"],
         expected_output=step.get("expected_output") or "as the instruction says",
-        output_format=step.get("output_format", "text"),
+        format_hint=format_hint(step.get("output_format", "text")),
         user_input=user_input, earlier=earlier,
     )
     if previous:

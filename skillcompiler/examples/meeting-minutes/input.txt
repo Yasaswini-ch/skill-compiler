@@ -1,0 +1,5 @@
+Priya: ok everyone, thanks for joining the Q4 launch sync. Arjun, Meera and Sam are here too. Goal today is to lock the launch plan.
+Arjun: the payment bug is fixed in staging, we should ship it Friday.
+Meera: agreed. Let's move the launch date from Nov 10 to Nov 17 so QA gets a full week. I'll update the website banner by Nov 5.
+Sam: I'll write the release notes by Nov 12. My worry is the app store review, it can take up to a week and we have no buffer.
+Priya: fine. Decision made, we also drop the dark mode feature from this release. Arjun, please deploy the fix Friday.

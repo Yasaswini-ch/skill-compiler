@@ -87,3 +87,8 @@ def test_verify_off(monkeypatch):
     calls = fake(monkeypatch, "FAIL")
     assert checker.check_step(STEP, "a", verify=False)[:2] == (True, True)
     assert calls == []
+
+
+def test_long_verifier_reason_is_truncated():
+    ok, reason = checker.parse_verdict("FAIL: " + "word " * 100)
+    assert ok is False and len(reason) <= 203

@@ -96,3 +96,11 @@ def test_trace_is_json_serializable_and_splits_when_no_plan(monkeypatch):
     t = run_skill("1. a\n2. b\n3. c", "x", model="m")
     json.dumps(t)
     assert t["totals"]["llm_calls"] == 7  # 1 split + 3 steps + 3 verifications
+
+
+def test_format_hint_is_plain_words():
+    from skillcompiler.runner import format_hint
+    assert "billing, technical" in format_hint("one_of:billing|technical")
+    assert "one_of" not in format_hint("one_of:billing|technical")
+    assert format_hint("max_words:60") == "at most 60 words"
+    assert format_hint("weird") == "weird"

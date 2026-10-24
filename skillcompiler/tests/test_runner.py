@@ -104,3 +104,28 @@ def test_format_hint_is_plain_words():
     assert "one_of" not in format_hint("one_of:billing|technical")
     assert format_hint("max_words:60") == "at most 60 words"
     assert format_hint("weird") == "weird"
+
+
+def test_concurrent_runs_keep_separate_totals(monkeypatch):
+    """Two runs in different threads (live mode, web server) must not mix counters."""
+    import threading
+    import time as _t
+
+    def fake(prompt, model):
+        _t.sleep(0.01)
+        if "Does the output follow" in prompt:
+            return "PASS"
+        return {"1": "Ravi", "2": "billing", "3": "{}"}[prompt.split("Step ")[1][0]]
+
+    monkeypatch.setattr(llm, "_generate", fake)
+    one_step = {"skill_name": "x", "source_file": "", "steps": PLAN["steps"][:1]}
+    results = {}
+
+    def go(name, plan):
+        results[name] = run_skill("", "in", plan=plan, model="m")["totals"]["llm_calls"]
+
+    threads = [threading.Thread(target=go, args=("long", PLAN)),
+               threading.Thread(target=go, args=("short", one_step))]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert results == {"long": 6, "short": 2}

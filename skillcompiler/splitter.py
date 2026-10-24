@@ -17,6 +17,7 @@ Rules:
 - One action per step.
 - Copy constraints (word limits, allowed values, required phrases) into the step they apply to.
 - The last step must produce the final answer in the format the skill requires.
+- If a rule applies to the final answer (word limit, required start or end, forbidden words), repeat that rule in the last step's instruction.
 SKILL:
 {skill_text}
 """

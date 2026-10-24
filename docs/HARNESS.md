@@ -36,7 +36,7 @@ SKILL.md -> splitter -> plan.json -> runner -> [ step prompt -> model -> checker
 | `providers.py` | `gemini` (default) or `openai-compatible` (Ollama, vLLM, llama.cpp). |
 | `__main__.py` | CLI: `compile` and `run`. |
 | `examples/` | Three sample skills with inputs (6, 8 and 12 steps). |
-| `tests/` | 88 tests; none needs an API key. |
+| `tests/` | 97 tests; none needs an API key. |
 
 ## 3. How one step runs
 
@@ -88,7 +88,7 @@ python -m skillcompiler run skillcompiler/examples/ticket-triage/SKILL.md \
 Progress lines go to stderr, so `stdout` can be piped. A missing file, missing `.env` or bad plan prints a short `error:` line and exits with code 1.
 
 Environment (`.env` in the repo root, never committed): `GEMINI_API_KEY`, `GEMMA_MODEL`,
-optional `GEMMA_THINKING` (section 8), `OPENAI_API_KEY` and `OPENAI_BASE_URL` for the other provider.
+optional `GEMMA_THINKING` and `GEMMA_RPM` (section 8), `OPENAI_API_KEY` and `OPENAI_BASE_URL` for the other provider.
 
 From Python:
 
@@ -133,6 +133,10 @@ These are the real problems the live runs exposed, and what was changed. All are
 | **The verifier was too strict and too wordy.** | It rejected `shipping` where `quality` was equally arguable, and its rambling reason became the retry feedback. | Verifier prompt: fail only clear violations, pass if several answers are reasonable, 25 words. Reasons are cut to 200 characters. |
 | **A begin-with rule was missed.** | `Internal note:` prefix dropped and the verifier passed it. | `check_constraints()` enforces begin-with and forbidden-word rules without a model call. |
 | **A correct answer was rejected.** | The skill asked for comma-separated names; the `list` check wanted one per line. | `list` accepts comma-separated items; the prompt hint no longer dictates a layout. |
+| **Free-tier rate limit.** The API allows **30 requests per minute per model**; a 12-step skill makes about 25 calls, and back-to-back runs exceeded the limit (HTTP 429, "retry in 48s"). | A 429 mid-run made the verifier unavailable for one step. | `llm.py` has a sliding-window limiter (default 25 requests per minute, `GEMMA_RPM=0` turns it off) and, on a 429, waits for the server's own "retry in Ns" hint (cap 70 s). Applies to the `gemini` provider only. |
+| **The verifier made a correct answer worse.** | On `2 x 3.50 + 4 x 1.25 + 8.00` the model answered `20.00` (correct); the verifier rejected it twice with wrong arithmetic, the model switched to `19.00`, and that was accepted. In another task it flip-flopped on an ambiguous label (`travel`, `other`, `travel`). | If the model gives an answer it already gave earlier in the same step and only the verifier objects, the answer is kept (step status `repaired`, note `model repeated its answer; verifier objection overruled`). A format or rule failure is never overruled. |
+| **A rule for the final answer did not reach the last step.** | Skill said the text must begin with "Meet the"; the final text began "Meet this" and every step passed. | The splitter prompt now says to repeat rules that apply to the final answer in the last step's instruction. This relies on the model following it. |
+| **Run counters were global.** | Two runs at once (live mode, a web server) would have mixed their `totals`. | `llm.stats` is now kept per thread. |
 | The splitter sometimes adds small wording. | One plan added "Use the rating and reason from step 3" to the final step. | Not changed. The plan can be saved and edited (`compile -o`, then `--plan`). |
 
 ## 9. Live runs of the examples (single runs, after all the changes above)
@@ -146,6 +150,14 @@ These are the real problems the live runs exposed, and what was changed. All are
 Calls per run are about 2 per step (one answer, one verification) plus one for the split, so a run costs
 roughly `2N + 1` calls. Runs are not deterministic: an earlier run of `ticket-triage` repaired its classify step.
 
+**Stress test (informal, 24 Oct, one run each, not part of the repo).** Five tasks written to resemble the benchmark's difficulty types
+(similar-sounding steps with strict JSON, a fixed table, step order, hard word and wording limits, a skill with headings and no numbers),
+each checked by a short script and run through the harness and as one plain call.
+After the fixes above the harness passed all 5 and plain Gemma passed 3 (it failed the table total and the step-order arithmetic).
+The checks were written by the harness author and the sample is five runs, so this shows the harness behaves sensibly on varied skills
+and does not show how much it helps. That measurement belongs to `benchmark/`. Before the fixes the same test exposed the rate-limit,
+verifier and final-rule problems in section 8, and the harness did not crash on any task.
+
 **Another open model.** `ticket-triage` on a local Ollama `gemma3:4b` (before the last two checker changes, so not directly comparable):
 3 of 6 steps failed after 3 attempts each, 22 calls, 345 s, and the final JSON had `"category": "billing|technical"`.
 So the harness runs on another model, but it does not make every model reliable.
@@ -153,7 +165,8 @@ So the harness runs on another model, but it does not make every model reliable.
 ## 10. Known limitations
 
 - **It costs more.** About `2N + 1` calls and tens of seconds per skill, against one call without the harness (see `benchmark/overhead.md` when available).
-- **A model verifier can be wrong** in both directions, and a verifier outage is accepted silently except for the trace note.
+- **A model verifier can be wrong** in both directions. A verifier outage is accepted (the trace note says so), and a repeated answer overrules the verifier, so a stubborn wrong answer can be accepted.
+- **Rate limits.** At the free-tier 30 requests per minute a long skill takes longer because the limiter paces calls. A benchmark of many tasks needs that time budget.
 - **Rule checks are narrow.** Only the format kinds above and the begin-with and forbidden-word patterns are enforced; other constraints rely on the verifier.
 - **Wording gaps pass.** Contradictions between steps or an invented claim (for example "I have initiated a refund") are not detected.
 - `final_output` is the raw last-step text, so it may be wrapped in a code fence. The benchmark scorer strips fences.
@@ -170,7 +183,7 @@ So the harness runs on another model, but it does not make every model reliable.
 ## 12. Tests
 
 ```bash
-python -m pytest skillcompiler/tests      # 88 tests, no API key, about 9 seconds
+python -m pytest skillcompiler/tests      # 97 tests, no API key, about 9 seconds
 ```
 
 A fake model replaces the API in the unit tests. Provider tests use a small local HTTP server. Live runs are manual (sections 6 to 9).

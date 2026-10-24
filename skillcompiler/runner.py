@@ -84,6 +84,13 @@ def _run_step(step: dict, user_input: str, outputs: dict[int, str],
             format_ok, verified, note = check_step(step, output, context, model, verify)
         except RuntimeError as exc:  # API gave up: record it and carry on
             output, format_ok, verified, note = "", False, False, f"LLM call failed: {exc}"
+        if (format_ok and not verified
+                and any(a["format_ok"] and a["output"] == output for a in attempts)):
+            # The model gave this exact answer before, and only the model verifier
+            # objects. Its judgement is inconsistent (it rejected a correct sum, and
+            # flip-flopped on an ambiguous label), so keep the model's answer.
+            verified = True
+            note = f"model repeated its answer; verifier objection overruled ({note[:120]})"
         attempts.append({
             "output": output, "format_ok": format_ok, "verified": verified,
             "checker_note": note, "latency_ms": int((time.time() - start) * 1000),

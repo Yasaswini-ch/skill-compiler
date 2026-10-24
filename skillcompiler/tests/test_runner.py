@@ -39,7 +39,7 @@ def test_clean_run(monkeypatch):
     assert [s["status"] for s in t["steps"]] == ["pass"] * 3
     assert t["mode"] == "harness" and t["mock"] is False
     assert t["final_output"] == '{"name": "Ravi"}'
-    assert t["totals"] == {"llm_calls": 6, "latency_ms": t["totals"]["latency_ms"], "retries": 0}
+    assert t["totals"] == {"llm_calls": 6, "latency_ms": t["totals"]["latency_ms"], "retries": 0, "cache_hits": 0}
 
 
 def test_retry_with_feedback_then_repaired(monkeypatch):

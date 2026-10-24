@@ -7,6 +7,8 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
+from . import cache
+
 load_dotenv()
 
 _client = None
@@ -19,11 +21,13 @@ class Stats:
     calls: int = 0
     latency_ms: int = 0
     errors: int = 0
+    cache_hits: int = 0
 
     def reset(self) -> None:
         self.calls = 0
         self.latency_ms = 0
         self.errors = 0
+        self.cache_hits = 0
 
 
 stats = Stats()
@@ -63,6 +67,15 @@ def call_llm(prompt: str, model: str | None = None, retries: int = 3) -> str:
     model = model or os.environ.get("GEMMA_MODEL", "")
     if not model:
         raise RuntimeError("No model set: pass model= or set GEMMA_MODEL in .env")
+    if cache.is_enabled():
+        cached = cache.get(model, prompt)
+        if cached is not None:
+            stats.cache_hits += 1
+            return cached
+        if cache.is_replay():
+            raise cache.CacheMiss(
+                "replay mode: this prompt is not in the cache "
+                f"(model {model}). Run once with --cache first.")
     last_error: Exception | None = None
     for attempt in range(retries):
         start = time.time()
@@ -76,5 +89,7 @@ def call_llm(prompt: str, model: str | None = None, retries: int = 3) -> str:
             continue
         stats.calls += 1
         stats.latency_ms += int((time.time() - start) * 1000)
+        if cache.is_enabled():
+            cache.put(model, prompt, text)
         return text
     raise RuntimeError(f"LLM call failed after {retries} tries: {last_error}")

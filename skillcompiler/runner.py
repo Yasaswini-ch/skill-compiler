@@ -122,5 +122,5 @@ def run_skill(skill_text: str, user_input: str, model: str | None = None,
         "steps": trace_steps,
         "final_output": outputs[plan["steps"][-1]["id"]] if plan["steps"] else "",
         "totals": {"llm_calls": llm.stats.calls, "latency_ms": llm.stats.latency_ms,
-                   "retries": retries},
+                   "retries": retries, "cache_hits": llm.stats.cache_hits},
     }

@@ -9,4 +9,6 @@ Splits a SKILL.md into steps, runs them one at a time on a small model, checks e
 5. From Python: `from skillcompiler import run_skill, compile_skill`
 6. Flags: `--model`, `--max-retries N`, `--no-verify` (format check only).
 7. Tests (no API key needed): `python -m pytest skillcompiler/tests`
-8. Set `GEMMA_THINKING=default` to use the model's own thinking (slower).
+8. Compile once, run many: `compile ... -o plan.yaml` (or .json), then `run ... --plan plan.yaml`.
+9. Cache: `--cache` saves responses in `.skillcompiler_cache/`; `--replay` uses only the cache (0 API calls, works offline).
+10. Set `GEMMA_THINKING=default` to use the model's own thinking (slower).

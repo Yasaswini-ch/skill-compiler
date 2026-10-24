@@ -11,4 +11,5 @@ Splits a SKILL.md into steps, runs them one at a time on a small model, checks e
 7. Tests (no API key needed): `python -m pytest skillcompiler/tests`
 8. Compile once, run many: `compile ... -o plan.yaml` (or .json), then `run ... --plan plan.yaml`.
 9. Cache: `--cache` saves responses in `.skillcompiler_cache/`; `--replay` uses only the cache (0 API calls, works offline).
-10. Set `GEMMA_THINKING=default` to use the model's own thinking (slower).
+10. Other models: `--provider openai-compatible --base-url http://localhost:11434/v1 --model gemma3:4b` (Ollama, vLLM, llama.cpp; set `OPENAI_API_KEY` if the server needs one).
+11. Set `GEMMA_THINKING=default` to use the model's own thinking (slower).

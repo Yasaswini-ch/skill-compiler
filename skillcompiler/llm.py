@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-from . import cache
+from . import cache, providers
 
 load_dotenv()
 
@@ -45,6 +45,8 @@ def _get_client():
 
 def _generate(prompt: str, model: str) -> str:
     """One raw API request. Tests monkeypatch this."""
+    if providers.current() == providers.OPENAI_COMPATIBLE:
+        return providers.generate_openai_compatible(prompt, model)
     from google.genai import types
 
     # Gemma 4 "thinks" by default: ~7000 hidden tokens turned one splitter
@@ -68,7 +70,7 @@ def call_llm(prompt: str, model: str | None = None, retries: int = 3) -> str:
     if not model:
         raise RuntimeError("No model set: pass model= or set GEMMA_MODEL in .env")
     if cache.is_enabled():
-        cached = cache.get(model, prompt)
+        cached = cache.get(providers.cache_namespace(model), prompt)
         if cached is not None:
             stats.cache_hits += 1
             return cached
@@ -90,6 +92,6 @@ def call_llm(prompt: str, model: str | None = None, retries: int = 3) -> str:
         stats.calls += 1
         stats.latency_ms += int((time.time() - start) * 1000)
         if cache.is_enabled():
-            cache.put(model, prompt, text)
+            cache.put(providers.cache_namespace(model), prompt, text)
         return text
     raise RuntimeError(f"LLM call failed after {retries} tries: {last_error}")

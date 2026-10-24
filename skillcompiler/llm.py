@@ -41,7 +41,20 @@ def _get_client():
 
 def _generate(prompt: str, model: str) -> str:
     """One raw API request. Tests monkeypatch this."""
-    response = _get_client().models.generate_content(model=model, contents=prompt)
+    from google.genai import types
+
+    # Gemma 4 "thinks" by default: ~7000 hidden tokens turned one splitter
+    # call into 158 s. MINIMAL cut it to 14 s. Set GEMMA_THINKING=default
+    # to use the model's own setting, or another level name to override.
+    level = os.environ.get("GEMMA_THINKING", "MINIMAL")
+    config = None
+    if level.lower() != "default":
+        config = types.GenerateContentConfig(
+            thinking_config=types.ThinkingConfig(thinking_level=level.upper())
+        )
+    response = _get_client().models.generate_content(
+        model=model, contents=prompt, config=config
+    )
     return response.text or ""
 
 

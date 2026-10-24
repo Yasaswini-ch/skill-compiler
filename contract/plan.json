@@ -1,0 +1,14 @@
+{
+  "skill_name": "ticket-triage",
+  "source_file": "skills/ticket-triage/SKILL.md",
+  "steps": [
+    {"id": 1, "title": "Extract customer name",
+     "instruction": "Find the customer's first name in the ticket.",
+     "output_format": "text", "expected_output": "A single first name",
+     "depends_on": []},
+    {"id": 2, "title": "Classify",
+     "instruction": "Classify the ticket as billing, technical or account.",
+     "output_format": "one_of:billing|technical|account",
+     "expected_output": "One word", "depends_on": [1]}
+  ]
+}

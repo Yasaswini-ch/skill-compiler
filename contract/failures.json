@@ -1,0 +1,7 @@
+[
+  {"failure_id": "f001", "task_id": "t01", "mode": "plain",
+   "label": "ignored_constraint",
+   "what_went_wrong": "Reply was 94 words; the limit was 60.",
+   "failed_checks": ["c4"],
+   "output_excerpt": "Hi Ravi, thank you for reaching out..."}
+]

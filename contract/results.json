@@ -1,0 +1,17 @@
+{
+  "model": "gemma-4-mock",
+  "generated_at": "2026-10-31T20:00:00+05:30",
+  "harness_is_mock": true,
+  "summary": {
+    "plain":   {"passed": 12, "total": 30},
+    "harness": {"passed": 25, "total": 30}
+  },
+  "tasks": [
+    {"task_id": "t01", "title": "Ticket triage, 6 steps, strict JSON",
+     "plain":   {"passed": false, "failed_checks": ["c4", "c5"],
+                 "failure_label": "ignored_constraint",
+                 "llm_calls": 1, "latency_ms": 1800, "output_excerpt": "Hi Ravi, ..."},
+     "harness": {"passed": true, "failed_checks": [], "failure_label": null,
+                 "llm_calls": 7, "latency_ms": 6200, "output_excerpt": "{...}"}}
+  ]
+}

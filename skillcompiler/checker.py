@@ -18,6 +18,13 @@ PASS or FAIL: <short reason>
 """
 
 VERDICT_RE = re.compile(r"^\W*(PASS|FAIL)\b[\s:.\-*]*(.*)$", re.IGNORECASE)
+QUOTE = "\"“”"
+BEGIN_RE = re.compile(
+    r"(?:begin|start)s?\s+with\s+(?:the\s+(?:phrase|text|word)\s+)?[\"“](.+?)[\"”]",
+    re.IGNORECASE)
+FORBID_RE = re.compile(
+    r"(?:must\s+not|never|do\s+not|don't)\s+(?:contain|use|include)\s+"
+    r"(?:the\s+)?(?:word\s+|phrase\s+)?[\"“](.+?)[\"”]", re.IGNORECASE)
 LIST_ITEM_RE = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+\S")
 
 
@@ -53,12 +60,14 @@ def check_format(output_format: str, output: str) -> tuple[bool, str]:
         lines = [l for l in text.splitlines() if l.strip()]
         if any(LIST_ITEM_RE.match(l) for l in lines) or len(lines) >= 2:
             return True, "ok"
+        if len([i for i in re.split(r"[,;]", text) if i.strip()]) >= 2:
+            return True, "ok"  # comma-separated list on one line
         try:
             if isinstance(json.loads(_strip_fences(text)), list):
                 return True, "ok"
         except ValueError:
             pass
-        return False, "Expected a list (one item per line, or a JSON array)"
+        return False, "Expected a list with more than one item"
 
     if fmt == "number":
         try:
@@ -81,6 +90,23 @@ def check_format(output_format: str, output: str) -> tuple[bool, str]:
         return False, f"Output has {words} words; the limit is {limit}"
 
     return True, "ok"  # unknown format: do not block the run
+
+
+def check_constraints(instruction: str, output_format: str, output: str) -> tuple[bool, str]:
+    """Enforce 'must begin with "X"' and 'must not contain the word "Y"' rules in the
+    instruction without a model call. A <placeholder> inside X matches any text."""
+    text = output.strip()
+    if (output_format or "text").startswith("json"):
+        return True, "ok"  # JSON starts with "{"; its wording rules belong to the verifier
+    for phrase in BEGIN_RE.findall(instruction):
+        pieces = re.split(r"<[^>]+>", phrase)
+        pattern = ".+?".join(re.escape(p) for p in pieces)
+        if not re.match(pattern, text.lstrip(QUOTE + "`*_ \n")):
+            return False, f'Output must begin with "{phrase}"'
+    for phrase in FORBID_RE.findall(instruction):
+        if re.search(r"\b" + re.escape(phrase) + r"\b", text, re.IGNORECASE):
+            return False, f'Output must not contain "{phrase}"'
+    return True, "ok"
 
 
 def parse_verdict(reply: str) -> tuple[bool | None, str]:
@@ -119,7 +145,10 @@ def verify_output(step: dict, output: str, context: str = "",
 def check_step(step: dict, output: str, context: str = "", model: str | None = None,
                verify: bool = True) -> tuple[bool, bool, str]:
     """Return (format_ok, verified, note). Verification is skipped if the format fails."""
-    format_ok, note = check_format(step.get("output_format", "text"), output)
+    fmt = step.get("output_format", "text")
+    format_ok, note = check_format(fmt, output)
+    if format_ok:
+        format_ok, note = check_constraints(step.get("instruction", ""), fmt, output)
     if not format_ok:
         return False, False, note
     if not verify:

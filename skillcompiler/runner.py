@@ -41,7 +41,7 @@ def format_hint(output_format: str) -> str:
     return {
         "text": "plain text",
         "json": "valid JSON only",
-        "list": "a list, one item per line",
+        "list": "a list, laid out as the instruction says",
         "number": "a single number and nothing else",
     }.get(fmt, fmt)
 

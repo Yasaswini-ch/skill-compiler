@@ -13,6 +13,8 @@ from skillcompiler import checker, llm
     ("list", "1. a", True),
     ("list", '["a", "b"]', True),
     ("list", "just one line", False),
+    ("list", "Arjun, Meera, Priya, Sam", True),
+    ("list", "Arjun,", False),
     ("number", "42", True),
     ("number", "3.5.", True),
     ("number", "about 4", False),
@@ -92,3 +94,28 @@ def test_verify_off(monkeypatch):
 def test_long_verifier_reason_is_truncated():
     ok, reason = checker.parse_verdict("FAIL: " + "word " * 100)
     assert ok is False and len(reason) <= 203
+
+
+@pytest.mark.parametrize("instruction,fmt,output,ok", [
+    ('It must start with "Internal note:".', "max_words:10", "Internal note: double charge", True),
+    ('It must start with "Internal note:".', "max_words:10", "Double charge on order", False),
+    ('It must begin with "Hi <name>,".', "text", "Hi Ravi,\n\nSorry about that.", True),
+    ('It must begin with "Hi <name>,".', "text", "Hello Ravi, sorry", False),
+    ('It must begin with "Dear <name>,".', "text", '"Dear Kavya, sorry"', True),
+    ('It must not contain the word "unfortunately".', "text", "Unfortunately we failed", False),
+    ('It must not contain the word "unfortunately".', "text", "We are sorry", True),
+    ('Must not contain the word "meeting".', "text", "Follow-up on meetings", True),
+    ('It must start with "Hi".', "json", '{"a": 1}', True),   # JSON is left to the verifier
+    ("No rules here.", "text", "anything", True),
+])
+def test_check_constraints(instruction, fmt, output, ok):
+    assert checker.check_constraints(instruction, fmt, output)[0] is ok
+
+
+def test_constraint_failure_skips_verifier_and_explains(monkeypatch):
+    calls = fake(monkeypatch, "PASS")
+    step = {"instruction": 'Write a note. It must start with "Internal note:".',
+            "output_format": "max_words:10", "expected_output": ""}
+    assert checker.check_step(step, "Double charge") == (
+        False, False, 'Output must begin with "Internal note:"')
+    assert calls == []

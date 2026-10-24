@@ -83,7 +83,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
                   if args.input_file else args.input)
     plan = load_plan(args.plan) if args.plan else None
     trace = run_skill(skill_text, user_input.strip(), args.model,
-                      max_retries=args.max_retries, verify=not args.no_verify, plan=plan)
+                      max_retries=args.max_retries, verify=False if args.no_verify else None, plan=plan)
     for step in trace["steps"]:
         print(f"step {step['step_id']} {step['status']:<8} "
               f"({len(step['attempts'])} attempt) {step['title']}", file=sys.stderr)

@@ -105,9 +105,11 @@ def _run_step(step: dict, user_input: str, outputs: dict[int, str],
 
 
 def run_skill(skill_text: str, user_input: str, model: str | None = None,
-              max_retries: int = 2, verify: bool = True,
+              max_retries: int = 2, verify: bool | None = None,
               plan: dict | None = None) -> dict:
     """Split (unless a plan is given), run every step, return a trace.json dict."""
+    if verify is None:  # SKILLCOMPILER_VERIFY=0 switches the verifier call off globally
+        verify = os.environ.get("SKILLCOMPILER_VERIFY", "1") != "0"
     llm.stats.reset()
     plan = plan or compile_skill(skill_text, model)
     outputs: dict[int, str] = {}

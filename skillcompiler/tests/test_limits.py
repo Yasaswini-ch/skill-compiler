@@ -104,3 +104,20 @@ def test_answer_returned_to_after_a_change_is_accepted(monkeypatch):
     t = run_skill("", "x", plan=STEP_PLAN, model="m")
     assert t["steps"][0]["status"] == "repaired" and len(t["steps"][0]["attempts"]) == 3
     assert t["final_output"] == "travel"
+
+
+def test_verifier_switch_by_environment(monkeypatch):
+    calls = []
+
+    def fake(prompt, model):
+        calls.append(prompt)
+        return "PASS" if "Does the output follow" in prompt else "20"
+
+    monkeypatch.setattr(llm, "_generate", fake)
+    monkeypatch.setenv("SKILLCOMPILER_VERIFY", "0")
+    t = run_skill("", "x", plan=STEP_PLAN, model="m")
+    assert t["totals"]["llm_calls"] == 1                      # answer only, no verification
+    monkeypatch.delenv("SKILLCOMPILER_VERIFY")
+    assert run_skill("", "x", plan=STEP_PLAN, model="m")["totals"]["llm_calls"] == 2
+    monkeypatch.setenv("SKILLCOMPILER_VERIFY", "0")
+    assert run_skill("", "x", plan=STEP_PLAN, model="m", verify=True)["totals"]["llm_calls"] == 2

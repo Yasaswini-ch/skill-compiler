@@ -36,7 +36,7 @@ SKILL.md -> splitter -> plan.json -> runner -> [ step prompt -> model -> checker
 | `providers.py` | `gemini` (default) or `openai-compatible` (Ollama, vLLM, llama.cpp). |
 | `__main__.py` | CLI: `compile` and `run`. |
 | `examples/` | Three sample skills with inputs (6, 8 and 12 steps). |
-| `tests/` | 97 tests; none needs an API key. |
+| `tests/` | 98 tests; none needs an API key. |
 
 ## 3. How one step runs
 
@@ -88,7 +88,7 @@ python -m skillcompiler run skillcompiler/examples/ticket-triage/SKILL.md \
 Progress lines go to stderr, so `stdout` can be piped. A missing file, missing `.env` or bad plan prints a short `error:` line and exits with code 1.
 
 Environment (`.env` in the repo root, never committed): `GEMINI_API_KEY`, `GEMMA_MODEL`,
-optional `GEMMA_THINKING` and `GEMMA_RPM` (section 8), `OPENAI_API_KEY` and `OPENAI_BASE_URL` for the other provider.
+optional `GEMMA_THINKING`, `GEMMA_RPM` (section 8) and `SKILLCOMPILER_VERIFY=0` (turns the verifier call off for every run; an explicit `verify=` argument or `--no-verify` still wins), `OPENAI_API_KEY` and `OPENAI_BASE_URL` for the other provider.
 
 From Python:
 
@@ -158,6 +158,13 @@ The checks were written by the harness author and the sample is five runs, so th
 and does not show how much it helps. That measurement belongs to `benchmark/`. Before the fixes the same test exposed the rate-limit,
 verifier and final-rule problems in section 8, and the harness did not crash on any task.
 
+**Verifier on or off (same five stress tasks, one run each).** With the verifier on: 5 of 5 pass my checks, 63 model calls, about 185 s.
+With it off (`--no-verify`, format and rule checks only): 5 of 5 pass, 30 calls, about 118 s. Plain Gemma passed 3 of 5 in the first run and 4 of 5 in the second
+(it passed the step-order task the second time), so single runs are noisy. These tasks are mostly format and wording rules, which the format and rule checks
+still enforce without the verifier, so this does not show what the verifier catches on wrong-but-well-formed answers. It did catch a wrong category in an
+earlier manual test, and it also caused the errors in section 8. Use `SKILLCOMPILER_VERIFY=0` when the rate limit matters more than semantic checking,
+and say so when quoting numbers.
+
 **Another open model.** `ticket-triage` on a local Ollama `gemma3:4b` (before the last two checker changes, so not directly comparable):
 3 of 6 steps failed after 3 attempts each, 22 calls, 345 s, and the final JSON had `"category": "billing|technical"`.
 So the harness runs on another model, but it does not make every model reliable.
@@ -183,7 +190,7 @@ So the harness runs on another model, but it does not make every model reliable.
 ## 12. Tests
 
 ```bash
-python -m pytest skillcompiler/tests      # 97 tests, no API key, about 9 seconds
+python -m pytest skillcompiler/tests      # 98 tests, no API key, about 9 seconds
 ```
 
 A fake model replaces the API in the unit tests. Provider tests use a small local HTTP server. Live runs are manual (sections 6 to 9).

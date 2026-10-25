@@ -4,7 +4,7 @@ Design, usage and findings for the harness, written by the harness owner (Person
 The one-page quickstart lives in [`skillcompiler/README.md`](../skillcompiler/README.md).
 
 > Every number in this file comes from a real run on the date it was measured
-> (24 Oct 2026, model `gemma-4-26b-a4b-it` unless stated) and is a **single run**.
+> (24 and 25 Oct 2026, model `gemma-4-26b-a4b-it` unless stated). Unless a table says otherwise it is a **single run**.
 > They show that the harness works. They are **not** benchmark results. The benchmark is in `benchmark/`.
 
 ## 1. What it does
@@ -127,7 +127,7 @@ These are the real problems the live runs exposed, and what was changed. All are
 
 | Finding | Evidence | Change |
 |---|---|---|
-| **Thinking made calls very slow.** Gemma 4 spends hidden "thinking" tokens. | A splitter call on `gemma-4-26b-a4b-it` used 6,770 thinking tokens for 678 answer tokens and took 158 s. Short prompts took 3 to 5 s. | `llm.py` sends `thinking_level="MINIMAL"` by default: the same call took 14 to 19 s. `thinking_budget` and `LOW` are rejected by this model. `GEMMA_THINKING=default` restores the model's own setting. Effect on answer quality is not measured. |
+| **Thinking made calls very slow.** Gemma 4 spends hidden "thinking" tokens. | A splitter call on `gemma-4-26b-a4b-it` used 6,770 thinking tokens for 678 answer tokens and took 158 s. Short prompts took 3 to 5 s. | `llm.py` sends `thinking_level="MINIMAL"` by default: the same call took 14 to 19 s. `thinking_budget` and `LOW` are rejected by this model. `GEMMA_THINKING=default` restores the model's own setting. Quality check: see the thinking comparison in section 9. |
 | `gemma-4-31b-it` was no better. | 104 s on the same prompt, and 3 of 6 calls returned HTTP 500. | Stayed on the 26b model. |
 | **The model copied the format label.** | For `one_of:shipping|quality|billing|other` it answered `one_of:quality`, twice. | The prompt now describes the format in words ("exactly one of these values and nothing else: ..."). |
 | **The verifier was too strict and too wordy.** | It rejected `shipping` where `quality` was equally arguable, and its rambling reason became the retry feedback. | Verifier prompt: fail only clear violations, pass if several answers are reasonable, 25 words. Reasons are cut to 200 characters. |
@@ -148,7 +148,7 @@ These are the real problems the live runs exposed, and what was changed. All are
 | `complaint-resolution` | 12 | 11 pass, 1 repaired (sentiment) | 1 | 25 | 90 s |
 
 Calls per run are about 2 per step (one answer, one verification) plus one for the split, so a run costs
-roughly `2N + 1` calls. Runs are not deterministic: an earlier run of `ticket-triage` repaired its classify step.
+roughly `2N + 1` calls. Runs are not deterministic: early on, `ticket-triage` repaired its classify step; after the fixes in section 8 it passed every step in 5 of 5 repeated runs.
 
 **Stress test (informal, 24 Oct, one run each, not part of the repo).** Five tasks written to resemble the benchmark's difficulty types
 (similar-sounding steps with strict JSON, a fixed table, step order, hard word and wording limits, a skill with headings and no numbers),
@@ -157,6 +157,22 @@ After the fixes above the harness passed all 5 and plain Gemma passed 3 (it fail
 The checks were written by the harness author and the sample is five runs, so this shows the harness behaves sensibly on varied skills
 and does not show how much it helps. That measurement belongs to `benchmark/`. Before the fixes the same test exposed the rate-limit,
 verifier and final-rule problems in section 8, and the harness did not crash on any task.
+
+**Repeated runs (5 per skill, 25 Oct, default settings: thinking MINIMAL, verifier on).**
+
+| Skill | Runs | Steps passing first try | Repaired | Failed | Final output valid JSON | Calls per run | Time per run |
+|---|---|---|---|---|---|---|---|
+| `ticket-triage` (6 steps) | 5 | 30 of 30 | 0 | 0 | 5 of 5 | 13 | 35 to 50 s |
+| `meeting-minutes` (8 steps) | 5 | 40 of 40 | 0 | 0 | 5 of 5 | 17 | 47 to 57 s |
+| `complaint-resolution` (12 steps) | 5 | 59 of 60 | 1 | 0 | 5 of 5 | 24 to 26 | 61 to 64 s (one run 112 s) |
+
+These skills are the ones the prompts and checks were tuned on, so the clean rates are optimistic for unseen skills.
+They show the harness is stable on them, not how much it helps compared with plain Gemma. (One timing, 5,444 s, was a laptop sleeping and is left out.)
+
+**Thinking MINIMAL vs the model's default (the five stress tasks, one run each, 25 Oct).** Harness with MINIMAL: 5 of 5 pass, 51 calls, 146 s in total.
+Harness with default thinking: 5 of 5 pass, 57 calls, 1,220 s in total (about 8 times slower). Plain Gemma passed all 5 under both settings in these runs
+(it had failed two of them in earlier runs), so these tasks do not separate the settings or separate plain from the harness.
+What this supports: MINIMAL does not visibly hurt on these five tasks and is much faster. It does not show that default thinking could never help on a harder task.
 
 **Verifier on or off (same five stress tasks, one run each).** With the verifier on: 5 of 5 pass my checks, 63 model calls, about 185 s.
 With it off (`--no-verify`, format and rule checks only): 5 of 5 pass, 30 calls, about 118 s. Plain Gemma passed 3 of 5 in the first run and 4 of 5 in the second

@@ -22,11 +22,12 @@
 </main>
 <script>
 nav("lint.html");
-const RULES = { L01: "Too many steps", L02: "Long step", L03: "Similar steps", L04: "No output format", L05: "Vague words", L06: "Several actions in one step", L07: "Nested condition", L08: "Unnumbered steps" };
+const RULES = { L01: "Too many steps", L02: "Long step", L03: "Similar steps", L04: "No output format", L05: "Vague words", L06: "Several actions in one step", L07: "Nested condition", L08: "Unnumbered steps", L09: "No steps found" };
 const out = document.getElementById("out"), msg = document.getElementById("msg");
 
-function show(rep, note) {
+function show(rep, note, isMock = false) {
   msg.textContent = "";
+  mockBanner(isMock, "MOCK DATA - sample lint report, not from your skill");
   if (!rep || typeof rep.score !== "number" || !Array.isArray(rep.findings)) { msg.textContent = "That does not look like a lint report (needs score and findings)."; return; }
   const color = rep.level === "low" ? "var(--pass)" : rep.level === "medium" ? "var(--rep)" : "var(--fail)";
   const gauge = el("div", { class: "gauge", style: `background: conic-gradient(${color} ${rep.score * 3.6}deg, var(--line) 0)` },
@@ -46,7 +47,7 @@ document.getElementById("file").addEventListener("change", e => {
   r.onload = () => { try { show(JSON.parse(r.result), "Loaded " + f.name); } catch (err) { msg.textContent = "Not valid JSON: " + err.message; } };
   r.readAsText(f);
 });
-loadJSON("lint.json").then(({ data, source }) => show(data, `Showing the ${source} sample report.`)).catch(() => out.append(el("div", { class: "empty" }, "Choose a lint report to begin.")));
+loadJSON("lint.json").then(({ data, source }) => show(data, `Showing the ${source} sample report.`, source === "mock")).catch(() => out.append(el("div", { class: "empty" }, "Choose a lint report to begin.")));
 </script>
 </body>
 </html>

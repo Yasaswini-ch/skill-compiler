@@ -20,7 +20,7 @@ Tasks live in `benchmark/tasks.json`. Each task has a sample skill in `skills/`,
 1. Write or pick a `skills/<name>/SKILL.md` (frontmatter with `name` and `description`, then numbered steps).
 2. Add an object to `benchmark/tasks.json` in the shape described in `contract/` (`task_id`, `title`, `skill_file`, `input`, `difficulty_tags`, `checks`).
 3. Give each check a `label` from the list below and verify by hand that it passes on a correct answer and fails on a wrong one. A wrong check creates a fake failure.
-4. Run `python tools/lint_skill.py skills/<name>/SKILL.md` to see how risky the skill is for small models.
+4. Run `python tools/lint_skill.py skills/<name>/SKILL.md` to see how risky the skill is for small models. It checks rules L01 to L09 and prints a 0 to 100 score (under 25 low, under 55 medium, otherwise high).
 
 ## Run the benchmark
 

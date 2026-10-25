@@ -68,8 +68,12 @@ def static_files(name):
 
 @app.post("/run")
 def run():
-    body = request.get_json(silent=True) or {}
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify(error="body must be a JSON object"), 400
     skill, text, mode = body.get("skill_text", ""), body.get("input", ""), body.get("mode")
+    if not isinstance(skill, str) or not isinstance(text, str) or not isinstance(mode, str):
+        return jsonify(error="skill_text, input and mode must be strings"), 400
     if not skill.strip() or not text.strip():
         return jsonify(error="skill_text and input are both required"), 400
     if mode not in ("plain", "harness"):
@@ -83,8 +87,13 @@ def run():
 
 @app.post("/lint")
 def lint():
-    body = request.get_json(silent=True) or {}
-    return jsonify(lint_skill.lint(body.get("skill_text", "")))
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify(error="body must be a JSON object"), 400
+    skill = body.get("skill_text", "")
+    if not isinstance(skill, str):
+        return jsonify(error="skill_text must be a string"), 400
+    return jsonify(lint_skill.lint(skill))
 
 
 @app.get("/recorded")

@@ -36,6 +36,14 @@ nav("live.html");
 const $ = id => document.getElementById(id);
 const SLOW_MS = 60000, ABORT_MS = 240000;
 let anyMock = false;
+let runId = 0;          // bumped by every new live run and by "Use recorded demo": late responses from an older run are ignored
+let activeRun = null;   // {ctl, tick, abort} of the run in flight, so the recorded demo can cancel it
+
+function stopActiveRun() {
+  if (!activeRun) return;
+  activeRun.ctl.abort(); clearInterval(activeRun.tick); clearTimeout(activeRun.abort);
+  activeRun = null;
+}
 
 function put(id, trace) {
   renderTrace(trace, $(id));
@@ -54,6 +62,8 @@ async function post(path, body, signal) {
 async function runBoth() {
   const skill_text = $("skill").value, input = $("input").value;
   if (!skill_text.trim() || !input.trim()) { $("status").textContent = "Fill in both the skill and the input."; return; }
+  stopActiveRun();
+  const myRun = ++runId;
   anyMock = false; mockBanner(false);
   $("run").disabled = true;
   for (const id of ["plain", "harness"]) $(id).replaceChildren(el("div", { class: "empty" }, "Running... ⏳"));
@@ -63,17 +73,25 @@ async function runBoth() {
     $("status").textContent = s * 1000 > SLOW_MS ? `${s}s: this is slow (rate limit?). Press "Use recorded demo" if needed.` : `${s}s...`;
   }, 1000);
   const abort = setTimeout(() => ctl.abort(), ABORT_MS);
+  activeRun = { ctl, tick, abort };
   await Promise.all(["plain", "harness"].map(mode =>
-    post("/run", { skill_text, input, mode }, ctl.signal).then(t => put(mode, t)).catch(e => putError(mode, e.name === "AbortError" ? "Timed out. Use the recorded demo." : "Failed: " + e.message))));
-  clearInterval(tick); clearTimeout(abort);
+    post("/run", { skill_text, input, mode }, ctl.signal)
+      .then(t => { if (myRun === runId) put(mode, t); })
+      .catch(e => { if (myRun === runId) putError(mode, e.name === "AbortError" ? "Timed out. Use the recorded demo." : "Failed: " + e.message); })));
+  if (myRun !== runId) return;   // replaced by the recorded demo or a newer run: it owns the page now
+  clearInterval(tick); clearTimeout(abort); activeRun = null;
   $("status").textContent = `Done in ${Math.round((Date.now() - t0) / 1000)}s.`;
   $("run").disabled = false;
 }
 
 async function useRecorded() {
+  const myRun = ++runId;   // invalidate any live run still in flight
+  stopActiveRun();
+  $("run").disabled = false;
   let rec;
   try { rec = await (await fetch("/recorded")).json(); }
   catch (e) { const m = window.__MOCK || {}; rec = { plain: m["trace_plain.json"], harness: m["trace.json"] }; }
+  if (myRun !== runId) return;   // another click happened while loading
   if (!rec.plain || !rec.harness) { $("status").textContent = "No recorded demo available."; return; }
   anyMock = false;
   put("plain", rec.plain); put("harness", rec.harness);

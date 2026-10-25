@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Score Page</title>
+<link rel="stylesheet" href="style.css">
+<script src="mock/mock.js"></script>
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+</head>
+<body>
+<main>
+  <h1 id="headline">Plain Gemma vs Gemma with the harness</h1>
+  <p class="sub" id="meta">Loading...</p>
+
+  <div class="card" id="bars"></div>
+
+  <h2>Why plain Gemma failed</h2>
+  <div class="card" id="labels"></div>
+
+  <h2>Every task</h2>
+  <div id="tablewrap"></div>
+  <p class="hint">Pass rate = tasks where every programmatic check passed. Harness calls and latency are higher than plain: see the Calls and Time columns.</p>
+</main>
+<script>
+nav("index.html");
+
+function barRow(name, cls, value, total, text) {
+  const pct = total ? Math.round((value / total) * 100) : 0;
+  return el("div", { class: "bar-row" },
+    el("b", {}, name),
+    el("div", { class: "bar-track" }, el("div", { class: `bar-fill ${cls}`, style: `width:${pct}%` })),
+    el("span", { class: "bar-num" }, text ?? `${value} / ${total}`));
+}
+
+(async function () {
+  let res, source;
+  try { ({ data: res, source } = await loadJSON("results.json")); }
+  catch (e) { document.getElementById("meta").replaceChildren(el("span", { class: "err" }, e.message)); return; }
+
+  const mock = res.harness_is_mock === true || source === "mock";
+  mockBanner(mock, res.harness_is_mock === true ? "MOCK DATA - harness not connected" : "MOCK DATA - showing web/mock/ because web/data/results.json is missing");
+
+  const s = res.summary, p = s.plain, h = s.harness;
+  const pr = p.total ? Math.round(100 * p.passed / p.total) : 0, hr = h.total ? Math.round(100 * h.passed / h.total) : 0;
+  document.getElementById("headline").textContent = mock ? "Plain vs harness (example shape, not a result)" : `Plain Gemma passes ${pr}%. With the harness: ${hr}%.`;
+  document.getElementById("meta").textContent = `Model: ${res.model}  |  Generated: ${res.generated_at}  |  ${p.total} tasks`;
+
+  const bars = document.getElementById("bars");
+  bars.append(barRow("Plain", "plain", p.passed, p.total), barRow("Harness", "harness", h.passed, h.total));
+  bars.append(el("p", { class: "hint" }, "Same model, same tasks, same scorer. Longer bar = more tasks passed."));
+
+  const counts = labelCounts(res, "plain"), hcounts = labelCounts(res, "harness");
+  const lab = document.getElementById("labels");
+  const max = Math.max(1, ...Object.values(counts));
+  const present = LABELS.filter(l => counts[l] || hcounts[l]);
+  if (!present.length) lab.append(el("div", { class: "empty" }, "No failures recorded."));
+  for (const l of present) {
+    lab.append(el("div", { class: "bar-row wide" }, labelTag(l), el("div", { class: "bar-track" }, el("div", { class: "bar-fill accent", style: `width:${((counts[l] || 0) / max) * 100}%` })),
+      el("span", { class: "bar-num" }, `${counts[l] || 0}`, el("span", { class: "hint" }, `  (harness ${hcounts[l] || 0})`))));
+  }
+
+  const rows = (res.tasks || []).map(t => el("tr", {},
+    el("td", {}, t.task_id), el("td", {}, t.title),
+    el("td", {}, pill(t.plain.passed ? "pass" : "fail", t.plain.passed ? "PASS" : "FAIL")),
+    el("td", {}, pill(t.harness.passed ? "pass" : "fail", t.harness.passed ? "PASS" : "FAIL")),
+    el("td", {}, t.plain.failure_label ? labelTag(t.plain.failure_label) : "-"),
+    el("td", { class: "num" }, `${t.plain.llm_calls} / ${t.harness.llm_calls}`),
+    el("td", { class: "num" }, `${(t.plain.latency_ms / 1000).toFixed(1)} s / ${(t.harness.latency_ms / 1000).toFixed(1)} s`)));
+  document.getElementById("tablewrap").append(el("table", {},
+    el("thead", {}, el("tr", {}, ["ID", "Task", "Plain", "Harness", "Plain failure", "Calls (plain / harness)", "Time (plain / harness)"].map(x => el("th", {}, x)))),
+    el("tbody", {}, rows)));
+})();
+</script>
+</body>
+</html>

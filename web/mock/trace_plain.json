@@ -1,0 +1,11 @@
+{
+  "run_id": "r-002",
+  "mode": "plain",
+  "mock": true,
+  "model": "gemma-4-mock",
+  "skill": "ticket-triage",
+  "input": "Hi, I was charged twice for my order...",
+  "steps": [],
+  "final_output": "Hi Ravi, thank you so much for reaching out to us about this. We completely understand how frustrating a double charge must be, especially so close to your card limit, and we are sorry for the trouble. Our billing team will look into order #4411 today.\n\nInternal note: duplicate charge, user cannot log in, urgent.",
+  "totals": {"llm_calls": 1, "latency_ms": 1800, "retries": 0}
+}

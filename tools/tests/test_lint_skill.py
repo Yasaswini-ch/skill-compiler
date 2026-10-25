@@ -95,3 +95,31 @@ def test_text_cli(tmp_path, capsys):
 
 def test_score_is_capped_at_100():
     assert L.lint(LONG + "\n".join(["use appropriate etc"] * 0))["score"] <= 100
+
+
+def test_frontmatter_stops_at_line_that_is_exactly_dashes():
+    text = "---\nname: x\ndescription: a --- b\n---\n1. First step\n2. Output as JSON\n"
+    assert L.strip_frontmatter(text).startswith("1. First step")
+    assert L.lint(text)["steps"] == 2
+
+
+def test_frontmatter_not_stripped_when_not_first_line():
+    text = "# Title\n---\n1. A\n"
+    assert L.strip_frontmatter(text) == text
+
+
+def test_unclosed_frontmatter_is_left_alone():
+    text = "---\n1. A\n2. B\n"
+    assert L.strip_frontmatter(text) == text
+
+
+def test_frontmatter_with_crlf_line_endings():
+    assert L.strip_frontmatter("---\r\nname: x\r\n---\r\n1. A\r\n").startswith("1. A")
+
+
+def test_no_steps_scores_above_low_threshold():
+    for text in ("", "   \n", "# Title only\n"):
+        r = L.lint(text)
+        assert r["steps"] == 0
+        assert "L09" in {f["rule"] for f in r["findings"]}
+        assert r["score"] > 25 and r["level"] != "low"

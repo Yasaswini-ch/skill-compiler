@@ -90,7 +90,7 @@ These numbers are filled in only from real runs. Anything shown with a red MOCK 
 - **Fail Museum**: `web/museum.html`, real failures grouped by label.
 - **Score page**: `web/index.html`, plain vs harness.
 - **Trace viewer**: `web/trace.html`, see a retry step by step.
-- **Skill linter**: `tools/lint_skill.py`, tells you which skills are risky for small models.
+- **Skill linter**: `tools/lint_skill.py`, tells you which skills are risky for small models (rules L01 to L09: too many steps, long step, similar steps, no output format, vague words, several actions in one step, nested condition, unnumbered steps, no steps found).
 - **Live mode**: `web/live.html`, run plain and harness side by side.
 - **Dataset**: [LINK TO benchmark/dataset/] and its card [LINK TO DATASET_CARD.md].
 - **Harness details**: [docs/HARNESS.md](docs/HARNESS.md).

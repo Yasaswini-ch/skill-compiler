@@ -11,7 +11,7 @@ import sys
 VAGUE = ["appropriate", "as needed", "properly", "suitable", "relevant", "if necessary", "etc"]
 FORMAT_WORDS = ["json", "table", "list", "words", "sentences", "format"]
 # Points added to the 0-100 score for each finding of that rule.
-WEIGHTS = {"L01": 15, "L02": 8, "L03": 12, "L04": 15, "L05": 6, "L06": 8, "L07": 8, "L08": 15}
+WEIGHTS = {"L01": 15, "L02": 8, "L03": 12, "L04": 15, "L05": 6, "L06": 8, "L07": 8, "L08": 15, "L09": 30}
 LOW, MEDIUM = 25, 55
 
 NUMBERED = re.compile(r"^\s*(\d+)[.)]\s+(.*\S)")
@@ -19,11 +19,17 @@ HEADING = re.compile(r"^\s*#{2,6}\s+(.*\S)")
 
 
 def strip_frontmatter(text: str) -> str:
-    """Remove a leading YAML frontmatter block."""
-    if text.startswith("---"):
-        parts = text.split("---", 2)
-        if len(parts) == 3:
-            return parts[2]
+    """Remove a leading YAML frontmatter block.
+
+    Only strips when the first line is exactly "---", up to the next line that is exactly "---".
+    An unclosed block is left alone.
+    """
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].rstrip("\r\n") != "---":
+        return text
+    for i in range(1, len(lines)):
+        if lines[i].rstrip("\r\n") == "---":
+            return "".join(lines[i + 1:])
     return text
 
 
@@ -56,6 +62,8 @@ def lint(text: str) -> dict:
     steps, numbered = parse_steps(text)
     findings: list[dict] = []
     n = len(steps)
+    if n == 0:
+        findings.append(_find("L09", None, "No steps found. Write the skill as numbered steps (1., 2., 3.), one action each."))
     if n > 12:
         findings.append(_find("L01", None, f"{n} steps is a lot (high risk above 12): small models lose track. Split the skill."))
     elif n > 8:

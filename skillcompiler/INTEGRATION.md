@@ -54,3 +54,15 @@ Suggested default for the official run: verifier on. Use verifier-off for quick 
   Any change to a skill, input or prompt needs a fresh cached run. The cache folder is not git-ignored yet: add it to `.gitignore` or commit it on purpose.
 - The `--replay` mode stops with a clear error on a cache miss rather than calling the API, which is what you want on stage.
 - `docs/HARNESS.md` is a new file in `docs/`; nothing of yours was changed.
+
+## Sriya: keeping the benchmark honest (please read before writing the tasks)
+
+Our own tests found that plain `gemma-4-26b` often passes long skills (in the latest 5 stress tasks it passed all 5, with the harness also passing all 5), and that the
+local `gemma3:4b` fails many steps even with the harness. So the size of the gap is unknown, and it depends on how the tasks are chosen. To keep the result honest:
+
+1. **Write and freeze the tasks first, then run plain.** Do not edit, add or drop tasks after seeing plain's score. If you must fix a broken check, note it in the dataset card.
+2. **Cover the difficulty types from the work split** (similar steps, strict format, step order, hard limits) even if plain passes some of them. A task plain passes is a valid result.
+3. **Run two models if time allows:** `gemma-4-26b-a4b-it` and a smaller local one (`gemma3:4b` via Ollama, `--provider openai-compatible`). The honest story may be "helps where plain fails most".
+4. **Report the cost beside the gain:** calls and time for plain against the harness (your `overhead.py`), and which verifier setting and `GEMMA_THINKING` were used.
+5. **If the gap is small or zero, report that.** The Failure Museum and the dataset are still the contribution.
+6. **Hand-check checks.** A wrong check creates a fake failure: re-verify every check by hand, especially arithmetic and word counts (our own first stress run had a model verifier reject a correct sum).

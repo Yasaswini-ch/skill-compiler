@@ -1,0 +1,22 @@
+{
+  "run_id": "r-001",
+  "mode": "harness",
+  "mock": true,
+  "model": "gemma-4-mock",
+  "skill": "ticket-triage",
+  "input": "Hi, I was charged twice for my order...",
+  "steps": [
+    {"step_id": 1, "title": "Extract customer name", "status": "pass",
+     "attempts": [
+       {"output": "Ravi", "format_ok": true, "verified": true,
+        "checker_note": "ok", "latency_ms": 640}]},
+    {"step_id": 2, "title": "Classify", "status": "repaired",
+     "attempts": [
+       {"output": "It looks like a billing issue", "format_ok": false,
+        "verified": false, "checker_note": "Expected one word", "latency_ms": 710},
+       {"output": "billing", "format_ok": true, "verified": true,
+        "checker_note": "ok", "latency_ms": 520}]}
+  ],
+  "final_output": "{\"name\": \"Ravi\", \"category\": \"billing\"}",
+  "totals": {"llm_calls": 6, "latency_ms": 3900, "retries": 1}
+}

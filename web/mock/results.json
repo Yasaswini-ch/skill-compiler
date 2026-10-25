@@ -1,0 +1,278 @@
+{
+  "model": "gemma-4-mock",
+  "generated_at": "2026-10-31T20:00:00+05:30",
+  "harness_is_mock": true,
+  "summary": {
+    "plain": {
+      "passed": 4,
+      "total": 12
+    },
+    "harness": {
+      "passed": 10,
+      "total": 12
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "t01",
+      "title": "Ticket triage, 6 steps, strict JSON",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c4",
+          "c5"
+        ],
+        "failure_label": "ignored_constraint",
+        "llm_calls": 1,
+        "latency_ms": 1500,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 13,
+        "latency_ms": 9000,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t02",
+      "title": "Meeting minutes, 8 steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c2"
+        ],
+        "failure_label": "skipped_step",
+        "llm_calls": 1,
+        "latency_ms": 1630,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 14,
+        "latency_ms": 9700,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t03",
+      "title": "Complaint resolution, 12 steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c6"
+        ],
+        "failure_label": "lost_track",
+        "llm_calls": 1,
+        "latency_ms": 1760,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": false,
+        "failed_checks": [
+          "c6"
+        ],
+        "failure_label": "lost_track",
+        "llm_calls": 15,
+        "latency_ms": 10400,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      }
+    },
+    {
+      "task_id": "t04",
+      "title": "Refund policy check, 7 steps",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 1890,
+        "output_excerpt": "{...}"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 16,
+        "latency_ms": 11100,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t05",
+      "title": "Bug report summary, 6 steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c1"
+        ],
+        "failure_label": "wrong_format",
+        "llm_calls": 1,
+        "latency_ms": 2020,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 17,
+        "latency_ms": 11800,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t06",
+      "title": "Release notes, 9 steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c3"
+        ],
+        "failure_label": "merged_steps",
+        "llm_calls": 1,
+        "latency_ms": 2150,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 18,
+        "latency_ms": 12500,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t07",
+      "title": "Interview feedback, 8 steps",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 2280,
+        "output_excerpt": "{...}"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 19,
+        "latency_ms": 13200,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t08",
+      "title": "Invoice extraction, 7 steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c3"
+        ],
+        "failure_label": "wrong_format",
+        "llm_calls": 1,
+        "latency_ms": 2410,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": false,
+        "failed_checks": [
+          "c3"
+        ],
+        "failure_label": "wrong_format",
+        "llm_calls": 20,
+        "latency_ms": 13900,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      }
+    },
+    {
+      "task_id": "t09",
+      "title": "Email rewrite, 6 steps",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 2540,
+        "output_excerpt": "{...}"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 21,
+        "latency_ms": 14600,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t10",
+      "title": "Incident report, 10 steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c4"
+        ],
+        "failure_label": "ignored_constraint",
+        "llm_calls": 1,
+        "latency_ms": 2670,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 22,
+        "latency_ms": 15300,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t11",
+      "title": "Product Q&A, 6 steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c5"
+        ],
+        "failure_label": "hallucinated_step",
+        "llm_calls": 1,
+        "latency_ms": 2800,
+        "output_excerpt": "Hi there, thank you for reaching out..."
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 23,
+        "latency_ms": 16000,
+        "output_excerpt": "{...}"
+      }
+    },
+    {
+      "task_id": "t12",
+      "title": "Onboarding checklist, 8 steps",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 2930,
+        "output_excerpt": "{...}"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 24,
+        "latency_ms": 16700,
+        "output_excerpt": "{...}"
+      }
+    }
+  ]
+}

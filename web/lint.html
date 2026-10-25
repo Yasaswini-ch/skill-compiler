@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Linter</title>
+<link rel="stylesheet" href="style.css">
+<script src="mock/mock.js"></script>
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+</head>
+<body>
+<main>
+  <h1>Skill linter</h1>
+  <p class="sub">How likely is a small model to trip on this skill? No AI is used: the rules are plain checks.</p>
+  <div class="card">
+    <label>Load a lint report: <input type="file" id="file" accept=".json,application/json"></label>
+    <p class="hint">Create one with <code>python tools/lint_skill.py path/to/SKILL.md --json &gt; report.json</code>, or use the Live page to lint pasted text.</p>
+  </div>
+  <p id="msg" class="err"></p>
+  <div id="out"></div>
+</main>
+<script>
+nav("lint.html");
+const RULES = { L01: "Too many steps", L02: "Long step", L03: "Similar steps", L04: "No output format", L05: "Vague words", L06: "Several actions in one step", L07: "Nested condition", L08: "Unnumbered steps" };
+const out = document.getElementById("out"), msg = document.getElementById("msg");
+
+function show(rep, note) {
+  msg.textContent = "";
+  if (!rep || typeof rep.score !== "number" || !Array.isArray(rep.findings)) { msg.textContent = "That does not look like a lint report (needs score and findings)."; return; }
+  const color = rep.level === "low" ? "var(--pass)" : rep.level === "medium" ? "var(--rep)" : "var(--fail)";
+  const gauge = el("div", { class: "gauge", style: `background: conic-gradient(${color} ${rep.score * 3.6}deg, var(--line) 0)` },
+    el("div", {}, el("span", {}, el("b", {}, rep.score), `risk: ${rep.level}`)));
+  out.replaceChildren(el("p", { class: "hint" }, note || ""), gauge, el("p", { class: "sub", style: "text-align:center" }, "0 = easy for a small model, 100 = very risky"));
+  if (!rep.findings.length) { out.append(el("div", { class: "empty" }, "No findings. This skill looks friendly to small models.")); return; }
+  const byRule = {};
+  for (const f of rep.findings) (byRule[f.rule] = byRule[f.rule] || []).push(f);
+  for (const rule of Object.keys(byRule).sort()) {
+    out.append(el("h2", {}, `${rule}  ${RULES[rule] || ""}`, el("span", { class: "hint" }, `  (${byRule[rule].length})`)));
+    out.append(el("div", { class: "card" }, byRule[rule].map(f => el("p", {}, el("b", {}, f.step ? `Step ${f.step}: ` : "Whole skill: "), f.message))));
+  }
+}
+document.getElementById("file").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { try { show(JSON.parse(r.result), "Loaded " + f.name); } catch (err) { msg.textContent = "Not valid JSON: " + err.message; } };
+  r.readAsText(f);
+});
+loadJSON("lint.json").then(({ data, source }) => show(data, `Showing the ${source} sample report.`)).catch(() => out.append(el("div", { class: "empty" }, "Choose a lint report to begin.")));
+</script>
+</body>
+</html>

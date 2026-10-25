@@ -1,0 +1,67 @@
+name: Submit a failure
+description: Add an example of a small model failing to follow a skill to the Gemma Fail Museum.
+title: "[Failure] "
+labels: ["failure-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for adding to the Fail Museum. Paste real output only. Do not edit the model's answer to make it look worse or better.
+  - type: textarea
+    id: skill_text
+    attributes:
+      label: Skill text
+      description: The SKILL.md (or the instructions) the model was given.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Input
+      description: The user input or ticket the skill was run on.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: What the model output
+      description: The exact output, copied as-is.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What was expected
+      description: What a correct answer would have looked like, or which rule in the skill was broken.
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model name
+      placeholder: "for example gemma-4-26b-a4b-it"
+    validations:
+      required: true
+  - type: dropdown
+    id: label
+    attributes:
+      label: Failure label
+      description: Pick the closest one. Maintainers will review it.
+      options:
+        - skipped_step
+        - wrong_format
+        - lost_track
+        - merged_steps
+        - hallucinated_step
+        - ignored_constraint
+        - other
+    validations:
+      required: true
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Permission
+      options:
+        - label: I have the right to share this text, and it contains no private or personal data.
+          required: true

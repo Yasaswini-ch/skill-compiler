@@ -1,0 +1,47 @@
+{
+  "score": 67,
+  "level": "high",
+  "steps": 5,
+  "findings": [
+    {
+      "rule": "L05",
+      "step": 1,
+      "message": "Vague wording \"as needed\": say exactly what to do."
+    },
+    {
+      "rule": "L05",
+      "step": 2,
+      "message": "Vague wording \"properly\": say exactly what to do."
+    },
+    {
+      "rule": "L06",
+      "step": 2,
+      "message": "Two actions in one step (\"and then\" / \"after that\"). Make them separate steps."
+    },
+    {
+      "rule": "L07",
+      "step": 2,
+      "message": "Nested or tricky condition (several \"if\" or an \"unless\"). Spell out each case."
+    },
+    {
+      "rule": "L05",
+      "step": 5,
+      "message": "Vague wording \"relevant\": say exactly what to do."
+    },
+    {
+      "rule": "L05",
+      "step": 5,
+      "message": "Vague wording \"etc\": say exactly what to do."
+    },
+    {
+      "rule": "L03",
+      "step": 4,
+      "message": "Step 4 is 79% similar to step 3: a model may merge or skip one."
+    },
+    {
+      "rule": "L04",
+      "step": null,
+      "message": "No output format is stated (json, table, list, word limit...). Say what the final output looks like."
+    }
+  ]
+}

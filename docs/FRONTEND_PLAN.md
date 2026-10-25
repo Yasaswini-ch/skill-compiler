@@ -64,7 +64,8 @@ components themselves, alone or bundled. Our repo is public and MIT, so:
   `https://reactbits.dev/r/CallChip-JS-CSS.json` (works; the files are inside the JSON), or `npx shadcn@latest add @react-bits/CallChip-JS-CSS`.
   The three verified components need two npm packages: `motion` and `@hugeicons/react` with `@hugeicons/core-free-icons`.
 - Build to **one self-contained HTML file** with `vite-plugin-singlefile`. A normal Vite build does not open from a folder in Chrome
-  (module scripts are blocked on `file://`); the single-file build is meant to fix that. **Not yet verified here**: check it before relying on it.
+  (module scripts are blocked on `file://`); the single-file build fixes that. **Verified on 25 Oct**: the prototype's built file (330 KB, script and
+  styles inlined) loaded straight from disk in headless Chrome on Windows with no server, and React rendered it fully. Not tested in other browsers.
 - Load JSON by file picker or bundled sample, as the viewer already does, so it works without a server. Same file shapes as `contract/`.
 - Keep the current pages until the new ones are checked on real data. Swap per page, not all at once.
 
@@ -81,10 +82,23 @@ The restyle alone is a smaller job and fixes most of what looks off.
 
 ## 8. Prototype status
 
-I started a one-page trace-viewer prototype outside the repo (Thought Line header, a Status Mark per step, a Call Chip per attempt, a Replay button,
-real `trace.json` files as input, paper-and-ink styling). At the time of writing it is **being built and has not been checked in a browser**.
-I will say here when it has, and I can put the source in a new folder of the repo (not in `web/`) for you to look at.
-The three sample traces it uses are in `skillcompiler/examples/traces/`.
+I built a one-page trace-viewer prototype outside the repo and checked it in a browser on 25 Oct. It has a Thought Line header, a Status Mark per step,
+a Call Chip per attempt, a **Replay** button, a file picker for any `trace.json`, and paper-and-ink styling (light and dark). It uses the three real traces in
+`skillcompiler/examples/traces/`, including the `gemma3:4b` run with pass, repaired and fail steps.
+
+What was checked: it renders from the built single file with no console errors; Replay plays the run back (a failed attempt gets a red chip and its checker note,
+then the retry turns green) and the header settles on the real recorded time ("Ran 6 steps in 39.4s"), not the sped-up replay time; step states and counts match the trace.
+Setup took 2 minutes for npm (the icon package is large) and the build takes a few seconds. The page is 330 KB.
+
+Things the prototype taught us:
+- **Call Chip only styles a failure when it moves from running to failed.** A chip mounted already failed looks unstyled, so the prototype mounts every chip as running and
+  settles it a moment later. A failed attempt shows a "retry" arrow icon by design, including the last attempt of a step that finally failed.
+- **Show real latency yourself.** The chip's own timer shows replay time, so the prototype turns it off and writes the recorded latency into the label.
+- The trace viewer must accept a trace with no `totals.cache_hits` (older traces).
+- Not yet done: the live page (needs per-step events from the harness), the score page, the museum, keyboard and reduced-motion checks.
+
+I have not added the prototype source to the repo, because it would include React Bits source files and the licence question in section 5 is yours to decide.
+Say if you want it in a new folder (not `web/`), with or without those files; the files can be fetched with a one-line script instead.
 
 ## 9. Decisions for you
 

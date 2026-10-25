@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Judge Mode</title>
+<link rel="stylesheet" href="style.css">
+<script src="mock/mock.js"></script>
+<script src="common.js"></script>
+</head>
+<body>
+<main>
+  <h1>Live judge mode</h1>
+  <p class="sub">Paste a skill and an input. Plain Gemma and the harness run side by side. Needs <code>python web/server.py</code>; otherwise use the recorded demo.</p>
+  <div class="card">
+    <label>Preset: <select id="preset"><option value="">(choose a sample skill)</option></select></label>
+    <div class="cols">
+      <div><h2>Skill (SKILL.md)</h2><textarea id="skill" rows="12" placeholder="Paste a SKILL.md"></textarea></div>
+      <div><h2>Input</h2><textarea id="input" rows="12" placeholder="Paste the user input / ticket"></textarea></div>
+    </div>
+    <p>
+      <button id="run">Run both</button>
+      <button id="lint" class="ghost">Lint this skill</button>
+      <button id="recorded" class="ghost">Use recorded demo</button>
+      <span id="status" class="hint"></span>
+    </p>
+  </div>
+  <div id="lintout"></div>
+  <div class="cols">
+    <section><h2>Plain Gemma</h2><div id="plain"><div class="empty">Waiting for a run.</div></div></section>
+    <section><h2>With the harness</h2><div id="harness"><div class="empty">Waiting for a run.</div></div></section>
+  </div>
+</main>
+<script>
+nav("live.html");
+const $ = id => document.getElementById(id);
+const SLOW_MS = 60000, ABORT_MS = 240000;
+let anyMock = false;
+
+function put(id, trace) {
+  renderTrace(trace, $(id));
+  if (trace.mock) anyMock = true;
+  mockBanner(anyMock, "MOCK DATA - a stand-in or recorded run, not the real harness");
+}
+function putError(id, msg) { $(id).replaceChildren(el("p", { class: "err" }, msg)); }
+
+async function post(path, body, signal) {
+  const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+
+async function runBoth() {
+  const skill_text = $("skill").value, input = $("input").value;
+  if (!skill_text.trim() || !input.trim()) { $("status").textContent = "Fill in both the skill and the input."; return; }
+  anyMock = false; mockBanner(false);
+  $("run").disabled = true;
+  for (const id of ["plain", "harness"]) $(id).replaceChildren(el("div", { class: "empty" }, "Running... ⏳"));
+  const t0 = Date.now(), ctl = new AbortController();
+  const tick = setInterval(() => {
+    const s = Math.round((Date.now() - t0) / 1000);
+    $("status").textContent = s * 1000 > SLOW_MS ? `${s}s: this is slow (rate limit?). Press "Use recorded demo" if needed.` : `${s}s...`;
+  }, 1000);
+  const abort = setTimeout(() => ctl.abort(), ABORT_MS);
+  await Promise.all(["plain", "harness"].map(mode =>
+    post("/run", { skill_text, input, mode }, ctl.signal).then(t => put(mode, t)).catch(e => putError(mode, e.name === "AbortError" ? "Timed out. Use the recorded demo." : "Failed: " + e.message))));
+  clearInterval(tick); clearTimeout(abort);
+  $("status").textContent = `Done in ${Math.round((Date.now() - t0) / 1000)}s.`;
+  $("run").disabled = false;
+}
+
+async function useRecorded() {
+  let rec;
+  try { rec = await (await fetch("/recorded")).json(); }
+  catch (e) { const m = window.__MOCK || {}; rec = { plain: m["trace_plain.json"], harness: m["trace.json"] }; }
+  if (!rec.plain || !rec.harness) { $("status").textContent = "No recorded demo available."; return; }
+  anyMock = false;
+  put("plain", rec.plain); put("harness", rec.harness);
+  $("status").textContent = "Showing the recorded demo (no API call).";
+}
+
+$("run").onclick = runBoth;
+$("recorded").onclick = useRecorded;
+$("lint").onclick = async () => {
+  try {
+    const r = await post("/lint", { skill_text: $("skill").value });
+    $("lintout").replaceChildren(el("div", { class: "card" }, el("b", {}, `Linter: ${r.level} risk, score ${r.score}/100`),
+      r.findings.length ? r.findings.map(f => el("p", {}, `${f.rule} ${f.step ? "step " + f.step : "skill"}: ${f.message}`)) : el("p", {}, "No findings.")));
+  } catch (e) { $("lintout").replaceChildren(el("p", { class: "err" }, "Lint failed: " + e.message)); }
+};
+fetch("/presets").then(r => r.json()).then(list => {
+  list.forEach((p, i) => $("preset").append(el("option", { value: i }, p.name)));
+  $("preset").onchange = () => { const p = list[$("preset").value]; if (p) { $("skill").value = p.skill_text; $("input").value = p.input; } };
+}).catch(() => { $("preset").disabled = true; $("status").textContent = "Server not running: only the recorded demo works."; });
+</script>
+</body>
+</html>

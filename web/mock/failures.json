@@ -1,0 +1,91 @@
+[
+  {
+    "failure_id": "f001",
+    "task_id": "t01",
+    "mode": "plain",
+    "label": "ignored_constraint",
+    "what_went_wrong": "Reply did not begin with \"Hi <name>,\".",
+    "failed_checks": [
+      "c4",
+      "c5"
+    ],
+    "output_excerpt": "Hi Ravi, thank you so much for reaching out to us about this. We completely understand how frustrating a double charge must be..."
+  },
+  {
+    "failure_id": "f002",
+    "task_id": "t02",
+    "mode": "plain",
+    "label": "skipped_step",
+    "what_went_wrong": "The internal_note key is missing: step 5 was skipped.",
+    "failed_checks": [
+      "c2"
+    ],
+    "output_excerpt": "{\"name\": \"Ravi\", \"category\": \"billing\", \"urgency\": 4, \"reply\": \"Hi Ravi, we are on it.\"}"
+  },
+  {
+    "failure_id": "f003",
+    "task_id": "t03",
+    "mode": "plain",
+    "label": "lost_track",
+    "what_went_wrong": "Step 6 gave category 'technical' but step 2 had said 'billing'.",
+    "failed_checks": [
+      "c6"
+    ],
+    "output_excerpt": "{\"name\": \"Sam\", \"category\": \"technical\", \"urgency\": 2, \"reply\": \"Hi Sam, ...\"}"
+  },
+  {
+    "failure_id": "f004",
+    "task_id": "t05",
+    "mode": "plain",
+    "label": "wrong_format",
+    "what_went_wrong": "Output is not valid JSON: it starts with prose before the object.",
+    "failed_checks": [
+      "c1"
+    ],
+    "output_excerpt": "Sure! Here is the JSON you asked for: {\"name\": \"Ravi\", ..."
+  },
+  {
+    "failure_id": "f005",
+    "task_id": "t06",
+    "mode": "plain",
+    "label": "merged_steps",
+    "what_went_wrong": "Steps 3 and 4 were blended: the urgency reason appears inside the reply.",
+    "failed_checks": [
+      "c3"
+    ],
+    "output_excerpt": "Urgency: 4 - the customer is near their card limit. Hi Ravi, we are sorry..."
+  },
+  {
+    "failure_id": "f006",
+    "task_id": "t08",
+    "mode": "plain",
+    "label": "wrong_format",
+    "what_went_wrong": "Output is not valid JSON: it starts with prose before the object.",
+    "failed_checks": [
+      "c3"
+    ],
+    "output_excerpt": "Sure! Here is the JSON you asked for: {\"name\": \"Ravi\", ..."
+  },
+  {
+    "failure_id": "f007",
+    "task_id": "t10",
+    "mode": "plain",
+    "label": "ignored_constraint",
+    "what_went_wrong": "Reply did not begin with \"Hi <name>,\".",
+    "failed_checks": [
+      "c4"
+    ],
+    "output_excerpt": "Hi Ravi, thank you so much for reaching out to us about this. We completely understand how frustrating a double charge must be..."
+  },
+  {
+    "failure_id": "f008",
+    "task_id": "t11",
+    "mode": "plain",
+    "label": "hallucinated_step",
+    "what_went_wrong": "Added a 'follow_up_date' field that the skill never asked for.",
+    "failed_checks": [
+      "c5"
+    ],
+    "output_excerpt": "{\"name\": \"Ravi\", \"category\": \"billing\", \"follow_up_date\": \"2026-10-14\", ...}"
+  }
+]

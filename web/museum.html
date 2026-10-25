@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gemma Fail Museum</title>
+<link rel="stylesheet" href="style.css">
+<script src="mock/mock.js"></script>
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+</head>
+<body>
+<main>
+  <h1>The Gemma Fail Museum</h1>
+  <p class="sub">Real ways a small open model goes wrong when it is handed a long skill in one go. Each exhibit is one recorded failure.</p>
+  <p><a class="btn" id="submit" href="#">Submit a failure</a> <span class="hint" id="count"></span></p>
+  <div class="filters" id="filters" role="group" aria-label="Filter by label"></div>
+  <div id="rooms"></div>
+</main>
+<script>
+nav("museum.html");
+document.getElementById("submit").href = REPO_URL + "/issues/new?template=submit_failure.yml";
+
+(async function () {
+  let fails, titles = {}, source;
+  try { ({ data: fails, source } = await loadJSON("failures.json")); }
+  catch (e) { document.getElementById("rooms").append(el("p", { class: "err" }, e.message)); return; }
+  let resultsMock = source === "mock";
+  try {
+    const r = await loadJSON("results.json");
+    for (const t of r.data.tasks || []) titles[t.task_id] = t.title;
+    if (r.data.harness_is_mock) resultsMock = true;
+  } catch (e) { /* titles are optional */ }
+  mockBanner(resultsMock, "MOCK DATA - example failures, not real Gemma output");
+
+  let active = null;
+  const filters = document.getElementById("filters");
+  const rooms = document.getElementById("rooms");
+  const counts = {};
+  for (const f of fails) counts[f.label] = (counts[f.label] || 0) + 1;
+
+  function draw() {
+    rooms.replaceChildren();
+    document.getElementById("count").textContent = `${fails.filter(f => !active || f.label === active).length} of ${fails.length} exhibits`;
+    const order = [...LABELS, ...Object.keys(counts).filter(l => !LABELS.includes(l))];
+    for (const label of order) {
+      if (active && label !== active) continue;
+      const items = fails.filter(f => f.label === label);
+      if (!items.length) continue;
+      rooms.append(el("h2", { class: "hall" }, `Hall of ${label.replace(/_/g, " ")} `, el("span", { class: "hint" }, `(${items.length})`)));
+      rooms.append(el("div", { class: "gallery" }, items.map(f => el("article", { class: "exhibit", "data-label": f.label },
+        el("div", { class: "plaque" }, `Exhibit ${f.failure_id}  |  ${f.mode}`),
+        labelTag(f.label),
+        el("h3", {}, titles[f.task_id] || f.task_id),
+        el("p", {}, f.what_went_wrong),
+        el("pre", {}, f.output_excerpt),
+        el("div", { class: "hint" }, `Failed checks: ${(f.failed_checks || []).join(", ") || "-"}`)))));
+    }
+    if (!rooms.children.length) rooms.append(el("div", { class: "empty" }, "No exhibits for this label yet. Be the first to submit one."));
+  }
+
+  const mk = (text, value) => el("button", { class: "ghost", onclick: () => { active = value; [...filters.children].forEach(b => b.classList.toggle("active", b.dataset.v === String(value))); draw(); } }, text);
+  const all = mk(`All (${fails.length})`, null); all.dataset.v = "null"; all.classList.add("active"); filters.append(all);
+  for (const l of Object.keys(counts)) { const b = mk(`${l} (${counts[l]})`, l); b.dataset.v = l; filters.append(b); }
+  draw();
+})();
+</script>
+</body>
+</html>

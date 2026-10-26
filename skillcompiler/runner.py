@@ -4,6 +4,7 @@ from __future__ import annotations
 import os
 import time
 import uuid
+from collections.abc import Callable
 
 from . import llm
 from .checker import check_step
@@ -46,6 +47,16 @@ def format_hint(output_format: str) -> str:
     }.get(fmt, fmt)
 
 
+def _emit(on_event: Callable[[dict], None] | None, event: dict) -> None:
+    """Report progress to the caller. A broken callback must never break a run."""
+    if on_event is None:
+        return
+    try:
+        on_event(event)
+    except Exception:  # noqa: BLE001 - the run matters more than the listener
+        pass
+
+
 def _earlier_block(step: dict, outputs: dict[int, str], titles: dict[int, str]) -> str:
     """Text listing the outputs of the steps this step depends on."""
     lines = [f"Step {d} ({titles[d]}): {outputs[d]}" for d in step["depends_on"]
@@ -69,14 +80,17 @@ def build_prompt(step: dict, user_input: str, earlier: str,
 
 def _run_step(step: dict, user_input: str, outputs: dict[int, str],
               titles: dict[int, str], model: str | None, max_retries: int,
-              verify: bool) -> tuple[dict, str]:
+              verify: bool, on_event: Callable[[dict], None] | None = None
+              ) -> tuple[dict, str]:
     """Run one step with retries. Returns (trace entry, last output)."""
+    _emit(on_event, {"type": "step_start", "step_id": step["id"], "title": step["title"]})
     earlier = _earlier_block(step, outputs, titles)
     context = f"{user_input}\n{earlier}".strip()
     attempts: list[dict] = []
     output, note = "", ""
     ok = False
     for n in range(max_retries + 1):
+        _emit(on_event, {"type": "attempt_start", "step_id": step["id"], "attempt": n + 1})
         start = time.time()
         prompt = build_prompt(step, user_input, earlier, output if n else "", note)
         try:
@@ -96,32 +110,46 @@ def _run_step(step: dict, user_input: str, outputs: dict[int, str],
             "checker_note": note, "latency_ms": int((time.time() - start) * 1000),
         })
         ok = format_ok and verified
+        _emit(on_event, {"type": "attempt_end", "step_id": step["id"], "attempt": n + 1,
+                         "ok": ok, **attempts[-1]})
         if ok:
             break
     status = "fail" if not ok else ("pass" if len(attempts) == 1 else "repaired")
     entry = {"step_id": step["id"], "title": step["title"], "status": status,
              "attempts": attempts}
+    _emit(on_event, {"type": "step_end", "step_id": step["id"], "status": status})
     return entry, output
 
 
 def run_skill(skill_text: str, user_input: str, model: str | None = None,
               max_retries: int = 2, verify: bool | None = None,
-              plan: dict | None = None) -> dict:
-    """Split (unless a plan is given), run every step, return a trace.json dict."""
+              plan: dict | None = None,
+              on_event: Callable[[dict], None] | None = None) -> dict:
+    """Split (unless a plan is given), run every step, return a trace.json dict.
+
+    on_event, if given, is called with a plain dict as the run progresses, so a UI can show
+    steps as they finish: run_start, plan, step_start, attempt_start, attempt_end, step_end,
+    run_end (carrying the full trace). It is called from the running thread and an
+    exception raised inside it is ignored.
+    """
     if verify is None:  # SKILLCOMPILER_VERIFY=0 switches the verifier call off globally
         verify = os.environ.get("SKILLCOMPILER_VERIFY", "1") != "0"
     llm.stats.reset()
+    _emit(on_event, {"type": "run_start", "will_split": plan is None})
     plan = plan or compile_skill(skill_text, model)
+    _emit(on_event, {"type": "plan", "skill": plan.get("skill_name", "skill"),
+                     "steps": [{"id": st["id"], "title": st["title"]} for st in plan["steps"]],
+                     "warnings": plan.get("warnings", [])})
     outputs: dict[int, str] = {}
     titles = {s["id"]: s["title"] for s in plan["steps"]}
     trace_steps = []
     for step in plan["steps"]:
         entry, output = _run_step(step, user_input, outputs, titles, model,
-                                  max_retries, verify)
+                                  max_retries, verify, on_event)
         trace_steps.append(entry)
         outputs[step["id"]] = output
     retries = sum(len(s["attempts"]) - 1 for s in trace_steps)
-    return {
+    trace = {
         "run_id": "r-" + uuid.uuid4().hex[:8],
         "mode": "harness",
         "mock": False,
@@ -133,3 +161,5 @@ def run_skill(skill_text: str, user_input: str, model: str | None = None,
         "totals": {"llm_calls": llm.stats.calls, "latency_ms": llm.stats.latency_ms,
                    "retries": retries, "cache_hits": llm.stats.cache_hits},
     }
+    _emit(on_event, {"type": "run_end", "trace": trace})
+    return trace

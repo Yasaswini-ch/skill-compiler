@@ -95,10 +95,19 @@ Things the prototype taught us:
   settles it a moment later. A failed attempt shows a "retry" arrow icon by design, including the last attempt of a step that finally failed.
 - **Show real latency yourself.** The chip's own timer shows replay time, so the prototype turns it off and writes the recorded latency into the label.
 - The trace viewer must accept a trace with no `totals.cache_hits` (older traces).
-- Not yet done: the live page (needs per-step events from the harness), the score page, the museum, keyboard and reduced-motion checks.
+- Not yet done: the score page, the museum, keyboard and reduced-motion checks.
 
-I have not added the prototype source to the repo, because it would include React Bits source files and the licence question in section 5 is yours to decide.
-Say if you want it in a new folder (not `web/`), with or without those files; the files can be fetched with a one-line script instead.
+**Try it:** open `docs/frontend-prototype/trace-viewer-demo.html` (double-click; one file, works offline). See that folder's README.
+
+**Live view, status on 25 Oct:** the harness side is done and tested. `run_skill(..., on_event=callback)` now reports `run_start`, `plan`, `step_start`, `attempt_start`,
+`attempt_end`, `step_end` and `run_end` as a run progresses, and `skillcompiler/stream.py` turns that into newline-delimited JSON for a web route
+(three lines in Flask; the docstring has the example), including a cancel when the browser disconnects. 111 tests pass.
+The page that uses it (a Live tab with steps appearing as they finish, a Stop button, and a download of the trace) is written, but **its build hung twice**
+in the transform step with a Node process spinning on the CPU, so it has not been run and is not in the repo. The cause is not known yet (my code or the build tool).
+Until it is found, do not build it on your machine; I will say here when it is resolved.
+
+I have not added the prototype source to the repo, because it includes React Bits files and the licence question in section 5 is yours to decide,
+and because of the build problem above.
 
 ## 9. Decisions for you
 

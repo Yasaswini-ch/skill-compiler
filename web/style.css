@@ -45,7 +45,6 @@ code { font: .9em var(--mono); background: var(--soft); padding: 1px 5px; }
 .card { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 16px 2px; background: transparent; }
 .card.boxed { border: 1px solid var(--line); background: var(--card); padding: 16px 20px; }
 
-main:focus { outline: none; }
 .skip { position: absolute; left: 8px; top: -60px; z-index: 10; background: var(--ink); color: var(--bg); padding: 8px 14px; font-weight: 700; }
 .skip:focus { top: 8px; }
 #tablewrap { overflow-x: auto; }

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>common.js browser tests</title>
+<link rel="stylesheet" href="../style.css">
+<script src="../mock/mock.js"></script>
+<script src="../common.js"></script>
+</head>
+<body>
+<!-- Open this page to run the checks (no server needed). tools/tests/test_web_common.py runs it in headless Edge/Chrome. -->
+<main><div id="o"></div></main>
+<pre id="result">running</pre>
+<script>
+const results = [];
+const check = (name, ok, detail = "") => results.push({ name, ok: !!ok, detail: String(detail) });
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// 1. fmtDuration: round to tenths first, then split into minutes and seconds.
+const cases = [
+  [0, "0.0s"], [38800, "38.8s"], [59940, "59.9s"], [59949, "59.9s"],
+  [59950, "1m 0.0s"], [59999, "1m 0.0s"], [60000, "1m 0.0s"], [60049, "1m 0.0s"], [60050, "1m 0.1s"],
+  [119950, "2m 0.0s"], [501500, "8m 21.5s"], [3599950, "60m 0.0s"], [null, "-"], [NaN, "-"],
+];
+for (const [ms, want] of cases) check(`fmtDuration ${ms} -> ${want}`, fmtDuration(ms) === want, fmtDuration(ms));
+let bad = null;
+for (let ms = 0; ms <= 130000 && !bad; ms += 7) { const s = fmtDuration(ms); if (/(^|\s)60\.\ds/.test(s)) bad = `${ms} -> ${s}`; }
+check("fmtDuration never shows 60.0s", bad === null, bad);
+
+(async () => {
+  // 2. Skip link: after it moves focus into <main>, the focus indicator must be visible.
+  nav("x");
+  document.querySelector("a.skip").click();
+  const main = document.querySelector("main"), cs = getComputedStyle(main);
+  check("skip link focuses main", document.activeElement === main);
+  check("main has a visible focus outline", cs.outlineStyle !== "none" && parseFloat(cs.outlineWidth) >= 2, `${cs.outlineStyle} ${cs.outlineWidth}`);
+  main.blur();
+
+  // 3. Replay race: restarting a replay must not stop the newer replay's spinner, and nothing may be left stuck.
+  const box = document.getElementById("o");
+  renderTrace(window.__MOCK["trace.json"], box, { replay: true });
+  if (REDUCED_MOTION) {
+    check("replay skipped (reduced motion)", true);
+  } else {
+    const btn = box.querySelector(".controls button");
+    btn.click();
+    await sleep(300);
+    btn.click();                       // restart while the first replay is in its first 650 ms attempt
+    await sleep(500);                  // t = 800 ms: the old replay has woken (650), the new attempt still runs (to 950)
+    const running = box.querySelectorAll(".running").length;
+    check("restart keeps the newer replay's spinner", running === 1, `running=${running}`);
+    await sleep(6000);
+    check("no spinner left after replay", box.querySelectorAll(".running").length === 0);
+    check("nothing left hidden after replay", box.querySelectorAll(".pending").length === 0, box.querySelectorAll(".pending").length);
+    check("summary settles on the recorded time", box.querySelector(".summary").textContent === "Ran 2 steps in 3.9s", box.querySelector(".summary").textContent);
+    check("replay button not left busy", !btn.hasAttribute("aria-busy"));
+  }
+  document.getElementById("result").textContent = JSON.stringify(results);
+  document.title = results.every(r => r.ok) ? "ALL PASS" : "FAILURES";
+})();
+</script>
+</body>
+</html>

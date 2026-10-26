@@ -55,8 +55,8 @@ const REDUCED_MOTION = window.matchMedia && matchMedia("(prefers-reduced-motion:
 // 38800 -> "38.8s", 501500 -> "8m 21.5s"
 function fmtDuration(ms) {
   if (ms == null || isNaN(ms)) return "-";
-  const s = ms / 1000;
-  return s < 60 ? `${s.toFixed(1)}s` : `${Math.floor(s / 60)}m ${(s % 60).toFixed(1)}s`;
+  const tenths = Math.round(ms / 100);   // round first, so 59.96 s becomes 1m 0.0s and never "60.0s"
+  return tenths < 600 ? `${(tenths / 10).toFixed(1)}s` : `${Math.floor(tenths / 600)}m ${((tenths % 600) / 10).toFixed(1)}s`;
 }
 
 // Count a number up from 0 once, unless the user prefers reduced motion. el shows `${n}${suffix}`.
@@ -133,6 +133,7 @@ async function replayTrace(container, run, summary, btn, final) {
   const hide = x => x.classList.add("pending");
   const show = x => { x.classList.remove("pending"); x.classList.add("reveal"); };
   btn.setAttribute("aria-busy", "true");
+  container.querySelectorAll(".running").forEach(x => x.classList.remove("running"));   // spinner left by a replay this one replaces
   stepEls.forEach(st => { hide(st); st.querySelectorAll(".attempt, .retry-arrow").forEach(hide); });
   if (final) hide(final);
   run.querySelector(".summary").textContent = "Replaying...";
@@ -144,7 +145,7 @@ async function replayTrace(container, run, summary, btn, final) {
     for (const k of kids) {
       if (!live()) return;
       show(k);
-      if (k.classList.contains("attempt")) { k.classList.add("running"); await _sleep(650); k.classList.remove("running"); if (!live()) return; }
+      if (k.classList.contains("attempt")) { k.classList.add("running"); await _sleep(650); if (!live()) return; k.classList.remove("running"); }
       else await _sleep(250);
     }
     await _sleep(150);

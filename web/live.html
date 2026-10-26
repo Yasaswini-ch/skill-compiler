@@ -10,19 +10,20 @@
 </head>
 <body>
 <main>
+  <p class="kicker">Live</p>
   <h1>Live judge mode</h1>
   <p class="sub">Paste a skill and an input. Plain Gemma and the harness run side by side. Needs <code>python web/server.py</code>; otherwise use the recorded demo.</p>
-  <div class="card">
+  <div class="card boxed">
     <label>Preset: <select id="preset"><option value="">(choose a sample skill)</option></select></label>
     <div class="cols">
-      <div><h2>Skill (SKILL.md)</h2><textarea id="skill" rows="12" placeholder="Paste a SKILL.md"></textarea></div>
-      <div><h2>Input</h2><textarea id="input" rows="12" placeholder="Paste the user input / ticket"></textarea></div>
+      <div><h2 id="skill-h">Skill (SKILL.md)</h2><textarea id="skill" aria-labelledby="skill-h" rows="12" placeholder="Paste a SKILL.md"></textarea></div>
+      <div><h2 id="input-h">Input</h2><textarea id="input" aria-labelledby="input-h" rows="12" placeholder="Paste the user input / ticket"></textarea></div>
     </div>
     <p>
       <button id="run">Run both</button>
       <button id="lint" class="ghost">Lint this skill</button>
       <button id="recorded" class="ghost">Use recorded demo</button>
-      <span id="status" class="hint"></span>
+      <span id="status" class="hint" role="status" aria-live="polite"></span>
     </p>
   </div>
   <div id="lintout"></div>
@@ -103,7 +104,7 @@ $("recorded").onclick = useRecorded;
 $("lint").onclick = async () => {
   try {
     const r = await post("/lint", { skill_text: $("skill").value });
-    $("lintout").replaceChildren(el("div", { class: "card" }, el("b", {}, `Linter: ${r.level} risk, score ${r.score}/100`),
+    $("lintout").replaceChildren(el("div", { class: "card boxed" }, el("b", {}, `Linter: ${r.level} risk, score ${r.score}/100`),
       r.findings.length ? r.findings.map(f => el("p", {}, `${f.rule} ${f.step ? "step " + f.step : "skill"}: ${f.message}`)) : el("p", {}, "No findings.")));
   } catch (e) { $("lintout").replaceChildren(el("p", { class: "err" }, "Lint failed: " + e.message)); }
 };

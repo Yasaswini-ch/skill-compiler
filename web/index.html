@@ -11,8 +11,9 @@
 </head>
 <body>
 <main>
+  <p class="kicker">Score page</p>
   <h1 id="headline">Plain Gemma vs Gemma with the harness</h1>
-  <p class="sub" id="meta">Loading...</p>
+  <p class="source" id="meta">Loading...</p>
 
   <div class="card" id="bars"></div>
 
@@ -20,7 +21,7 @@
   <div class="card" id="labels"></div>
 
   <h2>Every task</h2>
-  <div id="tablewrap"></div>
+  <div id="tablewrap" role="region" aria-label="All tasks (scrolls sideways on small screens)" tabindex="0"></div>
   <p class="hint">Pass rate = tasks where every programmatic check passed. Harness calls and latency are higher than plain: see the Calls and Time columns.</p>
 </main>
 <script>
@@ -31,7 +32,7 @@ function barRow(name, cls, value, total, text) {
   return el("div", { class: "bar-row" },
     el("b", {}, name),
     el("div", { class: "bar-track" }, el("div", { class: `bar-fill ${cls}`, style: `width:${pct}%` })),
-    el("span", { class: "bar-num" }, text ?? `${value} / ${total}`));
+    el("span", { class: "bar-num", "data-count": value, "data-total": total }, text ?? `${value} / ${total}`));
 }
 
 (async function () {
@@ -45,12 +46,13 @@ function barRow(name, cls, value, total, text) {
   const s = res.summary, p = s.plain, h = s.harness;
   const pr = p.total ? Math.round(100 * p.passed / p.total) : 0, hr = h.total ? Math.round(100 * h.passed / h.total) : 0;
   document.getElementById("headline").textContent = mock ? "Plain vs harness (example shape, not a result)" : `Plain Gemma passes ${pr}%. With the harness: ${hr}%.`;
-  document.getElementById("meta").textContent = `Model: ${res.model}  |  Generated: ${res.generated_at}  |  ${p.total} tasks`;
+  document.getElementById("meta").textContent = `model ${res.model} · generated ${res.generated_at} · ${p.total} tasks · data from web/${source}/`;
 
   const bars = document.getElementById("bars");
   bars.append(barRow("Plain", "plain", p.passed, p.total), barRow("Harness", "harness", h.passed, h.total));
   bars.append(el("p", { class: "hint" }, "Same model, same tasks, same scorer. Longer bar = more tasks passed."));
 
+  for (const n of bars.querySelectorAll("[data-count]")) countUp(n, +n.dataset.count, ` / ${n.dataset.total}`);
   const counts = labelCounts(res, "plain"), hcounts = labelCounts(res, "harness");
   const lab = document.getElementById("labels");
   const max = Math.max(1, ...Object.values(counts));
@@ -69,7 +71,7 @@ function barRow(name, cls, value, total, text) {
     el("td", { class: "num" }, `${t.plain.llm_calls} / ${t.harness.llm_calls}`),
     el("td", { class: "num" }, `${(t.plain.latency_ms / 1000).toFixed(1)} s / ${(t.harness.latency_ms / 1000).toFixed(1)} s`)));
   document.getElementById("tablewrap").append(el("table", {},
-    el("thead", {}, el("tr", {}, ["ID", "Task", "Plain", "Harness", "Plain failure", "Calls (plain / harness)", "Time (plain / harness)"].map(x => el("th", {}, x)))),
+    el("thead", {}, el("tr", {}, ["ID", "Task", "Plain", "Harness", "Plain failure", "Calls (plain / harness)", "Time (plain / harness)"].map(x => el("th", { scope: "col" }, x)))),
     el("tbody", {}, rows)));
 })();
 </script>

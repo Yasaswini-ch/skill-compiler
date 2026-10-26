@@ -16,16 +16,23 @@ const results = [];
 const check = (name, ok, detail = "") => results.push({ name, ok: !!ok, detail: String(detail) });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// 1. fmtDuration: round to tenths first, then split into minutes and seconds.
+// 1. fmtDuration: round |ms| to tenths first, then split into minutes and seconds; sign is added last.
 const cases = [
   [0, "0.0s"], [38800, "38.8s"], [59940, "59.9s"], [59949, "59.9s"],
   [59950, "1m 0.0s"], [59999, "1m 0.0s"], [60000, "1m 0.0s"], [60049, "1m 0.0s"], [60050, "1m 0.1s"],
-  [119950, "2m 0.0s"], [501500, "8m 21.5s"], [3599950, "60m 0.0s"], [null, "-"], [NaN, "-"],
+  [119950, "2m 0.0s"], [501500, "8m 21.5s"], [3599950, "60m 0.0s"], [null, "-"], [NaN, "-"], [Infinity, "-"],
+  // negative durations: format the absolute value, then add the sign (and no "-0.0s")
+  [-1, "0.0s"], [-49, "0.0s"], [-50, "-0.1s"], [-38800, "-38.8s"], [-59949, "-59.9s"], [-59950, "-1m 0.0s"],
+  [-60000, "-1m 0.0s"], [-119950, "-2m 0.0s"], [-501500, "-8m 21.5s"],
 ];
 for (const [ms, want] of cases) check(`fmtDuration ${ms} -> ${want}`, fmtDuration(ms) === want, fmtDuration(ms));
 let bad = null;
-for (let ms = 0; ms <= 130000 && !bad; ms += 7) { const s = fmtDuration(ms); if (/(^|\s)60\.\ds/.test(s)) bad = `${ms} -> ${s}`; }
-check("fmtDuration never shows 60.0s", bad === null, bad);
+for (let ms = -130000; ms <= 130000 && !bad; ms += 7) {
+  const s = fmtDuration(ms);
+  if (/(^|[\s-])60\.\ds/.test(s) || s === "-0.0s") bad = `${ms} -> ${s}`;
+}
+check("fmtDuration never shows 60.0s or -0.0s", bad === null, bad);
+check("fmtDuration is symmetric around zero", [51, 59950, 61234, 501500].every(ms => fmtDuration(-ms) === "-" + fmtDuration(ms)), "");
 
 (async () => {
   // 2. Skip link: after it moves focus into <main>, the focus indicator must be visible.

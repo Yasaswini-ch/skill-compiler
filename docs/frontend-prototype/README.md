@@ -20,13 +20,16 @@ The plan and the reasons are in [`../FRONTEND_PLAN.md`](../FRONTEND_PLAN.md).
 - Rendered in the browser pane from a local server, with no console errors; Replay and the sample switch work.
 - Not checked: other browsers, keyboard use, reduced motion, small phone screens.
 
-## Not in this demo
+## Live tab (needs a server)
 
-The live view (steps appearing as the harness finishes them) is not here. The harness side now exists (`on_event` in `run_skill`, and
-`skillcompiler/stream.py`), but the page that uses it is not ready to share yet.
+The second tab, **Live run**, runs a skill through the harness and shows each step as it finishes, with a Stop button and a download of the trace.
+In the double-click demo it will say it cannot reach the server; to use it, start `python server.py` from [`source/`](source/README.md).
+Checked on 26 Oct with a real run of `ticket-triage`: the plan appeared, steps filled in one by one, and it ended with "Ran 6 steps in 38.8s",
+6 of 6 passed first try, 13 model calls, and the trace downloadable. Also checked: with no working model, every attempt shows as failed with its error and the page does not crash.
+Source and build steps: [`source/`](source/README.md).
 
 ## Third-party code
 
-The page bundles source from **React Bits** (https://reactbits.dev), licensed MIT + Commons Clause. The licence text is in
+The page and the source in `source/` include code from **React Bits** (https://reactbits.dev), licensed MIT + Commons Clause. The licence text is in
 [`REACT-BITS-LICENSE.md`](REACT-BITS-LICENSE.md). The Commons Clause forbids selling or redistributing those components on their own or in a bundle;
 using them inside an application is allowed. Whether that is acceptable for this repository is an open question in `FRONTEND_PLAN.md`, section 5.

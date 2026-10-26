@@ -99,15 +99,18 @@ Things the prototype taught us:
 
 **Try it:** open `docs/frontend-prototype/trace-viewer-demo.html` (double-click; one file, works offline). See that folder's README.
 
-**Live view, status on 25 Oct:** the harness side is done and tested. `run_skill(..., on_event=callback)` now reports `run_start`, `plan`, `step_start`, `attempt_start`,
-`attempt_end`, `step_end` and `run_end` as a run progresses, and `skillcompiler/stream.py` turns that into newline-delimited JSON for a web route
-(three lines in Flask; the docstring has the example), including a cancel when the browser disconnects. 111 tests pass.
-The page that uses it (a Live tab with steps appearing as they finish, a Stop button, and a download of the trace) is written, but **its build hung twice**
-in the transform step with a Node process spinning on the CPU, so it has not been run and is not in the repo. The cause is not known yet (my code or the build tool).
-Until it is found, do not build it on your machine; I will say here when it is resolved.
+**Live view, checked on 26 Oct:** the harness reports each step as it finishes (`run_skill(..., on_event=callback)`; events `run_start`, `plan`, `step_start`,
+`attempt_start`, `attempt_end`, `step_end`, `run_end`), and `skillcompiler/stream.py` turns that into newline-delimited JSON for a web route, with a cancel when the
+browser disconnects. The prototype's Live tab uses it. A real run of `ticket-triage` through the page worked: the plan appeared, steps filled in one by one, and it ended with
+"Ran 6 steps in 38.8s", 6 of 6 passed, 13 model calls. Stop works. 111 harness tests pass (7 cover the events).
 
-I have not added the prototype source to the repo, because it includes React Bits files and the licence question in section 5 is yours to decide,
-and because of the build problem above.
+**The build hang:** on 25 Oct one build of the Live version hung in the transform step with a Node process spinning on the CPU (the machine was also loaded by other stuck processes).
+I bisected it on 26 Oct: the entry file alone, the step list alone, the Live tab alone and the full app each build in 0.5 to 10 seconds; five repeated builds, a build with a server
+holding the output folder, a build with a browser tab open on it, and a build launched through `npx` all finished normally. So **the code is not the cause and I could not reproduce it**;
+the most likely explanation is a one-off in the build tool under load. What does help: kill a stuck build with `taskkill /F /T /PID` (the tree, not just the parent).
+Source and build steps are in `frontend-prototype/source/`.
+
+The source includes the three React Bits components, so the licence question in section 5 applies to it as well as to the built demo.
 
 ## 9. Decisions for you
 

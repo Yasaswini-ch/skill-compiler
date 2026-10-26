@@ -33,8 +33,10 @@ function nav(current) {
   for (const [href, label] of pages) h.append(el("a", { href, ...(href === current ? { "aria-current": "page" } : {}) }, label));
   h.append(el("a", { href: REPO_URL }, "GitHub"));
   const main = document.querySelector("main");
-  if (main) main.id = "main";
-  document.body.prepend(el("a", { class: "skip", href: "#main" }, "Skip to content"), h);
+  if (main) { main.id = "main"; main.tabIndex = -1; }
+  const skip = el("a", { class: "skip", href: "#main" }, "Skip to content");
+  skip.addEventListener("click", e => { if (main) { e.preventDefault(); main.focus(); main.scrollIntoView(); } });
+  document.body.prepend(skip, h);
 }
 
 // Red banner shown whenever data is mock. message explains which data.
@@ -130,7 +132,7 @@ async function replayTrace(container, run, summary, btn, final) {
   const stepEls = [...container.querySelectorAll(".step")];
   const hide = x => x.classList.add("pending");
   const show = x => { x.classList.remove("pending"); x.classList.add("reveal"); };
-  btn.disabled = true;
+  btn.setAttribute("aria-busy", "true");
   stepEls.forEach(st => { hide(st); st.querySelectorAll(".attempt, .retry-arrow").forEach(hide); });
   if (final) hide(final);
   run.querySelector(".summary").textContent = "Replaying...";
@@ -150,7 +152,7 @@ async function replayTrace(container, run, summary, btn, final) {
   if (!live()) return;
   if (final) show(final);
   run.querySelector(".summary").textContent = summary;   // settle on the real recorded time
-  btn.disabled = false;
+  btn.removeAttribute("aria-busy");
 }
 
 // Count failure labels from results.json tasks for one side ("plain" or "harness").

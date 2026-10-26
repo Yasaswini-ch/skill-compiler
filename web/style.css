@@ -45,6 +45,7 @@ code { font: .9em var(--mono); background: var(--soft); padding: 1px 5px; }
 .card { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 16px 2px; background: transparent; }
 .card.boxed { border: 1px solid var(--line); background: var(--card); padding: 16px 20px; }
 
+main:focus { outline: none; }
 .skip { position: absolute; left: 8px; top: -60px; z-index: 10; background: var(--ink); color: var(--bg); padding: 8px 14px; font-weight: 700; }
 .skip:focus { top: 8px; }
 #tablewrap { overflow-x: auto; }
@@ -80,7 +81,7 @@ button.ghost, .btn.ghost { background: transparent; color: var(--ink); }
 button.active { background: var(--ink); color: var(--bg); }
 button:disabled { opacity: .5; cursor: wait; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 20px; }
-.filters button.ghost.active { background: var(--ink); color: var(--bg); outline: none; }
+.filters button.ghost.active { background: var(--ink); color: var(--bg); }
 textarea, select, input[type=text] { font: 15px var(--mono); width: 100%; background: var(--card); color: var(--ink); border: 1px solid var(--ink); padding: 10px; border-radius: 0; }
 input[type=file] { font: 15px system-ui, sans-serif; color: var(--ink); }
 .empty { padding: 28px; text-align: center; color: var(--muted); border: 1px dashed var(--muted); }

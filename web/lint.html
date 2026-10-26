@@ -11,9 +11,10 @@
 </head>
 <body>
 <main>
-  <h1>Skill linter</h1>
+  <p class="kicker">Skill linter</p>
+  <h1>Is this skill risky for a small model?</h1>
   <p class="sub">How likely is a small model to trip on this skill? No AI is used: the rules are plain checks.</p>
-  <div class="card">
+  <div class="card boxed">
     <label>Load a lint report: <input type="file" id="file" accept=".json,application/json"></label>
     <p class="hint">Create one with <code>python tools/lint_skill.py path/to/SKILL.md --json &gt; report.json</code>, or use the Live page to lint pasted text.</p>
   </div>
@@ -38,7 +39,7 @@ function show(rep, note, isMock = false) {
   for (const f of rep.findings) (byRule[f.rule] = byRule[f.rule] || []).push(f);
   for (const rule of Object.keys(byRule).sort()) {
     out.append(el("h2", {}, `${rule}  ${RULES[rule] || ""}`, el("span", { class: "hint" }, `  (${byRule[rule].length})`)));
-    out.append(el("div", { class: "card" }, byRule[rule].map(f => el("p", {}, el("b", {}, f.step ? `Step ${f.step}: ` : "Whole skill: "), f.message))));
+    out.append(el("div", { class: "card boxed" }, byRule[rule].map(f => el("p", {}, el("b", {}, f.step ? `Step ${f.step}: ` : "Whole skill: "), f.message))));
   }
 }
 document.getElementById("file").addEventListener("change", e => {

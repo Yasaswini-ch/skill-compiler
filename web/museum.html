@@ -11,9 +11,10 @@
 </head>
 <body>
 <main>
+  <p class="kicker">Failure archive</p>
   <h1>The Gemma Fail Museum</h1>
   <p class="sub">Real ways a small open model goes wrong when it is handed a long skill in one go. Each exhibit is one recorded failure.</p>
-  <p><a class="btn" id="submit" href="#">Submit a failure</a> <span class="hint" id="count"></span></p>
+  <p><a class="btn" id="submit" href="#">Submit a failure</a> <span class="hint" id="count" aria-live="polite"></span></p>
   <div class="filters" id="filters" role="group" aria-label="Filter by label"></div>
   <div id="rooms"></div>
 </main>
@@ -48,20 +49,20 @@ document.getElementById("submit").href = REPO_URL + "/issues/new?template=submit
       const items = fails.filter(f => f.label === label);
       if (!items.length) continue;
       rooms.append(el("h2", { class: "hall" }, `Hall of ${label.replace(/_/g, " ")} `, el("span", { class: "hint" }, `(${items.length})`)));
-      rooms.append(el("div", { class: "gallery" }, items.map(f => el("article", { class: "exhibit", "data-label": f.label },
+      rooms.append(el("div", { class: "gallery" }, items.map(f => el("article", { class: "exhibit", "data-label": f.label, "data-no": "CASE " + String(f.failure_id).replace(/^f/i, "") },
         el("div", { class: "plaque" }, `Exhibit ${f.failure_id}  |  ${f.mode}`),
         labelTag(f.label),
         el("h3", {}, titles[f.task_id] || f.task_id),
-        el("p", {}, f.what_went_wrong),
+        el("p", { class: "went-wrong" }, f.what_went_wrong),
         el("pre", {}, f.output_excerpt),
         el("div", { class: "hint" }, `Failed checks: ${(f.failed_checks || []).join(", ") || "-"}`)))));
     }
     if (!rooms.children.length) rooms.append(el("div", { class: "empty" }, "No exhibits for this label yet. Be the first to submit one."));
   }
 
-  const mk = (text, value) => el("button", { class: "ghost", onclick: () => { active = value; [...filters.children].forEach(b => b.classList.toggle("active", b.dataset.v === String(value))); draw(); } }, text);
-  const all = mk(`All (${fails.length})`, null); all.dataset.v = "null"; all.classList.add("active"); filters.append(all);
-  for (const l of Object.keys(counts)) { const b = mk(`${l} (${counts[l]})`, l); b.dataset.v = l; filters.append(b); }
+  const mk = (text, value) => el("button", { class: "ghost", onclick: () => { active = value; [...filters.children].forEach(b => { const on = b.dataset.v === String(value); b.classList.toggle("active", on); b.setAttribute("aria-pressed", on); }); draw(); } }, text);
+  const all = mk(`All (${fails.length})`, null); all.dataset.v = "null"; all.classList.add("active"); all.setAttribute("aria-pressed", "true"); filters.append(all);
+  for (const l of Object.keys(counts)) { const b = mk(`${l} (${counts[l]})`, l); b.dataset.v = l; b.setAttribute("aria-pressed", "false"); filters.append(b); }
   draw();
 })();
 </script>

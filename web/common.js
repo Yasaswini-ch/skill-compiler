@@ -32,7 +32,9 @@ function nav(current) {
   const h = el("header", { class: "top" }, el("span", { class: "brand" }, "Skill Compiler + Gemma Fail Museum"));
   for (const [href, label] of pages) h.append(el("a", { href, ...(href === current ? { "aria-current": "page" } : {}) }, label));
   h.append(el("a", { href: REPO_URL }, "GitHub"));
-  document.body.prepend(h);
+  const main = document.querySelector("main");
+  if (main) main.id = "main";
+  document.body.prepend(el("a", { class: "skip", href: "#main" }, "Skip to content"), h);
 }
 
 // Red banner shown whenever data is mock. message explains which data.
@@ -46,33 +48,109 @@ function mockBanner(show, message = "MOCK DATA - harness not connected. Do not u
 function labelTag(label) { return el("span", { class: "tag", "data-label": label || "other" }, label || "other"); }
 function pill(kind, text) { return el("span", { class: `pill ${kind}` }, text || kind); }
 
+const REDUCED_MOTION = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// 38800 -> "38.8s", 501500 -> "8m 21.5s"
+function fmtDuration(ms) {
+  if (ms == null || isNaN(ms)) return "-";
+  const s = ms / 1000;
+  return s < 60 ? `${s.toFixed(1)}s` : `${Math.floor(s / 60)}m ${(s % 60).toFixed(1)}s`;
+}
+
+// Count a number up from 0 once, unless the user prefers reduced motion. el shows `${n}${suffix}`.
+function countUp(node, n, suffix = "", ms = 450) {
+  if (REDUCED_MOTION || !isFinite(n)) { node.textContent = n + suffix; return; }
+  let done = false;
+  const finish = () => { done = true; node.textContent = n + suffix; };
+  const t0 = performance.now();
+  const tick = now => {
+    if (done) return;
+    const p = Math.min(1, (now - t0) / ms);
+    if (p >= 1) return finish();
+    node.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))) + suffix;
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  setTimeout(finish, ms + 150);   // always end on the real number, even if frames were skipped
+}
+
+let _replayToken = 0;
+const _sleep = ms => new Promise(r => setTimeout(r, ms));
+
 // Draw a trace.json into container. Handles missing optional fields (e.g. totals.cache_hits) and long notes.
-function renderTrace(trace, container) {
+// opts.replay adds a Replay button that plays the recorded run back; chips show the recorded latency, not replay time.
+function renderTrace(trace, container, opts = {}) {
+  _replayToken++;   // cancels any replay still running on a previous trace
   container.replaceChildren();
+  const steps = trace.steps || [];
   const t = trace.totals || {};
-  const stats = [["Mode", trace.mode || "?"], ["LLM calls", t.llm_calls ?? "-"], ["Latency", t.latency_ms != null ? (t.latency_ms / 1000).toFixed(1) + " s" : "-"], ["Retries", t.retries ?? "-"]];
-  if (t.cache_hits != null) stats.push(["Cache hits", t.cache_hits]);
-  container.append(el("div", { class: "totals" }, stats.map(([k, v]) => el("div", { class: "stat" }, el("span", { class: "hint" }, k), el("b", {}, v)))));
-  container.append(el("p", { class: "hint" }, `Skill: ${trace.skill || "?"}  |  Model: ${trace.model || "?"}  |  Run: ${trace.run_id || "?"}`));
-  if (!(trace.steps || []).length) {
-    container.append(el("div", { class: "empty" }, trace.mode === "plain" ? "Plain mode: one call, no steps. The whole skill went to the model at once." : "This trace has no steps."));
-  }
+  const n = s => steps.filter(x => x.status === s).length;
+  const summary = steps.length
+    ? `Ran ${steps.length} step${steps.length === 1 ? "" : "s"} in ${fmtDuration(t.latency_ms)}`
+    : `One model call in ${fmtDuration(t.latency_ms)}`;
+  const detail = steps.length ? `${n("pass")} passed first try · ${n("repaired")} repaired · ${n("fail")} failed` : "Plain mode: the whole skill went to the model at once.";
+  const run = el("div", { class: "runline" }, el("span", { class: "summary" }, summary));
+  const runsub = el("p", { class: "runsub" }, detail);
+  container.append(run, runsub);
+
+  const stats = [["mode", trace.mode || "?"], ["model calls", t.llm_calls ?? "-"], ["retries", t.retries ?? "-"]];
+  if (t.cache_hits != null) stats.push(["cache hits", t.cache_hits]);
+  container.append(el("div", { class: "totals" }, stats.map(([k, v]) => el("span", { class: "stat" }, k, el("b", {}, v)))));
+  container.append(el("p", { class: "source" }, `skill ${trace.skill || "?"} · model ${trace.model || "?"} · run ${trace.run_id || "?"}`));
+
   const tl = el("div", { class: "timeline" });
-  for (const s of trace.steps || []) {
+  for (const s of steps) {
     const attempts = s.attempts || [];
-    const card = el("div", { class: `step ${s.status}` }, el("h3", {}, `Step ${s.step_id}: ${s.title || ""}`, pill(s.status), attempts.length > 1 ? el("span", { class: "hint" }, `${attempts.length} attempts`) : null));
+    const body = el("div", {}, el("h3", {}, el("span", { class: "no" }, `STEP ${s.step_id}`), s.title || "", el("span", { class: "state" }, s.status === "pass" ? "passed" : s.status === "fail" ? "failed" : s.status)));
     attempts.forEach((a, i) => {
       const ok = a.format_ok && a.verified;
-      if (i > 0) card.append(el("div", { class: "retry-arrow" }, "↳ checker feedback sent back, model tries again"));
-      card.append(el("div", { class: "attempt" + (ok ? "" : " bad") },
-        el("div", { class: "meta" }, `Attempt ${i + 1}  |  format ${a.format_ok ? "ok" : "BAD"}  |  verified ${a.verified ? "yes" : "NO"}  |  ${a.latency_ms ?? "?"} ms`),
+      if (i > 0) body.append(el("div", { class: "retry-arrow" }, "↳ checker feedback sent back, model tries again"));
+      body.append(el("div", { class: "attempt " + (ok ? "ok" : "bad") },
+        el("span", { class: "chip" }, `${ok ? "✓" : "✕"} attempt ${i + 1} · ${fmtDuration(a.latency_ms)}`),
         el("pre", {}, a.output ?? ""),
-        a.checker_note && a.checker_note !== "ok" ? el("div", { class: "hint" }, "Checker: " + a.checker_note) : null));
+        a.checker_note && a.checker_note !== "ok" ? el("p", { class: ok ? "note fine" : "note" }, "checker: " + a.checker_note) : null));
     });
-    tl.append(card);
+    tl.append(el("div", { class: `step ${s.status}` }, el("div", { class: "mark", "aria-hidden": "true" }), body));
   }
   container.append(tl);
-  if (trace.final_output) container.append(el("h2", {}, "Final output"), el("pre", {}, trace.final_output));
+  let final = null;
+  if (trace.final_output) { final = el("div", {}, el("h2", {}, "Final output"), el("pre", {}, trace.final_output)); container.append(final); }
+
+  if (opts.replay && steps.length) {
+    const btn = el("button", { class: "ghost" }, "▶ Replay this run");
+    btn.onclick = () => replayTrace(container, run, summary, btn, final);
+    container.insertBefore(el("div", { class: "controls" }, btn, el("span", { class: "hint" }, "plays the recorded run back; durations shown are the real ones")), tl);
+  }
+}
+
+async function replayTrace(container, run, summary, btn, final) {
+  if (REDUCED_MOTION) return;   // nothing to animate: the full run is already on screen
+  const token = ++_replayToken;
+  const live = () => token === _replayToken;
+  const stepEls = [...container.querySelectorAll(".step")];
+  const hide = x => x.classList.add("pending");
+  const show = x => { x.classList.remove("pending"); x.classList.add("reveal"); };
+  btn.disabled = true;
+  stepEls.forEach(st => { hide(st); st.querySelectorAll(".attempt, .retry-arrow").forEach(hide); });
+  if (final) hide(final);
+  run.querySelector(".summary").textContent = "Replaying...";
+  for (const [si, st] of stepEls.entries()) {
+    if (!live()) return;
+    show(st);
+    run.querySelector(".summary").textContent = `Replaying... step ${si + 1} of ${stepEls.length}`;
+    const kids = [...st.querySelectorAll(".attempt, .retry-arrow")];
+    for (const k of kids) {
+      if (!live()) return;
+      show(k);
+      if (k.classList.contains("attempt")) { k.classList.add("running"); await _sleep(650); k.classList.remove("running"); if (!live()) return; }
+      else await _sleep(250);
+    }
+    await _sleep(150);
+  }
+  if (!live()) return;
+  if (final) show(final);
+  run.querySelector(".summary").textContent = summary;   // settle on the real recorded time
+  btn.disabled = false;
 }
 
 // Count failure labels from results.json tasks for one side ("plain" or "harness").

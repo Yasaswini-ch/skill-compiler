@@ -11,9 +11,10 @@
 </head>
 <body>
 <main>
+  <p class="kicker">Run trace</p>
   <h1>Trace viewer</h1>
   <p class="sub">See one run step by step: what each attempt said, what the checker answered, and where a retry fixed it.</p>
-  <div class="card" id="drop">
+  <div class="card boxed" id="drop">
     <label>Load a trace.json: <input type="file" id="file" accept=".json,application/json"></label>
     <span class="hint"> or drag a file onto this box, or open this page with <code>?file=path/to/trace.json</code>.</span>
   </div>
@@ -30,7 +31,7 @@ function show(trace, note) {
   mockBanner(trace.mock === true, "MOCK TRACE - produced by a stand-in, not the real harness");
   out.replaceChildren(el("p", { class: "hint" }, note || ""));
   const box = el("div"); out.append(box);
-  renderTrace(trace, box);
+  renderTrace(trace, box, { replay: true });
 }
 function readFile(f) {
   const r = new FileReader();
@@ -39,7 +40,7 @@ function readFile(f) {
 }
 document.getElementById("file").addEventListener("change", e => e.target.files[0] && readFile(e.target.files[0]));
 const drop = document.getElementById("drop");
-drop.addEventListener("dragover", e => { e.preventDefault(); drop.style.outline = "3px dashed var(--accent)"; });
+drop.addEventListener("dragover", e => { e.preventDefault(); drop.style.outline = "3px dashed var(--ink)"; });
 drop.addEventListener("dragleave", () => drop.style.outline = "");
 drop.addEventListener("drop", e => { e.preventDefault(); drop.style.outline = ""; if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
 

@@ -54,9 +54,10 @@ const REDUCED_MOTION = window.matchMedia && matchMedia("(prefers-reduced-motion:
 
 // 38800 -> "38.8s", 501500 -> "8m 21.5s"
 function fmtDuration(ms) {
-  if (ms == null || isNaN(ms)) return "-";
-  const tenths = Math.round(ms / 100);   // round first, so 59.96 s becomes 1m 0.0s and never "60.0s"
-  return tenths < 600 ? `${(tenths / 10).toFixed(1)}s` : `${Math.floor(tenths / 600)}m ${((tenths % 600) / 10).toFixed(1)}s`;
+  if (ms == null || !isFinite(ms)) return "-";
+  const tenths = Math.round(Math.abs(ms) / 100);   // format the absolute value, rounded first: 59.96 s is 1m 0.0s, never "60.0s"
+  const text = tenths < 600 ? `${(tenths / 10).toFixed(1)}s` : `${Math.floor(tenths / 600)}m ${((tenths % 600) / 10).toFixed(1)}s`;
+  return ms < 0 && tenths > 0 ? "-" + text : text;   // a negative that rounds to zero shows as 0.0s, not -0.0s
 }
 
 // Count a number up from 0 once, unless the user prefers reduced motion. el shows `${n}${suffix}`.

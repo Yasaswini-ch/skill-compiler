@@ -29,7 +29,7 @@ async function loadJSON(name) {
 
 function nav(current) {
   const pages = [["index.html", "Score"], ["museum.html", "Fail Museum"], ["trace.html", "Trace viewer"], ["lint.html", "Linter"], ["live.html", "Live"]];
-  const h = el("header", { class: "top" }, el("span", { class: "brand" }, "Skill Compiler + Gemma Fail Museum"));
+  const h = el("header", { class: "top" }, el("span", { class: "brand" }, el("span", { class: "brand-mark", "aria-hidden": "true" }), "Skill Compiler", el("em", {}, "+ Gemma Fail Museum")));
   for (const [href, label] of pages) h.append(el("a", { href, ...(href === current ? { "aria-current": "page" } : {}) }, label));
   h.append(el("a", { href: REPO_URL }, "GitHub"));
   const main = document.querySelector("main");
@@ -37,6 +37,27 @@ function nav(current) {
   const skip = el("a", { class: "skip", href: "#main" }, "Skip to content");
   skip.addEventListener("click", e => { if (main) { e.preventDefault(); main.focus(); main.scrollIntoView(); } });
   document.body.prepend(skip, h);
+  document.body.append(siteFooter());
+  initSpotlight();
+}
+
+function siteFooter() {
+  return el("footer", { class: "site" },
+    el("span", {}, "Open source (MIT) · Hacktoberfest Hack Day x AI for Vizag"),
+    el("span", { class: "links" }, el("a", { href: REPO_URL }, "GitHub"), el("a", { href: REPO_URL + "/issues/new?template=submit_failure.yml" }, "Submit a failure"), el("a", { href: REPO_URL + "/blob/main/LICENSE" }, "License")));
+}
+
+// Card hover border follows the pointer (CSS reads --mx / --my). Purely decorative; skipped for reduced motion.
+function initSpotlight() {
+  if (window.__spotlight || REDUCED_MOTION) return;
+  window.__spotlight = true;
+  document.addEventListener("pointermove", e => {
+    const c = e.target.closest && e.target.closest(".card, .exhibit");
+    if (!c) return;
+    const r = c.getBoundingClientRect();
+    c.style.setProperty("--mx", (e.clientX - r.left) + "px");
+    c.style.setProperty("--my", (e.clientY - r.top) + "px");
+  }, { passive: true });
 }
 
 // Red banner shown whenever data is mock. message explains which data.

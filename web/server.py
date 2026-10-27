@@ -21,7 +21,7 @@ WEB = Path(__file__).resolve().parent
 ROOT = WEB.parent
 sys.path.insert(0, str(ROOT))   # so `python web/server.py` can import skillcompiler, benchmark and tools
 
-from tools import lint_skill  # noqa: E402  (tools/ is a namespace package: no __init__.py needed)
+from tools import lint_skill  # noqa: E402  (tools is a regular package because tools/__init__.py exists)
 
 
 def _canned(name: str) -> dict:

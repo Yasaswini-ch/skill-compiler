@@ -6,7 +6,7 @@ function el(tag, attrs = {}, ...kids) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (k === "class") e.className = v;
-    else if (k.startsWith("data-")) e.setAttribute(k, v);
+    else if (k.startsWith("data-") || k.startsWith("aria-")) e.setAttribute(k, v);   // aria-* must be attributes: a property is invisible to assistive tech
     else if (v !== null && v !== undefined) e[k] = v;
   }
   for (const kid of kids.flat()) if (kid !== null && kid !== undefined && kid !== false) e.append(kid.nodeType ? kid : document.createTextNode(String(kid)));

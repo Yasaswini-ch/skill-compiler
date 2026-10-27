@@ -37,14 +37,72 @@ function nav(current) {
   const skip = el("a", { class: "skip", href: "#main" }, "Skip to content");
   skip.addEventListener("click", e => { if (main) { e.preventDefault(); main.focus(); main.scrollIntoView(); } });
   document.body.prepend(skip, h);
-  document.body.append(siteFooter());
+  document.body.append(siteFooter(), el("div", { id: "live-region", class: "sr-only", role: "status", "aria-live": "polite" }));
   initSpotlight();
+  navIndicator(h);
+  initReveal();
+}
+
+// A pill that slides to the hovered/focused link and rests on the current page. Decorative: the current page is still
+// marked by aria-current, and without this (reduced motion) the link keeps its static highlight.
+function navIndicator(h) {
+  if (REDUCED_MOTION) return;
+  const links = [...h.querySelectorAll("a")], current = h.querySelector('a[aria-current="page"]');
+  if (!current) return;
+  const ind = el("span", { class: "nav-ind", "aria-hidden": "true" });
+  h.prepend(ind); h.classList.add("has-ind");
+  let target = links[0];
+  const place = a => { target = a; ind.style.opacity = 1; ind.style.width = a.offsetWidth + "px"; ind.style.height = a.offsetHeight + "px"; ind.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`; };
+  place(links[0]); ind.getBoundingClientRect(); ind.classList.add("ready");
+  requestAnimationFrame(() => place(current));   // slides in from the first link to the current page
+  for (const a of links) { a.addEventListener("mouseenter", () => place(a)); a.addEventListener("focus", () => place(a)); }
+  h.addEventListener("mouseleave", () => place(current));
+  h.addEventListener("focusout", e => { if (!h.contains(e.relatedTarget)) place(current); });
+  // the links move when the header resizes (window resize, a scrollbar appearing once data loads, web fonts)
+  if ("ResizeObserver" in window) new ResizeObserver(() => place(target)).observe(h);
+  else addEventListener("resize", () => place(target));
+}
+
+// Fade cards in as they scroll into view. Only runs when IntersectionObserver exists and motion is allowed; otherwise nothing is ever hidden.
+function initReveal() {
+  const main = document.querySelector("main");
+  if (!main || REDUCED_MOTION || !("IntersectionObserver" in window)) return;
+  document.documentElement.classList.add("js-reveal");
+  const settle = n => { n.classList.remove("rv", "in"); n.classList.add("seen"); };
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const n = e.target; io.unobserve(n); n.classList.add("in");
+      const done = ev => { if (ev && ev.target !== n) return; n.removeEventListener("transitionend", done); settle(n); };
+      n.addEventListener("transitionend", done); setTimeout(() => done(), 900);
+    }
+  }, { rootMargin: "0px 0px -6% 0px" });
+  const scan = root => {
+    for (const n of [...(root.matches(".card, .exhibit") ? [root] : []), ...root.querySelectorAll(".card, .exhibit")])
+      if (!n.dataset.rv) { n.dataset.rv = "1"; n.classList.add("rv"); io.observe(n); }
+  };
+  scan(main);
+  new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) scan(n); }).observe(main, { childList: true, subtree: true });
+}
+
+// Copy text; falls back to a hidden textarea where the async clipboard API is unavailable.
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* fall through */ }
+  const t = el("textarea", { value: text, readOnly: true }); t.style.cssText = "position:fixed;opacity:0";
+  document.body.append(t); t.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch (e) { /* ignore */ }
+  t.remove(); return ok;
+}
+function announce(msg) {
+  const r = document.getElementById("live-region"); if (!r) return;
+  r.textContent = ""; setTimeout(() => { r.textContent = msg; }, 50);   // clearing first makes repeated copies announce again
 }
 
 function siteFooter() {
   return el("footer", { class: "site" },
     el("span", {}, "Open source (MIT) · Hacktoberfest Hack Day x AI for Vizag"),
-    el("span", { class: "links" }, el("a", { href: REPO_URL }, "GitHub"), el("a", { href: REPO_URL + "/issues/new?template=submit_failure.yml" }, "Submit a failure"), el("a", { href: REPO_URL + "/blob/main/LICENSE" }, "License")));
+    el("span", { class: "links" }, el("a", { href: REPO_URL }, "GitHub"), el("a", { href: REPO_URL + "/issues/new?template=submit_failure.yml" }, "Submit a failure"), el("a", { href: REPO_URL + "/blob/main/LICENSE" }, "License")),
+    el("span", { class: "credit" }, "Visual style inspired by ", el("a", { href: "https://reactbits.dev" }, "React Bits (reactbits.dev)")));
 }
 
 // Card hover border follows the pointer (CSS reads --mx / --my). Purely decorative; skipped for reduced motion.
@@ -66,6 +124,32 @@ function mockBanner(show, message = "MOCK DATA - harness not connected. Do not u
   if (!b) { b = el("div", { id: "mock-banner", class: "banner", role: "alert" }); document.body.prepend(b); }
   b.textContent = message;
   b.classList.toggle("show", !!show);
+  const sync = () => document.documentElement.style.setProperty("--banner-h", show ? b.offsetHeight + "px" : "0px");
+  sync();
+  if (!window.__bannerResize) { window.__bannerResize = true; addEventListener("resize", () => mockBanner.sync && mockBanner.sync()); }
+  mockBanner.sync = sync;   // the banner wraps to more lines on narrow screens, so the offset follows the viewport
+}
+
+// Terminal-style panel: header bar with a title, then a monospace body. body is a string (shown in a <pre>) or a node.
+// Each panel gets a Copy button (a real <button>, so Enter/Space work); copy overrides the text copied.
+function termPanel(title, body, copy) {
+  const inner = typeof body === "string" ? el("pre", {}, body) : el("div", { class: "term-body" }, body);
+  const text = copy ?? (typeof body === "string" ? body : [...inner.children].map(c => c.textContent).join("\n"));
+  const btn = el("button", { class: "copy", type: "button", "aria-label": `Copy ${title}` }, "Copy");
+  btn.addEventListener("click", async () => {
+    const ok = await copyText(text), msg = ok ? "Copied" : "Copy failed";
+    btn.textContent = msg; announce(msg);
+    setTimeout(() => { btn.textContent = "Copy"; }, 1600);
+  });
+  return el("div", { class: "term" },
+    el("div", { class: "term-bar" }, el("span", { class: "term-dots", "aria-hidden": "true" }, el("i"), el("i"), el("i")), el("span", { class: "term-title" }, title), btn),
+    inner);
+}
+
+// Word-by-word blur/fade-in for a heading (CSS animates .w using --i). Text content is unchanged, so screen readers read it normally.
+function revealWords(node) {
+  const words = node.textContent.trim().split(/\s+/);
+  node.replaceChildren(...words.flatMap((w, i) => [i ? " " : null, el("span", { class: "w", style: `--i:${i}` }, w)]).filter(Boolean));
 }
 
 function labelTag(label) { return el("span", { class: "tag", "data-label": label || "other" }, label || "other"); }
@@ -131,14 +215,14 @@ function renderTrace(trace, container, opts = {}) {
       if (i > 0) body.append(el("div", { class: "retry-arrow" }, "↳ checker feedback sent back, model tries again"));
       body.append(el("div", { class: "attempt " + (ok ? "ok" : "bad") },
         el("span", { class: "chip" }, `${ok ? "✓" : "✕"} attempt ${i + 1} · ${fmtDuration(a.latency_ms)}`),
-        el("pre", {}, a.output ?? ""),
+        termPanel(`attempt ${i + 1} output`, a.output ?? ""),
         a.checker_note && a.checker_note !== "ok" ? el("p", { class: ok ? "note fine" : "note" }, "checker: " + a.checker_note) : null));
     });
     tl.append(el("div", { class: `step ${s.status}` }, el("div", { class: "mark", "aria-hidden": "true" }), body));
   }
   container.append(tl);
   let final = null;
-  if (trace.final_output) { final = el("div", {}, el("h2", {}, "Final output"), el("pre", {}, trace.final_output)); container.append(final); }
+  if (trace.final_output) { final = el("div", {}, el("h2", {}, "Final output"), termPanel("final output", trace.final_output)); container.append(final); }
 
   if (opts.replay && steps.length) {
     const btn = el("button", { class: "ghost" }, "▶ Replay this run");
@@ -159,6 +243,7 @@ async function replayTrace(container, run, summary, btn, final) {
   stepEls.forEach(st => { hide(st); st.querySelectorAll(".attempt, .retry-arrow").forEach(hide); });
   if (final) hide(final);
   run.querySelector(".summary").textContent = "Replaying...";
+  run.querySelector(".summary").classList.add("shimmer");
   for (const [si, st] of stepEls.entries()) {
     if (!live()) return;
     show(st);
@@ -175,6 +260,7 @@ async function replayTrace(container, run, summary, btn, final) {
   if (!live()) return;
   if (final) show(final);
   run.querySelector(".summary").textContent = summary;   // settle on the real recorded time
+  run.querySelector(".summary").classList.remove("shimmer");
   btn.removeAttribute("aria-busy");
 }
 

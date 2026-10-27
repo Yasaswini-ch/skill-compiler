@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0b0e14">
-<title>Live Judge Mode</title>
+<meta name="theme-color" content="#06080c">
+<title>Skill Compiler · Live</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>⚡</text></svg>">
 <link rel="stylesheet" href="style.css">
 <script src="mock/mock.js"></script>
 <script src="common.js"></script>
@@ -69,7 +70,7 @@ async function runBoth() {
   const myRun = ++runId;
   anyMock = false; mockBanner(false);
   $("run").disabled = true;
-  for (const id of ["plain", "harness"]) $(id).replaceChildren(el("div", { class: "empty loading", role: "status" }, "Running..."));
+  for (const id of ["plain", "harness"]) $(id).replaceChildren(el("div", { class: "empty loading", role: "status" }, el("span", { class: "shimmer" }, "Running...")));
   const t0 = Date.now(), ctl = new AbortController();
   const tick = setInterval(() => {
     const s = Math.round((Date.now() - t0) / 1000);
@@ -106,7 +107,7 @@ $("recorded").onclick = useRecorded;
 $("lint").onclick = async () => {
   try {
     const r = await post("/lint", { skill_text: $("skill").value });
-    $("lintout").replaceChildren(el("div", { class: "card boxed" }, el("b", {}, `Linter: ${r.level} risk, score ${r.score}/100`),
+    $("lintout").replaceChildren(termPanel(`lint: ${r.level} risk, score ${r.score}/100`,
       r.findings.length ? r.findings.map(f => el("p", {}, `${f.rule} ${f.step ? "step " + f.step : "skill"}: ${f.message}`)) : el("p", {}, "No findings.")));
   } catch (e) { $("lintout").replaceChildren(el("p", { class: "err" }, "Lint failed: " + e.message)); }
 };

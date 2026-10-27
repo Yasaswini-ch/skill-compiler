@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0b0e14">
-<title>Gemma Fail Museum</title>
+<meta name="theme-color" content="#06080c">
+<title>Skill Compiler · Fail Museum</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🏛️</text></svg>">
 <link rel="stylesheet" href="style.css">
 <script src="mock/mock.js"></script>
 <script src="data/data.js"></script>
@@ -50,13 +51,12 @@ document.getElementById("submit").href = REPO_URL + "/issues/new?template=submit
       if (active && label !== active) continue;
       const items = fails.filter(f => f.label === label);
       if (!items.length) continue;
-      rooms.append(el("h2", { class: "hall" }, `Hall of ${label.replace(/_/g, " ")} `, el("span", { class: "hint" }, `(${items.length})`)));
+      rooms.append(el("h2", { class: "hall", "data-label": label }, `Hall of ${label.replace(/_/g, " ")} `, el("span", { class: "hint" }, `(${items.length})`)));
       rooms.append(el("div", { class: "gallery" }, items.map(f => el("article", { class: "exhibit", "data-label": f.label, "data-no": "CASE " + String(f.failure_id).replace(/^f/i, "") },
         el("div", { class: "plaque" }, `Exhibit ${f.failure_id}  |  ${f.mode}`),
-        labelTag(f.label),
-        el("h3", {}, titles[f.task_id] || f.task_id),
+        el("div", { class: "ex-head" }, el("h3", {}, titles[f.task_id] || f.task_id), labelTag(f.label)),
         el("p", { class: "went-wrong" }, f.what_went_wrong),
-        el("pre", {}, f.output_excerpt),
+        termPanel("output excerpt", f.output_excerpt),
         el("div", { class: "hint" }, `Failed checks: ${(f.failed_checks || []).join(", ") || "-"}`)))));
     }
     if (!rooms.children.length) rooms.append(el("div", { class: "empty" }, "No exhibits for this label yet. Be the first to submit one."));

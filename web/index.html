@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0b0e14">
-<title>Score Page</title>
+<meta name="theme-color" content="#06080c">
+<title>Skill Compiler · Score</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>📊</text></svg>">
 <link rel="stylesheet" href="style.css">
 <script src="mock/mock.js"></script>
 <script src="data/data.js"></script>
@@ -13,14 +14,25 @@
 </head>
 <body>
 <main>
-  <p class="kicker">Score page</p>
-  <h1 id="headline">Plain Gemma vs Gemma with the harness</h1>
-  <p class="source" id="meta">Loading...</p>
+  <section class="hero">
+    <p class="kicker">Score page</p>
+    <h1 id="headline">Plain Gemma vs Gemma with the harness</h1>
+    <p class="source" id="meta">Loading...</p>
+    <div class="cta">
+      <a class="btn" href="museum.html">Browse the Fail Museum</a>
+      <a class="btn ghost" href="trace.html">Open the trace viewer</a>
+    </div>
+  </section>
 
-  <div class="card" id="bars"></div>
+  <div class="stats" id="stats"></div>
 
-  <h2>Why plain Gemma failed</h2>
-  <div class="card" id="labels"></div>
+  <div class="card" id="bars">
+    <div class="card-head"><h2>Tasks passed</h2><span class="tag" id="bars-tag"></span></div>
+  </div>
+
+  <div class="card" id="labels" style="margin-top:var(--s5)">
+    <div class="card-head"><h2>Why plain Gemma failed</h2><span class="tag" id="labels-tag"></span></div>
+  </div>
 
   <h2>Every task</h2>
   <div id="tablewrap" role="region" aria-label="All tasks (scrolls sideways on small screens)" tabindex="0"></div>
@@ -28,6 +40,10 @@
 </main>
 <script>
 nav("index.html");
+const promptEl = el("span", { class: "prompt", "aria-hidden": "true" }, "$ ");
+document.querySelector(".hero .cta").after(termPanel("quick start",
+  [el("p", {}, promptEl.cloneNode(true), "git clone https://github.com/Yasaswini-ch/skill-compiler.git"), el("p", {}, promptEl.cloneNode(true), "python web/server.py")],
+  "git clone https://github.com/Yasaswini-ch/skill-compiler.git\npython web/server.py"));
 
 function barRow(name, cls, value, total, text) {
   const pct = total ? Math.round((value / total) * 100) : 0;
@@ -47,7 +63,19 @@ function barRow(name, cls, value, total, text) {
 
   const s = res.summary, p = s.plain, h = s.harness;
   const pr = p.total ? Math.round(100 * p.passed / p.total) : 0, hr = h.total ? Math.round(100 * h.passed / h.total) : 0;
-  document.getElementById("headline").textContent = mock ? "Plain vs harness (example shape, not a result)" : `Plain Gemma passes ${pr}%. With the harness: ${hr}%.`;
+  const headline = document.getElementById("headline");
+  headline.textContent = mock ? "Plain vs harness (example shape, not a result)" : `Plain Gemma passes ${pr}%. With the harness: ${hr}%.`;
+  revealWords(headline);
+  document.getElementById("bars-tag").textContent = `${p.total} tasks`;
+  for (const [name, cls, side, rate] of [["Plain Gemma", "plain", p, pr], ["With the harness", "harness", h, hr]]) {
+    const num = el("span", {}, `${rate}%`);
+    document.getElementById("stats").append(el("div", { class: "card" },
+      el("div", { class: "card-head" }, el("h2", {}, name), el("span", { class: "tag" }, mock ? "MOCK" : "pass rate")),
+      el("div", { class: "stat-body" },
+        el("div", { class: `ring ${cls}`, style: `--p:${rate}` }, el("div", { class: "ring-in" }, num)),
+        el("div", { class: "stat-note" }, el("b", {}, `${side.passed} of ${side.total}`), "tasks passed"))));
+    countUp(num, rate, "%");
+  }
   document.getElementById("meta").textContent = `model ${res.model} · generated ${res.generated_at} · ${p.total} tasks · data from web/${source}/`;
 
   const bars = document.getElementById("bars");
@@ -59,6 +87,7 @@ function barRow(name, cls, value, total, text) {
   const lab = document.getElementById("labels");
   const max = Math.max(1, ...Object.values(counts));
   const present = LABELS.filter(l => counts[l] || hcounts[l]);
+  document.getElementById("labels-tag").textContent = `${Object.values(counts).reduce((a, b) => a + b, 0)} plain failures`;
   if (!present.length) lab.append(el("div", { class: "empty" }, "No failures recorded."));
   for (const l of present) {
     lab.append(el("div", { class: "bar-row wide" }, labelTag(l), el("div", { class: "bar-track" }, el("div", { class: "bar-fill accent", style: `width:${((counts[l] || 0) / max) * 100}%` })),

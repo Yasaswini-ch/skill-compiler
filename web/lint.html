@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0b0e14">
-<title>Skill Linter</title>
+<meta name="theme-color" content="#06080c">
+<title>Skill Compiler · Linter</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🧹</text></svg>">
 <link rel="stylesheet" href="style.css">
 <script src="mock/mock.js"></script>
 <script src="data/data.js"></script>
@@ -41,7 +42,7 @@ function show(rep, note, isMock = false) {
   for (const f of rep.findings) (byRule[f.rule] = byRule[f.rule] || []).push(f);
   for (const rule of Object.keys(byRule).sort()) {
     out.append(el("h2", {}, `${rule}  ${RULES[rule] || ""}`, el("span", { class: "hint" }, `  (${byRule[rule].length})`)));
-    out.append(el("div", { class: "card boxed" }, byRule[rule].map(f => el("p", {}, el("b", {}, f.step ? `Step ${f.step}: ` : "Whole skill: "), f.message))));
+    out.append(termPanel(`lint ${rule}`, byRule[rule].map(f => el("p", {}, el("b", {}, f.step ? `step ${f.step}: ` : "whole skill: "), f.message))));
   }
 }
 document.getElementById("file").addEventListener("change", e => {

@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b0e14">
 <title>Live Judge Mode</title>
 <link rel="stylesheet" href="style.css">
 <script src="mock/mock.js"></script>
@@ -67,7 +69,7 @@ async function runBoth() {
   const myRun = ++runId;
   anyMock = false; mockBanner(false);
   $("run").disabled = true;
-  for (const id of ["plain", "harness"]) $(id).replaceChildren(el("div", { class: "empty" }, "Running... ⏳"));
+  for (const id of ["plain", "harness"]) $(id).replaceChildren(el("div", { class: "empty loading", role: "status" }, "Running..."));
   const t0 = Date.now(), ctl = new AbortController();
   const tick = setInterval(() => {
     const s = Math.round((Date.now() - t0) / 1000);

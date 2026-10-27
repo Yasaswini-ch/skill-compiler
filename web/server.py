@@ -19,10 +19,9 @@ from flask import Flask, jsonify, request, send_from_directory
 
 WEB = Path(__file__).resolve().parent
 ROOT = WEB.parent
-sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT))   # so `python web/server.py` can import skillcompiler, benchmark and tools
 
-import lint_skill  # noqa: E402
+from tools import lint_skill  # noqa: E402  (tools/ is a namespace package: no __init__.py needed)
 
 
 def _canned(name: str) -> dict:

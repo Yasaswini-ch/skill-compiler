@@ -236,7 +236,7 @@ def main(argv: list[str] | None = None) -> int:
               "Do NOT report them.\n" + "=" * 72, file=sys.stderr)
     if args.cache:
         print("note: --cache is on; do not use these numbers as the final measured run.", file=sys.stderr)
-    tasks = load_tasks(args.tasks, include_generated=args.tasks is None)
+    tasks = load_tasks(args.tasks)
     if args.only:
         tasks = [t for t in tasks if t["task_id"] in set(args.only.split(","))]
     done = load_previous(args.out_dir, settings) if args.resume else []

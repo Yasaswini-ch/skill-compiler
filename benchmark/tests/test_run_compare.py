@@ -262,3 +262,12 @@ def test_overhead_report_has_settings_and_ratios(env, monkeypatch):
     assert "Verifier | ON" in text and "unset (default MINIMAL)" in text and "`m1`" in text
     assert rc.tasks_sha256()[:8] in text
     assert "| t01 | 1 | 7 | 7.0x |" in text and "| Calls, total | 2 | 14 | 7.0x |" in text
+
+
+def test_generated_tasks_are_never_loaded_implicitly(tmp_path):
+    """tasks_generated.json next to tasks.json must not leak into an official run."""
+    (tmp_path / "tasks.json").write_text(json.dumps([{"task_id": "a"}]), encoding="utf-8")
+    (tmp_path / "tasks_generated.json").write_text(json.dumps([{"task_id": "a-v1"}]), encoding="utf-8")
+    assert [t["task_id"] for t in rp.load_tasks(tmp_path / "tasks.json")] == ["a"]
+    assert [t["task_id"] for t in rp.load_tasks(tmp_path / "tasks_generated.json")] == ["a-v1"]
+    assert [t["task_id"] for t in rp.load_tasks()] == [f"t{i:02d}" for i in range(1, 11)]

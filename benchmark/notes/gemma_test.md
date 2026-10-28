@@ -6,7 +6,7 @@ Written from what was actually seen in Google AI Studio on 28 Oct 2026. Tested b
 |---|---|
 | Date | 28 Oct 2026 |
 | Model name (exact, as shown in AI Studio) | gemma-4-26b-a4b-it (Gemma 4 26B A4B IT) |
-| Settings | Temperature 1. Thinking level: [FILL IN: Minimal / High]. Grounding with Google Search: [FILL IN: on / off]. No other tools. |
+| Settings | Temperature 1. Thinking level: High. Grounding with Google Search: on. No other tools. This differs from the benchmark setup (MINIMAL thinking, no grounding), so these notes are an early look, not comparable to the measured results. |
 | Number of runs | 4 |
 | Prompt used | The 6-step support-ticket prompt from the team doc, Section 4. Run 1 used it exactly. In runs 2 to 4, step 4 read `Hi ,` instead of `Hi <name>,` because the `<name>` placeholder was lost when pasting. |
 | Different tickets used | No. All 4 runs used the same ticket text (double charge plus can't log in). Only the name, order number and date changed (Ravi #4411, sita #0001, likks #0211, Mark #0411). |
@@ -53,4 +53,4 @@ Written from what was actually seen in Google AI Studio on 28 Oct 2026. Tested b
 
 ## Summary
 
-In 4 runs on one ticket type, Gemma 4 26B respected every length limit and the "Hi <name>," start, and always picked a valid category. Run 1 added an extra "urgency_reason" key, and runs 2 to 4 merged the urgency rating and its reason into one string. This is an early look at a single ticket type, not a measured result. The measured benchmark numbers are in benchmark/RESULTS_NOTE.md.
+In 4 runs on one ticket type, Gemma 4 26B respected every length limit and always picked a valid category. The greeting rule ("Hi <name>,") was tested only in run 1; in runs 2 to 4 the prompt read "Hi ," so greeting compliance was not tested there (the replies still began with "Hi <name>,"). Run 1 added an extra "urgency_reason" key, and runs 2 to 4 merged the urgency rating and its reason into one string. This is an early look at a single ticket type, not a measured result. The measured benchmark numbers are in benchmark/RESULTS_NOTE.md.

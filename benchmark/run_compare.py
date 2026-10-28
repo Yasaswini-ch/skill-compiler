@@ -23,9 +23,27 @@ from benchmark.run_plain import ROOT, load_tasks, read_skill, run_plain
 from benchmark.scorer import score_output
 
 OUT_DIR = Path(__file__).with_name("output")
+OVERRIDES_FILE = Path(__file__).with_name("label_overrides.json")
 EXCERPT_CHARS = 300
 SETTINGS_KEYS = ("model", "gemma_thinking", "verifier", "cache_used", "harness_is_mock")
 MODES = ("plain", "harness")
+
+
+def load_overrides(path: Path = OVERRIDES_FILE) -> dict:
+    """Hand-reviewed labels: {task_id: {"label", "reason", optional "mode"}}. Missing file = none."""
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def apply_override(task_id: str, mode: str, cell: dict, overrides: dict) -> dict:
+    """Replace a failed cell's scorer label with the hand-reviewed one. what_went_wrong is unaffected.
+
+    An override applies to both modes unless it names one ("mode"). The scorer's own label and the
+    reason are kept in the cell (scorer_label, label_note) so the change stays visible.
+    """
+    ov = overrides.get(task_id)
+    if cell["passed"] or not ov or ov.get("mode", mode) != mode:
+        return cell
+    return {**cell, "failure_label": ov["label"], "scorer_label": cell["failure_label"], "label_note": ov["reason"]}
 
 
 def excerpt(text: str) -> str:
@@ -77,13 +95,16 @@ def build_failures(task_results: list[dict]) -> list[dict]:
             if cell["passed"]:
                 continue
             score = {"failed_checks": cell["failed_checks"], "details": cell["details"]}
-            out.append({
+            entry = {
                 "failure_id": f"f{len(out) + 1:03d}", "task_id": t["task_id"], "mode": mode,
                 "label": cell["failure_label"] or "other",
                 "what_went_wrong": what_went_wrong(score),
                 "failed_checks": cell["failed_checks"],
                 "output_excerpt": cell["output_excerpt"],
-            })
+            }
+            if "label_note" in cell:  # hand-reviewed label (label_overrides.json)
+                entry["label_note"] = cell["label_note"]
+            out.append(entry)
     return out
 
 
@@ -127,7 +148,7 @@ def load_previous(out_dir: Path, settings: dict) -> list[dict]:
     return [t for t in old["tasks"] if all(m in t for m in MODES)]
 
 
-def run_one(task: dict, runners: dict) -> dict | None:
+def run_one(task: dict, runners: dict, overrides: dict | None = None) -> dict | None:
     """Run both modes for a task. Returns the results.json task entry, or None if a call errored."""
     skill_text = read_skill(task)
     cells, traces = {}, {}
@@ -137,7 +158,7 @@ def run_one(task: dict, runners: dict) -> dict | None:
         except Exception as exc:  # API outage, missing key: not a model failure, so do not record it
             print(f"  ERROR in {mode} run of {task['task_id']}: {exc}", file=sys.stderr)
             return None
-        cells[mode] = mode_entry(task, traces[mode])
+        cells[mode] = apply_override(task["task_id"], mode, mode_entry(task, traces[mode]), overrides or {})
         time.sleep(runners.get("sleep", 0))
     return {"task_id": task["task_id"], "title": task["title"], **cells, "_traces": traces}
 
@@ -183,11 +204,12 @@ def main(argv: list[str] | None = None) -> int:
     done_ids = {t["task_id"] for t in done}
     todo = [t for t in tasks if t["task_id"] not in done_ids]
     todo = todo[: args.limit] if args.limit else todo
+    overrides = load_overrides()
     runners = {"plain": run_plain, "harness": harness_adapter.run_skill, "sleep": args.sleep}
     results = list(done)
     for task in todo:
         print(f"{task['task_id']}  {task['title']}", flush=True)
-        entry = run_one(task, runners)
+        entry = run_one(task, runners, overrides)
         if entry is None:
             continue
         save_traces(args.out_dir, entry)

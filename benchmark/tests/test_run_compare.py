@@ -176,3 +176,44 @@ def test_failure_entries_for_both_modes():
     cell_pass = rc.mode_entry(task, fake_trace("harness", GOLDEN["t01"]["good"][0]))
     fails = rc.build_failures([{"task_id": "t01", "title": "x", "plain": cell_fail, "harness": cell_pass}])
     assert len(fails) == 1 and fails[0]["label"] == "wrong_format" and "c1" in fails[0]["what_went_wrong"]
+
+
+def test_label_overrides_file_is_valid():
+    ov = rc.load_overrides()
+    labels = {"skipped_step", "wrong_format", "lost_track", "merged_steps", "hallucinated_step",
+              "ignored_constraint", "other"}
+    ids = {t["task_id"] for t in TASKS}
+    assert set(ov) <= ids
+    for entry in ov.values():
+        assert entry["label"] in labels and entry["reason"] and entry.get("mode", "plain") in rc.MODES
+    assert ov["t04"]["label"] == ov["t05"]["label"] == "other"
+    assert ov["t04"]["reason"] == "arithmetic error: wrong subtotal, later steps follow it"
+    assert ov["t08"]["label"] == "wrong_format"
+
+
+def test_apply_override_changes_label_only_for_failed_cells_of_the_named_mode():
+    ov = {"t04": {"mode": "plain", "label": "other", "reason": "why"}, "t08": {"label": "wrong_format", "reason": "r"}}
+    failed = {"passed": False, "failure_label": "lost_track", "failed_checks": ["c4"], "details": {"c4": "x"}}
+    done = rc.apply_override("t04", "plain", failed, ov)
+    assert done["failure_label"] == "other" and done["scorer_label"] == "lost_track" and done["label_note"] == "why"
+    assert rc.apply_override("t04", "harness", failed, ov) == failed           # override is plain-only
+    assert rc.apply_override("t08", "harness", failed, ov)["failure_label"] == "wrong_format"  # no mode = both
+    passed = {**failed, "passed": True, "failure_label": None}
+    assert rc.apply_override("t04", "plain", passed, ov) == passed             # passing cells are untouched
+    assert rc.apply_override("t01", "plain", failed, ov) == failed
+
+
+def test_run_compare_applies_overrides_but_keeps_real_reason(env, monkeypatch):
+    wrong_t04 = json.dumps({**json.loads(good("t04")), "subtotal": "171.75"})
+    patch_runners(monkeypatch, lambda t: wrong_t04 if t == "t04" else good(t), lambda t: wrong_t04 if t == "t04" else good(t))
+    out = env / "out"
+    rc.main(["--out-dir", str(out), "--sleep", "0"])
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    t04 = next(t for t in res["tasks"] if t["task_id"] == "t04")
+    assert t04["plain"]["failure_label"] == "other" and t04["plain"]["scorer_label"] == "lost_track"
+    assert t04["harness"]["failure_label"] == "lost_track" and "label_note" not in t04["harness"]  # plain-only override
+    fails = {(f["task_id"], f["mode"]): f for f in json.loads((out / "failures.json").read_text(encoding="utf-8"))}
+    plain = fails[("t04", "plain")]
+    assert plain["label"] == "other" and plain["label_note"].startswith("arithmetic error")
+    assert "c4" in plain["what_went_wrong"] and "did not match" in plain["what_went_wrong"]  # real reason kept
+    assert fails[("t04", "harness")]["label"] == "lost_track"

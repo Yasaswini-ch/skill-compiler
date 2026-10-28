@@ -260,3 +260,18 @@ The 6-step and "low" thresholds are starting values, not tuned. **Status: tested
 **Escalation** (`--escalate-model NAME`). A step that is still failing after its normal retries gets one last attempt, with the same feedback, on the named bigger model
 (the verifier call for that attempt also uses it). The attempt carries `"model"`, the step gets `"escalated": true`, and the trace lists `escalated_steps`
 (empty if none). A step that passes is never sent up, and escalating to the model already in use does nothing. **Status: tested with a fake model only; no real run yet.**
+
+## 14. Mode comparison on the 10 frozen tasks (28 Oct evening; single runs, API unstable)
+
+Same 10 tasks, `gemma-4-26b-a4b-it`, harness commit `7e778d9`, one run per configuration. Two to three tasks per run had to be filled in with `--resume` after API errors.
+
+| Configuration | Harness | Plain (same run) | Calls/task | Repaired steps | Attempts hit by API errors |
+|---|---|---|---|---|---|
+| full (verifier on every step) | 7/10 | 7/10 | 16.0 | 4 | 7 of 82 |
+| verifier off | 8/10 | 7/10 | 8.7 | 4 | 4 of 81 |
+| adaptive (verifier on risky steps) | 6/10 | 7/10 | 15.1 | 0 | 2 of 77 |
+| full + copy rule | 9/10 | 7/10 | 16.5 | 3 | 3 of 79 |
+
+**How to read this.** These do not replace the official result (plain 7/10, harness 9/10, identical in three runs). The same default configuration scored 7/10 tonight against 9/10 before, which shows how much a single run moves when the Gemini API returns 500 errors (up to 7 of 82 attempts in one run). Differences of one or two tasks between rows are within that noise. Seconds per task are not comparable between rows (rate limiting and API slowness changed during the evening), so no speed claim is made from them. Calls per task are comparable except for adaptive, whose count includes retries after API errors.
+
+What can be said: the verifier did not obviously help (verifier off was no worse), and adaptive mode did not beat full on these tasks (6/10, with t01 and t06 failing; its call count did not drop here). The copy rule scored best (9/10) but it scored 8/10 in the earlier full re-run, so it stays opt-in. Nothing here is a reason to change a default before the event. Per-task results are in the scratch outputs of the run and are not part of the dataset.

@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-001",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "Since I updated to version 2.4.1 on Android 13, the app crashes every time I tap Pay on the checkout page. Nobody on my team can place orders now, so our whole sales desk is blocked.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"bug\": \"The app crashes immediately upon tapping the Pay button during checkout.\",\n  \"impact\": \"The entire sales desk cannot place any customer orders.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Debug the checkout payment button tap event handler.\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 5645,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

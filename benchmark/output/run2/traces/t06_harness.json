@@ -1,0 +1,101 @@
+{
+  "run_id": "r-275206b7",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Pancakes, serves 4: 400 g flour, 300 ml milk, 2 eggs, 45 g butter. Scale it to serve 14.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract servings",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "{\"original_servings\": 4, \"target_servings\": 14}",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2714
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Compute scale factor",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "3.5",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2544
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract ingredients",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "[\n  {\"original quantity\": \"400\", \"original unit\": \"g\", \"ingredient name\": \"flour\"},\n  {\"original quantity\": \"300\", \"original unit\": \"ml\", \"ingredient name\": \"milk\"},\n  {\"original quantity\": \"2\", \"original unit\": \"\", \"ingredient name\": \"eggs\"},\n  {\"original quantity\": \"45\", \"original unit\": \"g\", \"ingredient name\": \"butter\"}\n]",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4455
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Scale quantities",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "[\n  {\"scaled quantity\": \"1400\", \"unit\": \"g\", \"ingredient name\": \"flour\"},\n  {\"scaled quantity\": \"1050\", \"unit\": \"ml\", \"ingredient name\": \"milk\"},\n  {\"scaled quantity\": \"7\", \"unit\": \"\", \"ingredient name\": \"eggs\"},\n  {\"scaled quantity\": \"157.5\", \"unit\": \"g\", \"ingredient name\": \"butter\"}\n]",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 6638
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Format scaled values",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 1.4 kg flour\n- 1050.0 ml milk\n- 7.0 eggs\n- 157.5 g butter",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2871
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Generate final output",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 | 7.0 |\n| butter | 45 g | 157.5 g |\n\nScale factor: 3.5",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3745
+        }
+      ]
+    }
+  ],
+  "final_output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 | 7.0 |\n| butter | 45 g | 157.5 g |\n\nScale factor: 3.5",
+  "totals": {
+    "llm_calls": 13,
+    "latency_ms": 35940,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

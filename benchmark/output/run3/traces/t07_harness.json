@@ -1,0 +1,101 @@
+{
+  "run_id": "r-56d02d0d",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "trip-day-planner",
+  "input": "Our flight lands at 10:35 and the taxi to the hotel takes 1 hour 50 minutes.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract landing time",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "10:35",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2315
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Calculate airport departure time",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "11:20",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2002
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Calculate hotel arrival time",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "13:10",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 1988
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Determine check-in time",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "15:00",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2023
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Calculate free minutes",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "270",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2066
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Format final output",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Leave airport: 11:20\nHotel arrival: 13:10\nCheck-in: 15:00\nFree minutes before dinner: 270",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3027
+        }
+      ]
+    }
+  ],
+  "final_output": "Leave airport: 11:20\nHotel arrival: 13:10\nCheck-in: 15:00\nFree minutes before dinner: 270",
+  "totals": {
+    "llm_calls": 13,
+    "latency_ms": 28419,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-007",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "release-announcement",
+  "input": "Product: Quill Notes app. Release date: 3 December 2026. Features: handwriting search that finds words inside scanned notes, offline sync across 3 devices, and a focus mode that hides all notifications. Audience: students.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"headline\": \"Meet the Quill Notes app\",\n  \"summary\": \"A powerful note-taking tool designed to help students organize their studies and maintain deep focus.\",\n  \"bullets\": [\n    \"Search handwritten words in scanned notes\",\n    \"Sync notes offline across three devices\",\n    \"Focus mode hides all distracting notifications\"\n  ],\n  \"closing\": \"Available from 03/12/2026.\",\n  \"hashtags\": \"#quillnotes #students\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 4198,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

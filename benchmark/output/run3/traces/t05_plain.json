@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-005",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "invoice-summary",
+  "input": "Invoice no. 3392 from Harlow Office Co. 4 x monitor stands at 45.50 each, 10 x USB hubs at 12.40 each, 2 x ergonomic chairs at 89.99 each. Net 15.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"vendor\": \"Harlow Office Co.\",\n  \"invoice\": \"INV-3392\",\n  \"subtotal\": \"448.78\",\n  \"discount\": \"44.88\",\n  \"tax\": \"32.31\",\n  \"total\": \"436.21\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3369,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

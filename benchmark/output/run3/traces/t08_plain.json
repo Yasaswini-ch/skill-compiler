@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-008",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Chili, serves 8: 1000 g beef mince, 800 g canned tomatoes, 2 tbsp tomato paste, 1.6 tsp cumin. Scale it to serve 2.",
+  "steps": [],
+  "final_output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beef mince | 1000 g | 0.3 kg |\n| canned tomatoes | 800 g | 200.0 g |\n| tomato paste | 2 tbsp | 0.5 tbsp |\n| cumin | 1.6 tsp | 0.4 tsp |\n\nScale factor: 0.25",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3294,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

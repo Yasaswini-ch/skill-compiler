@@ -68,4 +68,12 @@ The 7 kept tasks (`tasks_generated_reviewed.json`, SHA-256 `3b0d781b…`) were r
 
 ## License
 
-The repository is under the MIT License (`LICENSE`), and this dataset is distributed under the same license. The model outputs in it were produced by Gemma; [PLACEHOLDER: confirm Gemma's terms for redistributing model outputs]. Owner must verify Google's terms before publishing.
+The repository is under the MIT License (`LICENSE`), and this dataset is distributed under the same license. The model outputs in it were produced by Gemma (`gemma-4-26b-a4b-it`) through the Gemini API's free tier.
+
+**Terms checked on 28 Oct 2026** (read from ai.google.dev; this is not legal advice):
+
+- *Gemma Terms of Use*, section 3.3: Google claims no rights in outputs generated with Gemma, and the user is solely responsible for the outputs and their later use. Outputs are not "Model Derivatives", but a model trained on Gemma outputs so that it performs like Gemma can be one, so anyone who trains on this data should read those terms. This dataset makes no claim about training any model.
+- The *Gemma Prohibited Use Policy* applies to what we generate and publish. Anything from the arena is reviewed by a person before export.
+- The *Gemini API Additional Terms*: on the unpaid tier Google may use submitted prompts and generated responses to improve its products, and human reviewers may read them; do not submit sensitive, confidential or personal information. The service may not be used to develop models that compete with it.
+
+Sources: https://ai.google.dev/gemma/terms, https://ai.google.dev/gemma/prohibited_use_policy, https://ai.google.dev/gemini-api/terms. The repository owner should read these pages once more before publishing, because terms can change.

@@ -26,3 +26,7 @@ and `error` (`{"type": "error", "message": "..."}`, always the last line). Optio
 - Numbers come from saved runs only. Frozen tasks stay frozen (`benchmark/FROZEN.md`).
 - `arena_log.jsonl` and `web/arena_traces/` hold attendee text: they are never committed.
 - Free-play arena rows have `passed: null` and `broke_plain: null` and are never counted as failures.
+- **Arena privacy notice must be accurate.** Attendee text is sent to Google's Gemini API on the free tier, where Google may use prompts and
+  responses to improve its products and human reviewers may read them (Gemini API Additional Terms, checked 28 Oct 2026). The consent box must say
+  so, and must tell people not to type personal data. "May be added to a public dataset after review" alone is not enough.
+- Publishing model outputs: see the terms summary in `benchmark/DATASET_CARD.md`.

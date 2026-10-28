@@ -1,0 +1,229 @@
+==============================================================================
+[1/12] t01-v2   (generated from t01: Bug triage: similar summary steps, strict JSON (checkout crash))
+skill: skills/bug-report-triage/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: similar_steps, hard_limits
+title: Bug triage: Similar steps and specific versioning
+INPUT:
+  The login screen hangs on Android 14 (version 5.5.0) when tapping 'Submit'. Users are unable to access their accounts at all. We need this fixed for our 500 users.
+CHECKS:
+  c1  [json_keys]  The whole output must be a JSON object with exactly these keys (none missing, none extra): ['bug', 'impact', 'version', 'os', 'severity', 'component', 'fix']
+       if this fails the label is: skipped_step
+  c2  [regex]  The field 'version' of the JSON output must match the regular expression '^v5\\.5\\.0$'.
+       if this fails the label is: wrong_format
+  c3  [max_words]  The field 'bug' of the JSON output must have at most 15 words.
+       if this fails the label is: ignored_constraint
+  c4  [max_words]  The field 'impact' of the JSON output must have at most 15 words.
+       if this fails the label is: ignored_constraint
+  c5  [one_of]  The field 'severity' of the JSON output must be exactly one of ['critical', 'major', 'minor'] (case matters).
+       if this fails the label is: lost_track
+==============================================================================
+[2/12] t01-v3   (generated from t01: Bug triage: similar summary steps, strict JSON (checkout crash))
+skill: skills/bug-report-triage/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: hard_limits, strict_format
+title: Bug triage: Complex impact and negative constraints
+INPUT:
+  After moving to v1.1.1 on macOS 14, the payment button is greyed out. Our account managers cannot process any invoices, which is stopping our revenue flow.
+CHECKS:
+  c1  [json_valid]  The whole output must be valid JSON.
+       if this fails the label is: wrong_format
+  c2  [regex]  The field 'component' of the JSON output must match the regular expression '(?i)^payments$'.
+       if this fails the label is: lost_track
+  c3  [not_contains]  The field 'fix' of the JSON output must NOT contain 'just' anywhere inside it (case ignored).
+       if this fails the label is: ignored_constraint
+  c4  [max_words]  The field 'fix' of the JSON output must have at most 12 words.
+       if this fails the label is: ignored_constraint
+  c5  [regex]  The field 'impact' of the JSON output must match the regular expression '(?i)(account managers|cannot|invoices|revenue|stopping)'.
+       if this fails the label is: merged_steps
+==============================================================================
+[3/12] t03-v1   (generated from t03: Candidate screen: experience vs skills, decision logic)
+skill: skills/candidate-screen/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: arithmetic, hard_limits, strict_format
+title: Candidate screen: Arithmetic and strict constraints
+INPUT:
+  Alex Chen. Worked as Dev at TechCorp (2018-2021) and Junior Dev at SoftSys (2021-present). Skills: Python, Java, C++, AWS, Docker, Kubernetes. Total experience is 6 years.
+CHECKS:
+  c1  [json_valid]  The whole output must be valid JSON.
+       if this fails the label is: wrong_format
+  c2  [json_keys]  The whole output must be a JSON object with exactly these keys (none missing, none extra): ['name', 'experience', 'skills', 'years', 'meets_minimum', 'reason', 'note']
+       if this fails the label is: skipped_step
+  c3  [regex]  The field 'years' of the JSON output must match the regular expression '^6$'.
+       if this fails the label is: wrong_format
+  c4  [regex]  The field 'skills' of the JSON output must match the regular expression '^[^,\\[\\]]+(,[^,\\[\\]]+){0,4}$'.
+       if this fails the label is: ignored_constraint
+  c5  [max_words]  The field 'experience' of the JSON output must have at most 20 words.
+       if this fails the label is: ignored_constraint
+  c6  [one_of]  The field 'meets_minimum' of the JSON output must be exactly one of ['yes', 'no'] (case matters).
+       if this fails the label is: lost_track
+==============================================================================
+[4/12] t03-v2   (generated from t03: Candidate screen: experience vs skills, decision logic)
+skill: skills/candidate-screen/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: long_instructions, similar_steps, strict_format
+title: Candidate screen: Negative requirement and distractor
+INPUT:
+  Jordan Smith. 5 years experience in Data Science. Skills: SQL, Tableau, R, Statistics. Note: Previously used Python in 2015, but no longer uses it.
+CHECKS:
+  c1  [json_valid]  The whole output must be valid JSON.
+       if this fails the label is: wrong_format
+  c2  [json_keys]  The whole output must be a JSON object with exactly these keys (none missing, none extra): ['name', 'experience', 'skills', 'years', 'meets_minimum', 'reason', 'note']
+       if this fails the label is: skipped_step
+  c3  [one_of]  The field 'meets_minimum' of the JSON output must be exactly one of ['no'] (case matters).
+       if this fails the label is: lost_track
+  c4  [max_words]  The field 'reason' of the JSON output must have at most 10 words.
+       if this fails the label is: ignored_constraint
+  c5  [starts_with]  The field 'note' of the JSON output must start with 'Recommend:'.
+       if this fails the label is: ignored_constraint
+  c6  [regex]  The field 'skills' of the JSON output must match the regular expression '^[^,]+(,[^,]+){0,4}$'.
+       if this fails the label is: ignored_constraint
+==============================================================================
+[5/12] t04-v2   (generated from t04: Invoice summary: arithmetic chain, amounts as 2-decimal strings (no discount))
+skill: skills/invoice-summary/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: arithmetic, similar_steps
+title: Invoice summary: similar numbers and precision
+INPUT:
+  Vendor: Zenith Corp. Invoice: 882. Items: 15 units of item A at 1.15 each, 12 units of item B at 12.10 each. Total items: 27.
+CHECKS:
+  c1  [json_valid]  The whole output must be valid JSON.
+       if this fails the label is: wrong_format
+  c2  [regex]  The field 'invoice' of the JSON output must match the regular expression '^INV-882$'.
+       if this fails the label is: wrong_format
+  c3  [regex]  The field 'subtotal' of the JSON output must match the regular expression '"161\\.55"'.
+       if this fails the label is: lost_track
+  c4  [regex]  The field 'discount' of the JSON output must match the regular expression '"16\\.16"'.
+       if this fails the label is: lost_track
+  c5  [regex]  The field 'tax' of the JSON output must match the regular expression '"11.63"'.
+       if this fails the label is: lost_track
+  c6  [regex]  The field 'total' of the JSON output must match the regular expression '"156.99"'.
+       if this fails the label is: lost_track
+==============================================================================
+[6/12] t04-v3   (generated from t04: Invoice summary: arithmetic chain, amounts as 2-decimal strings (no discount))
+skill: skills/invoice-summary/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: hard_limits, strict_format, step_order
+title: Invoice summary: strict JSON and no discount threshold
+INPUT:
+  Brighton Co. (Ref: 77) - 5 x pens at 2.00, 10 x pads at 10.00. Tax must be calculated after discount. Keep output under 100 words.
+CHECKS:
+  c1  [json_valid]  The whole output must be valid JSON.
+       if this fails the label is: wrong_format
+  c2  [max_words]  The whole output must have at most 100 words.
+       if this fails the label is: ignored_constraint
+  c3  [regex]  The field 'invoice' of the JSON output must match the regular expression '^INV-77$'.
+       if this fails the label is: wrong_format
+  c4  [regex]  The field 'subtotal' of the JSON output must match the regular expression '"110\\.00"'.
+       if this fails the label is: lost_track
+  c5  [regex]  The field 'discount' of the JSON output must match the regular expression '"11\\.00"'.
+       if this fails the label is: lost_track
+  c6  [regex]  The field 'tax' of the JSON output must match the regular expression '"7\\.92"'.
+       if this fails the label is: lost_track
+  c7  [regex]  The field 'total' of the JSON output must match the regular expression '"106.92"'.
+       if this fails the label is: lost_track
+==============================================================================
+[7/12] t05-v1   (generated from t05: Invoice summary: conditional discount and rounding carried into later steps)
+skill: skills/invoice-summary/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: arithmetic, step_order, strict_format
+title: Invoice summary: complex arithmetic and precision handling
+INPUT:
+  Supplier: Global Tech Ltd. Invoice #8821-A. Items: 3 x Mechanical Keyboards at 125.55 each, 5 x Mousepads at 12.99 each. Note: Shipping fee of 15.00 is excluded from subtotal calculations.
+CHECKS:
+  c1  [json_valid]  The whole output must be valid JSON.
+       if this fails the label is: wrong_format
+  c2  [json_keys]  The whole output must be a JSON object with exactly these keys (none missing, none extra): ['vendor', 'invoice', 'subtotal', 'discount', 'tax', 'total']
+       if this fails the label is: skipped_step
+  c3  [regex]  The field 'invoice' of the JSON output must match the regular expression '^INV-8821$'.
+       if this fails the label is: wrong_format
+  c4  [regex]  The field 'subtotal' of the JSON output must match the regular expression '"441\\.60"'.
+       if this fails the label is: lost_track
+  c5  [regex]  The field 'discount' of the JSON output must match the regular expression '"44\\.16"'.
+       if this fails the label is: lost_track
+  c6  [regex]  The field 'tax' of the JSON output must match the regular expression '"31.80"'.
+       if this fails the label is: lost_track
+  c7  [regex]  The field 'total' of the JSON output must match the regular expression '"429.24"'.
+       if this fails the label is: lost_track
+==============================================================================
+[8/12] t06-v2   (generated from t06: Recipe scaler: fixed table, scale 4 to 14 servings, grams to kg)
+skill: skills/recipe-scaler/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: arithmetic, similar_steps, strict_format
+title: Recipe scaler: Similar steps and unit confusion
+INPUT:
+  Spicy Soup, serves 2: 150 ml broth, 10 g chili, 800 g potato, 200 g onion. Scale it to serve 5.
+CHECKS:
+  c1  [regex]  The whole output must match the regular expression '(?im)^\\|\\s*broth\\s*\\|\\s*150\\s*ml\\s*\\|\\s*375.0\\s*ml\\s*\\|\\s*$'.
+       if this fails the label is: lost_track
+  c2  [regex]  The whole output must match the regular expression '(?im)^\\|\\s*potato\\s*\\|\\s*800\\s*g\\s*\\|\\s*2.0\\s*kg\\s*\\|\\s*$'.
+       if this fails the label is: wrong_format
+  c3  [regex]  The whole output must match the regular expression '(?im)^\\|\\s*onion\\s*\\|\\s*200\\s*g\\s*\\|\\s*500.0\\s*g\\s*\\|\\s*$'.
+       if this fails the label is: lost_track
+  c4  [regex]  The whole output must match the regular expression '(?m)^Scale factor:\\s*2\\.5\\s*\\Z'.
+       if this fails the label is: ignored_constraint
+==============================================================================
+[9/12] t07-v2   (generated from t07: Trip day planner: chained time arithmetic, exact 4-line output)
+skill: skills/trip-day-planner/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: arithmetic, strict_format
+title: Trip day planner: multiple time units and strict format
+INPUT:
+  The plane touches down at 14:20. We need 45 minutes for customs. The shuttle to the hotel takes exactly 1 hour and 5 minutes. Dinner is set for 19:30.
+CHECKS:
+  c1  [regex]  The whole output must match the regular expression '(?m)^Leave airport: 15:05$'.
+       if this fails the label is: lost_track
+  c2  [regex]  The whole output must match the regular expression '(?m)^Hotel arrival: 16:10$'.
+       if this fails the label is: lost_track
+  c3  [regex]  The whole output must match the regular expression '(?m)^Check-in: 16:10$'.
+       if this fails the label is: lost_track
+  c4  [regex]  The whole output must match the regular expression '(?m)^Free minutes before dinner: 200$'.
+       if this fails the label is: lost_track
+  c5  [regex]  The whole output must match the regular expression '\\A(?:[^\\n]+\\n){3}[^\\n]+\\Z'.
+       if this fails the label is: ignored_constraint
+==============================================================================
+[10/12] t07-v3   (generated from t07: Trip day planner: chained time arithmetic, exact 4-line output)
+skill: skills/trip-day-planner/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: similar_steps, arithmetic, step_order
+title: Trip day planner: similar time values and check-in logic
+INPUT:
+  Landing is at 14:45. Customs and bags take 45 minutes. The taxi takes 15 minutes. Dinner is at 19:30.
+CHECKS:
+  c1  [regex]  The whole output must match the regular expression '(?m)^Leave airport: 15:30$'.
+       if this fails the label is: lost_track
+  c2  [regex]  The whole output must match the regular expression '(?m)^Hotel arrival: 15:45$'.
+       if this fails the label is: lost_track
+  c3  [regex]  The whole output must match the regular expression '(?m)^Check-in: 15:45$'.
+       if this fails the label is: lost_track
+  c4  [regex]  The whole output must match the regular expression '(?m)^Free minutes before dinner: 225$'.
+       if this fails the label is: lost_track
+  c5  [order]  The whole output must contain these strings in this order: ['Leave airport:', 'Hotel arrival:', 'Check-in:', 'Free minutes before dinner:']
+       if this fails the label is: wrong_format
+==============================================================================
+[11/12] t08-v3   (generated from t08: Recipe scaler: scale down 8 to 2 servings, keep 1000 g unconverted in Original)
+skill: skills/recipe-scaler/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: arithmetic, strict_format, hard_limits
+title: Recipe scaler: Large scale up with heavy unit conversion focus
+INPUT:
+  Giant Stew, serves 2: 1500 g beef, 500 g potatoes, 100 g onions, 10 ml soy sauce. Scale up to 20 servings.
+CHECKS:
+  c1  [regex]  The whole output must match the regular expression '(?im)^\\|\\s*beef\\s*\\|\\s*1500\\s*g\\s*\\|\\s*15\\.0\\s*kg\\s*\\|\\s*$'.
+       if this fails the label is: wrong_format
+  c2  [regex]  The whole output must match the regular expression '(?im)^\\|\\s*potatoes\\s*\\|\\s*500\\s*g\\s*\\|\\s*5\\.0\\s*kg\\s*\\|\\s*$'.
+       if this fails the label is: wrong_format
+  c3  [regex]  The whole output must match the regular expression '(?im)^\\|\\s*onions\\s*\\|\\s*100\\s*g\\s*\\|\\s*1\\.0\\s*kg\\s*\\|\\s*$'.
+       if this fails the label is: wrong_format
+  c4  [regex]  The whole output must match the regular expression '(?im)^\\|\\s*soy sauce\\s*\\|\\s*10\\s*ml\\s*\\|\\s*100\\.0\\s*ml\\s*\\|\\s*$'.
+       if this fails the label is: lost_track
+  c5  [regex]  The whole output must match the regular expression '(?m)^Scale factor:\\s*10\\s*\\Z'.
+       if this fails the label is: ignored_constraint
+==============================================================================
+[12/12] t09-v1   (generated from t09: Release announcement: headline and summary limits, forbidden words)
+skill: skills/release-announcement/SKILL.md
+skill step targeted: not recorded (the generator does not say); difficulty tags: hard_limits, long_instructions
+title: Release announcement: distraction and character constraints
+INPUT:
+  Product: AeroStream Pro. Release date: 03/05/2027. Features: whisper-quiet motor, 5-speed settings, and HEPA filtration. Note: The product was designed in Sweden. Do not mention the origin in the announcement. Write the announcement.
+CHECKS:
+  c1  [json_valid]  The whole output must be valid JSON.
+       if this fails the label is: wrong_format
+  c2  [json_keys]  The whole output must be a JSON object with exactly these keys (none missing, none extra): ['headline', 'summary', 'bullets', 'closing', 'hashtags']
+       if this fails the label is: skipped_step
+  c3  [not_contains]  The field 'summary' of the JSON output must NOT contain 'Sweden' anywhere inside it (case ignored).
+       if this fails the label is: hallucinated_step
+  c4  [max_words]  The field 'headline' of the JSON output must have at most 8 words.
+       if this fails the label is: ignored_constraint
+  c5  [regex]  The field 'closing' of the JSON output must match the regular expression '^Available.*03/05/2027'.
+       if this fails the label is: wrong_format
+==============================================================================

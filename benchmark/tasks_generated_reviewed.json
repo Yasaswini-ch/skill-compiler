@@ -1,0 +1,355 @@
+[
+  {
+    "task_id": "t01-v2",
+    "title": "Bug triage: Similar steps and specific versioning",
+    "skill_file": "skills/bug-report-triage/SKILL.md",
+    "input": "The login screen hangs on Android 14 (version 5.5.0) when tapping 'Submit'. Users are unable to access their accounts at all. We need this fixed for our 500 users.",
+    "difficulty_tags": [
+      "similar_steps",
+      "hard_limits"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_keys",
+        "value": [
+          "bug",
+          "impact",
+          "version",
+          "os",
+          "severity",
+          "component",
+          "fix"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "path": "version",
+        "value": "^v5\\.5\\.0$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "max_words",
+        "path": "bug",
+        "value": 15,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "impact",
+        "value": 15,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "one_of",
+        "path": "severity",
+        "value": [
+          "critical",
+          "major",
+          "minor"
+        ],
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t01",
+    "generated": true
+  },
+  {
+    "task_id": "t01-v3",
+    "title": "Bug triage: Complex impact and negative constraints",
+    "skill_file": "skills/bug-report-triage/SKILL.md",
+    "input": "After moving to v1.1.1 on macOS 14, the payment button is greyed out. Our account managers cannot process any invoices, which is stopping our revenue flow.",
+    "difficulty_tags": [
+      "hard_limits",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "path": "component",
+        "value": "(?i)^payments$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "not_contains",
+        "path": "fix",
+        "value": "just",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "fix",
+        "value": 12,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "impact",
+        "value": "(?i)(account managers|cannot|invoices|revenue|stopping)",
+        "label": "merged_steps"
+      }
+    ],
+    "source_task_id": "t01",
+    "generated": true
+  },
+  {
+    "task_id": "t05-v1",
+    "title": "Invoice summary: complex arithmetic and precision handling",
+    "skill_file": "skills/invoice-summary/SKILL.md",
+    "input": "Supplier: Global Tech Ltd. Invoice #8821-A. Items: 3 x Mechanical Keyboards at 125.55 each, 5 x Mousepads at 12.99 each. Note: Shipping fee of 15.00 is excluded from subtotal calculations.",
+    "difficulty_tags": [
+      "arithmetic",
+      "step_order",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "vendor",
+          "invoice",
+          "subtotal",
+          "discount",
+          "tax",
+          "total"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "invoice",
+        "value": "^INV-8821$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "path": "subtotal",
+        "value": "441\\.60",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "discount",
+        "value": "44\\.16",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "tax",
+        "value": "31.80",
+        "label": "lost_track"
+      },
+      {
+        "id": "c7",
+        "type": "regex",
+        "path": "total",
+        "value": "429.24",
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t05",
+    "generated": true
+  },
+  {
+    "task_id": "t06-v2",
+    "title": "Recipe scaler: Similar steps and unit confusion",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Spicy Soup, serves 2: 150 ml broth, 10 g chili, 800 g potato, 200 g onion. Scale it to serve 5.",
+    "difficulty_tags": [
+      "arithmetic",
+      "similar_steps",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*broth\\s*\\|\\s*150\\s*ml\\s*\\|\\s*375.0\\s*ml\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*potato\\s*\\|\\s*800\\s*g\\s*\\|\\s*2.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*onion\\s*\\|\\s*200\\s*g\\s*\\|\\s*500.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*2\\.5\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t06",
+    "generated": true
+  },
+  {
+    "task_id": "t07-v2",
+    "title": "Trip day planner: multiple time units and strict format",
+    "skill_file": "skills/trip-day-planner/SKILL.md",
+    "input": "The plane touches down at 14:20. We need 45 minutes for customs. The shuttle to the hotel takes exactly 1 hour and 5 minutes. Dinner is set for 19:30.",
+    "difficulty_tags": [
+      "arithmetic",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?m)^Leave airport: 15:05$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?m)^Hotel arrival: 16:10$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?m)^Check-in: 16:10$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?m)^Free minutes before dinner: 200$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "\\A(?:[^\\n]+\\n){3}[^\\n]+\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t07",
+    "generated": true
+  },
+  {
+    "task_id": "t07-v3",
+    "title": "Trip day planner: similar time values and check-in logic",
+    "skill_file": "skills/trip-day-planner/SKILL.md",
+    "input": "Landing is at 14:45. Customs and bags take 45 minutes. The taxi takes 15 minutes. Dinner is at 19:30.",
+    "difficulty_tags": [
+      "similar_steps",
+      "arithmetic",
+      "step_order"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?m)^Leave airport: 15:30$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?m)^Hotel arrival: 15:45$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?m)^Check-in: 15:45$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?m)^Free minutes before dinner: 225$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "order",
+        "value": [
+          "Leave airport:",
+          "Hotel arrival:",
+          "Check-in:",
+          "Free minutes before dinner:"
+        ],
+        "label": "wrong_format"
+      }
+    ],
+    "source_task_id": "t07",
+    "generated": true
+  },
+  {
+    "task_id": "t08-v3",
+    "title": "Recipe scaler: Large scale up with heavy unit conversion focus",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Giant Stew, serves 2: 1500 g beef, 500 g potatoes, 100 g onions, 10 ml soy sauce. Scale up to 20 servings.",
+    "difficulty_tags": [
+      "arithmetic",
+      "strict_format",
+      "hard_limits"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*beef\\s*\\|\\s*1500\\s*g\\s*\\|\\s*15\\.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*potatoes\\s*\\|\\s*500\\s*g\\s*\\|\\s*5\\.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*onions\\s*\\|\\s*100\\s*g\\s*\\|\\s*1\\.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*soy sauce\\s*\\|\\s*10\\s*ml\\s*\\|\\s*100\\.0\\s*ml\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*10(\\.0)?\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t08",
+    "generated": true
+  }
+]

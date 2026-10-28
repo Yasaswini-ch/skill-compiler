@@ -132,12 +132,15 @@ GOLDEN = {
         ],
     },
     "t06": {
-        "good": [T06, "```\n" + T06 + "\n```"],
+        "good": [T06, "```\n" + T06 + "\n```",
+                 T06.replace("| eggs | 2 | 7.0 |", "| eggs | 2 eggs | 7.0 eggs |")],  # t06 fix: trailing "eggs" accepted
         "bad": [
             (T06.replace("1.4 kg", "1400.0 g"), {"c2"}),
             ("Here is the scaled recipe:\n" + T06, {"c1"}),
             (T06 + "\nEnjoy!", {"c7"}),
             (T06.replace("| 7.0 |", "| 7 |"), {"c4"}),
+            (T06.replace("| eggs | 2 | 7.0 |", "| eggs | 2 eggs | 7 eggs |"), {"c4"}),    # still wrong: no decimal
+            (T06.replace("| eggs | 2 | 7.0 |", "| eggs | 2 eggs | 8.0 eggs |"), {"c4"}),  # still wrong: arithmetic
             (T06.replace("1050.0 ml", "1.1 l"), {"c3"}),
         ],
     },

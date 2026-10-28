@@ -93,3 +93,16 @@ def test_every_check_is_exercised_by_a_bad_answer():
         for _, expected in GOLDEN[task["task_id"]]["bad"]:
             hit |= expected
         assert hit >= {c["id"] for c in task["checks"]}, (task["task_id"], hit)
+
+
+def test_t06_eggs_row_accepts_both_original_forms_and_rejects_wrong_values():
+    """t06 fix (FROZEN.md): the original quantity may keep a trailing "eggs"; wrong numbers still fail."""
+    task = next(t for t in TASKS if t["task_id"] == "t06")
+    base = GOLDEN["t06"]["good"][0]
+    row = "| eggs | 2 | 7.0 |"
+    assert row in base
+    for ok in ("| eggs | 2 | 7.0 |", "| eggs | 2 eggs | 7.0 eggs |", "| eggs | 2 | 7.0 eggs |", "| Eggs | 2 eggs | 7.0 |"):
+        assert score_output(task, base.replace(row, ok))["passed"], ok
+    for wrong in ("| eggs | 2 eggs | 7 eggs |", "| eggs | 2 eggs | 8.0 eggs |", "| eggs | 3 eggs | 7.0 eggs |",
+                  "| eggs | 2 eggs | 7.0 eggs extra |"):
+        assert score_output(task, base.replace(row, wrong))["failed_checks"] == ["c4"], wrong

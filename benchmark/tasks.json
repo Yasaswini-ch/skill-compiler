@@ -358,7 +358,7 @@
       {
         "id": "c4",
         "type": "regex",
-        "value": "(?im)^\\|\\s*eggs\\s*\\|\\s*2\\s*\\|\\s*7\\.0\\s*\\|\\s*$",
+        "value": "(?im)^\\|\\s*eggs\\s*\\|\\s*2(\\s*eggs)?\\s*\\|\\s*7\\.0(\\s*eggs)?\\s*\\|\\s*$",
         "label": "lost_track"
       },
       {

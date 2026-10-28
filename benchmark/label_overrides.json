@@ -1,4 +1,5 @@
 {
+  "t03": {"mode": "harness", "label": "wrong_format", "reason": "boolean false instead of the required string 'no'; the verifier did not catch it"},
   "t04": {"mode": "plain", "label": "other", "reason": "arithmetic error: wrong subtotal, later steps follow it"},
   "t05": {"mode": "plain", "label": "other", "reason": "arithmetic error: wrong subtotal, later steps follow it"},
   "t08": {"mode": "plain", "label": "wrong_format", "reason": "applied the grams-to-kg rule to 250 g and rounded it to 0.3 kg"}

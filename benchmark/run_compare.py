@@ -11,6 +11,7 @@ and a loud warning. A task whose model call errors out is NOT recorded
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -44,6 +45,37 @@ def apply_override(task_id: str, mode: str, cell: dict, overrides: dict) -> dict
     if cell["passed"] or not ov or ov.get("mode", mode) != mode:
         return cell
     return {**cell, "failure_label": ov["label"], "scorer_label": cell["failure_label"], "label_note": ov["reason"]}
+
+
+def tasks_sha256(path: Path | None = None) -> str:
+    """SHA-256 of the tasks file (default benchmark/tasks.json), recorded in results.json."""
+    return hashlib.sha256((path or Path(__file__).with_name("tasks.json")).read_bytes()).hexdigest()
+
+
+def relabel(out_dir: Path, overrides: dict) -> int:
+    """Re-apply label_overrides.json to a saved results.json and rebuild failures.json. Offline, no model calls.
+
+    The scorer's own label is restored first, so removing or changing an override also takes effect.
+    results.json gets tasks_sha256 if it has none (run before that field existed): the file's current hash.
+    Returns the number of cells whose label changed.
+    """
+    path = out_dir / "results.json"
+    results = json.loads(path.read_text(encoding="utf-8"))
+    changed = 0
+    for t in results["tasks"]:
+        for mode in MODES:
+            before = t[mode].get("failure_label")
+            cell = dict(t[mode])
+            if "scorer_label" in cell:
+                cell["failure_label"] = cell.pop("scorer_label")
+                cell.pop("label_note", None)
+            t[mode] = apply_override(t["task_id"], mode, cell, overrides)
+            changed += t[mode].get("failure_label") != before
+    results.setdefault("tasks_sha256", tasks_sha256())
+    path.write_text(json.dumps(results, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (out_dir / "failures.json").write_text(
+        json.dumps(build_failures(results["tasks"]), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return changed
 
 
 def excerpt(text: str) -> str:
@@ -118,11 +150,12 @@ def current_settings(args: argparse.Namespace) -> dict:
     }
 
 
-def write_outputs(out_dir: Path, settings: dict, task_results: list[dict]) -> None:
+def write_outputs(out_dir: Path, settings: dict, task_results: list[dict], tasks_hash: str | None = None) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     results = {
         "model": settings["model"],
         "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "tasks_sha256": tasks_hash or tasks_sha256(),
         "harness_is_mock": settings["harness_is_mock"],
         "gemma_thinking": settings["gemma_thinking"],
         "verifier": settings["verifier"],
@@ -181,11 +214,17 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     ap.add_argument("--sleep", type=float, default=2.0, help="seconds between calls (default 2)")
     ap.add_argument("--out-dir", type=Path, default=OUT_DIR)
     ap.add_argument("--tasks", type=Path, help="tasks file (default benchmark/tasks.json)")
+    ap.add_argument("--relabel", action="store_true",
+                    help="only re-apply label_overrides.json to --out-dir/results.json (offline, no model calls)")
     return ap.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.relabel:
+        n = relabel(args.out_dir, load_overrides())
+        print(f"relabel: {n} label(s) changed in {args.out_dir / 'results.json'}; failures.json rebuilt (no API calls)")
+        return 0
     if args.no_verify:
         os.environ["SKILLCOMPILER_VERIFY"] = "0"
     client.configure_cache(args.cache)
@@ -205,7 +244,8 @@ def main(argv: list[str] | None = None) -> int:
     todo = [t for t in tasks if t["task_id"] not in done_ids]
     todo = todo[: args.limit] if args.limit else todo
     overrides = load_overrides()
-    runners = {"plain": run_plain, "harness": harness_adapter.run_skill, "sleep": args.sleep}
+    tasks_hash = tasks_sha256(args.tasks)
+    runners ={"plain": run_plain, "harness": harness_adapter.run_skill, "sleep": args.sleep}
     results = list(done)
     for task in todo:
         print(f"{task['task_id']}  {task['title']}", flush=True)
@@ -215,9 +255,9 @@ def main(argv: list[str] | None = None) -> int:
         save_traces(args.out_dir, entry)
         results.append(entry)
         results.sort(key=lambda t: t["task_id"])
-        write_outputs(args.out_dir, settings, results)  # after every task, so --resume can pick up
+        write_outputs(args.out_dir, settings, results, tasks_hash)  # after every task, so --resume can pick up
         print("  plain {}   harness {}".format(*("PASS" if entry[m]["passed"] else "FAIL" for m in MODES)), flush=True)
-    write_outputs(args.out_dir, settings, results)
+    write_outputs(args.out_dir, settings, results, tasks_hash)
     s = summarize(results)
     print(f"\nplain {s['plain']['passed']}/{s['plain']['total']}   harness {s['harness']['passed']}/{s['harness']['total']}"
           f"   settings={ {k: settings[k] for k in SETTINGS_KEYS} }")

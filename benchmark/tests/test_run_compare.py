@@ -217,3 +217,48 @@ def test_run_compare_applies_overrides_but_keeps_real_reason(env, monkeypatch):
     assert plain["label"] == "other" and plain["label_note"].startswith("arithmetic error")
     assert "c4" in plain["what_went_wrong"] and "did not match" in plain["what_went_wrong"]  # real reason kept
     assert fails[("t04", "harness")]["label"] == "lost_track"
+
+
+def test_relabel_rewrites_labels_and_failures_offline(env, monkeypatch):
+    wrong = json.dumps({**json.loads(good("t03")), "meets_minimum": False})
+    patch_runners(monkeypatch, good, lambda t: wrong if t == "t03" else good(t))
+    out = env / "out"
+    rc.main(["--out-dir", str(out), "--sleep", "0"])
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    assert res["tasks_sha256"] == rc.tasks_sha256()
+    # run again WITHOUT the t03 override to simulate a results.json made before the override existed
+    assert rc.relabel(out, {}) == 1
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    t03 = next(t for t in res["tasks"] if t["task_id"] == "t03")["harness"]
+    assert t03["failure_label"] == "lost_track" and "scorer_label" not in t03  # the scorer's own label
+    ov = {"t03": {"mode": "harness", "label": "wrong_format", "reason": "boolean instead of 'no'"}}
+    assert rc.relabel(out, ov) == 1
+    assert rc.relabel(out, ov) == 0  # idempotent
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    t03 = next(t for t in res["tasks"] if t["task_id"] == "t03")["harness"]
+    assert t03["failure_label"] == "wrong_format" and t03["scorer_label"] == "lost_track"
+    assert t03["failed_checks"] == ["c4"] and t03["details"]["c4"].endswith("did not match")  # nothing else changed
+    f = json.loads((out / "failures.json").read_text(encoding="utf-8"))
+    assert [(x["task_id"], x["mode"], x["label"]) for x in f] == [("t03", "harness", "wrong_format")]
+    assert "did not match" in f[0]["what_went_wrong"] and f[0]["label_note"] == "boolean instead of 'no'"
+    # undoing the override restores the scorer label
+    assert rc.relabel(out, {}) == 1
+
+
+def test_relabel_cli_flag_makes_no_model_calls(env, monkeypatch):
+    patch_runners(monkeypatch, good, good)
+    out = env / "out"
+    rc.main(["--out-dir", str(out), "--sleep", "0", "--limit", "1"])
+    monkeypatch.setattr(rc, "run_plain", lambda *a, **k: pytest.fail("model call in --relabel"))
+    assert rc.main(["--out-dir", str(out), "--relabel"]) == 0
+
+
+def test_overhead_report_has_settings_and_ratios(env, monkeypatch):
+    from benchmark import overhead
+    patch_runners(monkeypatch, good, good)
+    out = env / "out"
+    rc.main(["--out-dir", str(out), "--sleep", "0", "--limit", "2"])
+    text = overhead.build_report(json.loads((out / "results.json").read_text(encoding="utf-8")))
+    assert "Verifier | ON" in text and "unset (default MINIMAL)" in text and "`m1`" in text
+    assert rc.tasks_sha256()[:8] in text
+    assert "| t01 | 1 | 7 | 7.0x |" in text and "| Calls, total | 2 | 14 | 7.0x |" in text

@@ -1,0 +1,227 @@
+{
+  "generated_at": "2026-10-28T12:05:11+05:30",
+  "settings": {
+    "model": "gemma-4-26b-a4b-it",
+    "gemma_thinking": "MINIMAL",
+    "gemma_rpm": 25,
+    "cache_used": false
+  },
+  "tasks_sha256": "53351f62f15b026cb6c653e43c591c60ce1b4877ba9f3522b1c6fba1f427bfd2",
+  "summary": {
+    "passed": 7,
+    "total": 10
+  },
+  "tasks": [
+    {
+      "task_id": "t01",
+      "title": "Bug triage: similar summary steps, strict JSON (checkout crash)",
+      "passed": true,
+      "failed_checks": [],
+      "failure_label": null,
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 26445,
+      "output": "```json\n{\n  \"bug\": \"The app crashes whenever the Pay button is tapped on the checkout page.\",\n  \"impact\": \"The sales desk cannot place orders, blocking all team transactions.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Debug the checkout payment trigger to prevent immediate application crashes.\"\n}\n```"
+    },
+    {
+      "task_id": "t02",
+      "title": "Bug triage: distracting feature request, forbidden word",
+      "passed": true,
+      "failed_checks": [],
+      "failure_label": null,
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 15483,
+      "output": "```json\n{\n  \"bug\": \"The search function takes twenty seconds to return results.\",\n  \"impact\": \"A single user experiences significant delays when attempting to search.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"minor\",\n  \"component\": \"search\",\n  \"fix\": \"Optimize the search query execution and indexing speed.\"\n}\n```"
+    },
+    {
+      "task_id": "t03",
+      "title": "Candidate screen: experience vs skills, decision logic",
+      "passed": true,
+      "failed_checks": [],
+      "failure_label": null,
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 12197,
+      "output": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Data Analyst at Orbit Retail for two years.\",\n  \"skills\": \"SQL, Excel, Tableau, Power BI, R\",\n  \"years\": 2,\n  \"meets_minimum\": \"no\",\n  \"reason\": \"Under 3 years experience and lacks Python skill.\",\n  \"note\": \"Recommend: Priya lacks the required Python skill and experience.\"\n}\n```"
+    },
+    {
+      "task_id": "t04",
+      "title": "Invoice summary: arithmetic chain, amounts as 2-decimal strings (no discount)",
+      "passed": false,
+      "failed_checks": [
+        "c4",
+        "c6",
+        "c7"
+      ],
+      "failure_label": "lost_track",
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "pattern '\"subtotal\"\\\\s*:\\\\s*\"150\\\\.75\"' did not match",
+        "c5": "ok",
+        "c6": "pattern '\"tax\"\\\\s*:\\\\s*\"12\\\\.06\"' did not match",
+        "c7": "pattern '\"total\"\\\\s*:\\\\s*\"162\\\\.81\"' did not match"
+      },
+      "llm_calls": 1,
+      "latency_ms": 2883,
+      "output": "```json\n{\n  \"vendor\": \"Brightwell Supplies\",\n  \"invoice\": \"INV-20417\",\n  \"subtotal\": \"171.75\",\n  \"discount\": \"0.00\",\n  \"tax\": \"13.74\",\n  \"total\": \"185.49\"\n}\n```"
+    },
+    {
+      "task_id": "t05",
+      "title": "Invoice summary: conditional discount and rounding carried into later steps",
+      "passed": false,
+      "failed_checks": [
+        "c4",
+        "c5",
+        "c6",
+        "c7"
+      ],
+      "failure_label": "lost_track",
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "pattern '\"subtotal\"\\\\s*:\\\\s*\"485\\\\.98\"' did not match",
+        "c5": "pattern '\"discount\"\\\\s*:\\\\s*\"48\\\\.60\"' did not match",
+        "c6": "pattern '\"tax\"\\\\s*:\\\\s*\"34\\\\.99\"' did not match",
+        "c7": "pattern '\"total\"\\\\s*:\\\\s*\"472\\\\.37\"' did not match"
+      },
+      "llm_calls": 1,
+      "latency_ms": 2835,
+      "output": "```json\n{\n  \"vendor\": \"Harlow Office Co.\",\n  \"invoice\": \"INV-3392\",\n  \"subtotal\": \"443.78\",\n  \"discount\": \"44.38\",\n  \"tax\": \"31.95\",\n  \"total\": \"431.35\"\n}\n```"
+    },
+    {
+      "task_id": "t06",
+      "title": "Recipe scaler: fixed table, scale 4 to 14 servings, grams to kg",
+      "passed": true,
+      "failed_checks": [],
+      "failure_label": null,
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 3185,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 eggs | 7.0 eggs |\n| butter | 45 g | 157.5 g |\n\nScale factor: 3.5"
+    },
+    {
+      "task_id": "t07",
+      "title": "Trip day planner: chained time arithmetic, exact 4-line output",
+      "passed": true,
+      "failed_checks": [],
+      "failure_label": null,
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 1918,
+      "output": "Leave airport: 11:20\nHotel arrival: 13:10\nCheck-in: 15:00\nFree minutes before dinner: 270"
+    },
+    {
+      "task_id": "t08",
+      "title": "Recipe scaler: scale down 8 to 2 servings, keep 1000 g unconverted in Original",
+      "passed": false,
+      "failed_checks": [
+        "c2"
+      ],
+      "failure_label": "wrong_format",
+      "details": {
+        "c1": "ok",
+        "c2": "pattern '(?im)^\\\\|\\\\s*beef mince\\\\s*\\\\|\\\\s*1000\\\\s*g\\\\s*\\\\|\\\\s*250\\\\.0\\\\s*g\\\\s*\\\\|\\\\s*$' did not match",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 3148,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beef mince | 1000 g | 0.3 kg |\n| canned tomatoes | 800 g | 200.0 g |\n| tomato paste | 2 tbsp | 0.5 tbsp |\n| cumin | 1.6 tsp | 0.4 tsp |\n\nScale factor: 0.25"
+    },
+    {
+      "task_id": "t09",
+      "title": "Release announcement: headline and summary limits, forbidden words",
+      "passed": true,
+      "failed_checks": [],
+      "failure_label": null,
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 3887,
+      "output": "```json\n{\n  \"headline\": \"Meet the Lumo Desk Lamp\",\n  \"summary\": \"Enhance your workspace with a versatile lamp featuring adjustable brightness and integrated charging capabilities.\",\n  \"bullets\": [\n    \"Dim light from 5% to 100% via touch slider\",\n    \"Built-in wireless phone charger\",\n    \"Long-lasting 12-hour battery life\"\n  ],\n  \"closing\": \"Available from 14/11/2026.\",\n  \"hashtags\": \"#lumolamp #desksetup\"\n}\n```"
+    },
+    {
+      "task_id": "t10",
+      "title": "Release announcement: three bullet limits, hashtag format, zero-padded date",
+      "passed": true,
+      "failed_checks": [],
+      "failure_label": null,
+      "details": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok",
+        "c5": "ok",
+        "c6": "ok",
+        "c7": "ok"
+      },
+      "llm_calls": 1,
+      "latency_ms": 3788,
+      "output": "```json\n{\n  \"headline\": \"Meet the Quill Notes app\",\n  \"summary\": \"A powerful note-taking tool designed to help students organize their handwritten thoughts and stay focused on their studies.\",\n  \"bullets\": [\n    \"Search words inside your scanned handwritten notes\",\n    \"Sync your data offline across three devices\",\n    \"Stay focused with a distraction-free mode\"\n  ],\n  \"closing\": \"Available starting 03/12/2026.\",\n  \"hashtags\": \"#quillnotes #students\"\n}\n```"
+    }
+  ],
+  "rescored": [
+    {
+      "at": "2026-10-28T12:13:41+05:30",
+      "previous_tasks_sha256": "b0e7a62810f7fb07343fd816c453dde898d0c41becdff2de1a787561ee506adb",
+      "previous_summary": {
+        "passed": 6,
+        "total": 10
+      }
+    }
+  ]
+}

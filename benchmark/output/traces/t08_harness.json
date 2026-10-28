@@ -1,0 +1,101 @@
+{
+  "run_id": "r-f1dba55b",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Chili, serves 8: 1000 g beef mince, 800 g canned tomatoes, 2 tbsp tomato paste, 1.6 tsp cumin. Scale it to serve 2.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract servings",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "{\"original_servings\": 8, \"target_servings\": 2}",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2886
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Calculate scale factor",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "0.25",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2190
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract ingredients",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 1000 g beef mince\n- 800 g canned tomatoes\n- 2 tbsp tomato paste\n- 1.6 tsp cumin",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2964
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Scale ingredient quantities",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 250 g beef mince\n- 200 g canned tomatoes\n- 0.5 tbsp tomato paste\n- 0.4 tsp cumin",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2972
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Format scaled quantities",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 250.0 g beef mince\n- 200.0 g canned tomatoes\n- 0.5 tbsp tomato paste\n- 0.4 tsp cumin",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3053
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Generate final Markdown table",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| beef mince | 1000 g | 250.0 g |\n| canned tomatoes | 800 g | 200.0 g |\n| tomato paste | 2 tbsp | 0.5 tbsp |\n| cumin | 1.6 tsp | 0.4 tsp |\n\nScale factor: 0.25",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4192
+        }
+      ]
+    }
+  ],
+  "final_output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| beef mince | 1000 g | 250.0 g |\n| canned tomatoes | 800 g | 200.0 g |\n| tomato paste | 2 tbsp | 0.5 tbsp |\n| cumin | 1.6 tsp | 0.4 tsp |\n\nScale factor: 0.25",
+  "totals": {
+    "llm_calls": 13,
+    "latency_ms": 33587,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

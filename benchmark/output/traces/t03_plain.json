@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-003",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "candidate-screen",
+  "input": "Priya Nair, Data Analyst at Orbit Retail for 2 years. Skills: SQL, Excel, Tableau, Power BI, R, statistics. Python: none.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Priya worked as a Data Analyst at Orbit Retail for two years.\",\n  \"skills\": \"SQL, Excel, Tableau, Power BI, R\",\n  \"years\": 2,\n  \"meets_minimum\": \"no\",\n  \"reason\": \"Less than 3 years experience and no Python skill.\",\n  \"note\": \"Recommend: Priya for further review if Python is not mandatory.\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3379,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

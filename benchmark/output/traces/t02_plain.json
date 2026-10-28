@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-002",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "Hi, search is really slow for me on Windows 11 (app 3.0.12). I type in the search box and results take about 20 seconds to show. Also it would be great to have a dark mode! Only me as far as I know, not urgent.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"bug\": \"The search function exhibits high latency when retrieving results.\",\n  \"impact\": \"The user experiences significant delays when attempting to search.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"minor\",\n  \"component\": \"search\",\n  \"fix\": \"Optimize search query execution and backend indexing performance.\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 4493,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

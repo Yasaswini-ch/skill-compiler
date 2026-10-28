@@ -1,0 +1,101 @@
+{
+  "run_id": "r-cc749a32",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Pancakes, serves 4: 400 g flour, 300 ml milk, 2 eggs, 45 g butter. Scale it to serve 14.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract servings",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "{\"original_servings\": 4, \"target_servings\": 14}",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2704
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Calculate scale factor",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "3.5",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The assistant correctly calculated 14 / 4 = 3.5.",
+          "latency_ms": 2581
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract ingredients",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 400 g flour\n- 300 ml milk\n- 2 eggs\n- 45 g butter",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2633
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Scale quantities",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 1400 g flour\n- 1050 ml milk\n- 7 eggs\n- 157.5 g butter",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3649
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Format quantities",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 1.4 kg flour\n- 1050.0 ml milk\n- 7.0 eggs\n- 157.5 g butter",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3212
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Generate final Markdown table",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 eggs | 7.0 eggs |\n| butter | 45 g | 157.5 g |\nScale factor: 3.5",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4086
+        }
+      ]
+    }
+  ],
+  "final_output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 eggs | 7.0 eggs |\n| butter | 45 g | 157.5 g |\nScale factor: 3.5",
+  "totals": {
+    "llm_calls": 13,
+    "latency_ms": 33016,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

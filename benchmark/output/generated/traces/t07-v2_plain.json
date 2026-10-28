@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-005",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "trip-day-planner",
+  "input": "The plane touches down at 14:20. We need 45 minutes for customs. The shuttle to the hotel takes exactly 1 hour and 5 minutes. Dinner is set for 19:30.",
+  "steps": [],
+  "final_output": "Leave airport: 15:05\nHotel arrival: 16:10\nCheck-in: 16:10\nFree minutes before dinner: 190",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 2655,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

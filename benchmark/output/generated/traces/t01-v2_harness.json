@@ -1,0 +1,136 @@
+{
+  "run_id": "r-a9dc0518",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "The login screen hangs on Android 14 (version 5.5.0) when tapping 'Submit'. Users are unable to access their accounts at all. We need this fixed for our 500 users.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Summarize bug",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "The login screen hangs on Android 14 when tapping the submit button.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 31436
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize user impact",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Android 14 users cannot access their accounts due to a hanging login screen.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 33116
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract app version",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "v5.5.0",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2659
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract OS",
+      "status": "repaired",
+      "attempts": [
+        {
+          "output": "Android 14",
+          "format_ok": true,
+          "verified": false,
+          "checker_note": "The output omitted the version number (5.5.0) explicitly requested in the instructions.",
+          "latency_ms": 5847
+        },
+        {
+          "output": "Android 14 (version 5.5.0)",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2757
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Classify severity",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "critical",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 39922
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Classify component",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "login",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 7946
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Suggest fix",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Update the app to resolve Android 14 login compatibility issues.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2512
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"bug\": \"Login screen hangs on Android 14 when tapping the submit button.\",\n  \"impact\": \"Android 14 users cannot access their accounts due to login hangs.\",\n  \"version\": \"5.5.0\",\n  \"os\": \"Android 14\",\n  \"severity\": \"critical\",\n  \"component\": \"login\",\n  \"fix\": \"Update the app to resolve Android 14 login compatibility issues.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 44547
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"bug\": \"Login screen hangs on Android 14 when tapping the submit button.\",\n  \"impact\": \"Android 14 users cannot access their accounts due to login hangs.\",\n  \"version\": \"5.5.0\",\n  \"os\": \"Android 14\",\n  \"severity\": \"critical\",\n  \"component\": \"login\",\n  \"fix\": \"Update the app to resolve Android 14 login compatibility issues.\"\n}\n```",
+  "totals": {
+    "llm_calls": 20,
+    "latency_ms": 218745,
+    "retries": 1,
+    "cache_hits": 0
+  }
+}

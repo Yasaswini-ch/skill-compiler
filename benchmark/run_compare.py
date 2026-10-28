@@ -214,6 +214,8 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     ap.add_argument("--sleep", type=float, default=2.0, help="seconds between calls (default 2)")
     ap.add_argument("--out-dir", type=Path, default=OUT_DIR)
     ap.add_argument("--tasks", type=Path, help="tasks file (default benchmark/tasks.json)")
+    ap.add_argument("--overrides", type=Path, default=OVERRIDES_FILE,
+                    help="label overrides file (default benchmark/label_overrides.json; a separate file for generated tasks)")
     ap.add_argument("--relabel", action="store_true",
                     help="only re-apply label_overrides.json to --out-dir/results.json (offline, no model calls)")
     return ap.parse_args(argv)
@@ -222,7 +224,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.relabel:
-        n = relabel(args.out_dir, load_overrides())
+        n = relabel(args.out_dir, load_overrides(args.overrides))
         print(f"relabel: {n} label(s) changed in {args.out_dir / 'results.json'}; failures.json rebuilt (no API calls)")
         return 0
     if args.no_verify:
@@ -243,7 +245,7 @@ def main(argv: list[str] | None = None) -> int:
     done_ids = {t["task_id"] for t in done}
     todo = [t for t in tasks if t["task_id"] not in done_ids]
     todo = todo[: args.limit] if args.limit else todo
-    overrides = load_overrides()
+    overrides = load_overrides(args.overrides)
     tasks_hash = tasks_sha256(args.tasks)
     runners ={"plain": run_plain, "harness": harness_adapter.run_skill, "sleep": args.sleep}
     results = list(done)

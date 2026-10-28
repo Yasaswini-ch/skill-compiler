@@ -271,3 +271,23 @@ def test_generated_tasks_are_never_loaded_implicitly(tmp_path):
     assert [t["task_id"] for t in rp.load_tasks(tmp_path / "tasks.json")] == ["a"]
     assert [t["task_id"] for t in rp.load_tasks(tmp_path / "tasks_generated.json")] == ["a-v1"]
     assert [t["task_id"] for t in rp.load_tasks()] == [f"t{i:02d}" for i in range(1, 11)]
+
+
+def test_relabel_with_a_separate_overrides_file(env, monkeypatch, tmp_path):
+    """--overrides lets the generated run use its own override file without touching the official one."""
+    wrong = json.dumps({**json.loads(good("t04")), "subtotal": "171.75"})
+    patch_runners(monkeypatch, lambda t: wrong if t == "t04" else good(t), good)
+    out = env / "gen"
+    rc.main(["--out-dir", str(out), "--sleep", "0", "--limit", "5", "--overrides", str(tmp_path / "none.json")])
+    before = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    assert next(t for t in before["tasks"] if t["task_id"] == "t04")["plain"]["failure_label"] == "lost_track"
+    own = tmp_path / "own_overrides.json"
+    own.write_text(json.dumps({"t04": {"mode": "plain", "label": "other", "reason": "arithmetic error"}}), encoding="utf-8")
+    monkeypatch.setattr(rc, "run_plain", lambda *a, **k: pytest.fail("model call in --relabel"))
+    assert rc.main(["--out-dir", str(out), "--relabel", "--overrides", str(own)]) == 0
+    after = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    cell = next(t for t in after["tasks"] if t["task_id"] == "t04")["plain"]
+    assert cell["failure_label"] == "other" and cell["scorer_label"] == "lost_track" and cell["label_note"] == "arithmetic error"
+    fails = json.loads((out / "failures.json").read_text(encoding="utf-8"))
+    assert [(f["task_id"], f["label"]) for f in fails] == [("t04", "other")]
+    assert "did not match" in fails[0]["what_went_wrong"]  # the real reason is kept

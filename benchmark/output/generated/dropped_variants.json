@@ -1,0 +1,302 @@
+{
+  "generated_at": "2026-10-28T15:44:19+05:30",
+  "model": "gemma-4-26b-a4b-it",
+  "dropped": [
+    {
+      "source_task_id": "t02",
+      "reason": "c3: label 'hard_limit_violation' is not one of the 7 labels",
+      "raw": {
+        "title": "Bug triage: overlapping info and length constraints",
+        "input": "I'm on macOS 14.2 running version 5.4.0. When I try to pay for my subscription, the button stays grey and nothing happens. It's really frustrating because I can't renew my pro plan. Also, please add more color options to the UI. This is a huge problem for my business!",
+        "difficulty_tags": [
+          "hard_limits",
+          "similar_steps"
+        ],
+        "checks": [
+          {
+            "id": "c1",
+            "type": "json_valid",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c2",
+            "type": "json_keys",
+            "value": [
+              "bug",
+              "impact",
+              "version",
+              "os",
+              "severity",
+              "component",
+              "fix"
+            ],
+            "label": "skipped_step"
+          },
+          {
+            "id": "c3",
+            "type": "max_words",
+            "path": "bug",
+            "value": 15,
+            "label": "hard_limit_violation"
+          },
+          {
+            "id": "c4",
+            "type": "regex",
+            "path": "version",
+            "value": "^v5\\.4\\.0$",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c5",
+            "type": "one_of",
+            "path": "component",
+            "value": [
+              "login",
+              "payments",
+              "search",
+              "other"
+            ],
+            "label": "lost_track"
+          },
+          {
+            "id": "c6",
+            "type": "not_contains",
+            "value": "color",
+            "label": "hallucinated_step"
+          }
+        ]
+      }
+    },
+    {
+      "source_task_id": "t02",
+      "reason": "c4: label 'hard_limit_violation' is not one of the 7 labels",
+      "raw": {
+        "title": "Bug triage: multi-step extraction with noise",
+        "input": "User Report: The login screen freezes on iOS 17.0.1 (app 2.1.9) immediately after typing my password. I cannot access my account at all. I tried rebooting, but no luck. It's a minor annoyance for me but might be bigger for others. Can you add a biometric login feature?",
+        "difficulty_tags": [
+          "hard_limits",
+          "similar_steps"
+        ],
+        "checks": [
+          {
+            "id": "c1",
+            "type": "json_valid",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c2",
+            "type": "regex",
+            "path": "os",
+            "value": "iOS 17\\.0\\.1",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c3",
+            "type": "regex",
+            "path": "version",
+            "value": "^v2\\.1\\.9$",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c4",
+            "type": "max_words",
+            "path": "impact",
+            "value": 15,
+            "label": "hard_limit_violation"
+          },
+          {
+            "id": "c5",
+            "type": "one_of",
+            "path": "severity",
+            "value": [
+              "critical",
+              "major",
+              "minor"
+            ],
+            "label": "wrong_format"
+          },
+          {
+            "id": "c6",
+            "type": "not_contains",
+            "value": "biometric",
+            "label": "hallucinated_step"
+          }
+        ]
+      }
+    },
+    {
+      "source_task_id": "t02",
+      "reason": "c3: label 'hard_limit_violation' is not one of the 7 labels",
+      "raw": {
+        "title": "Bug triage: strict constraints and component confusion",
+        "input": "Every time I use the search bar on Android 13 (v0.9.8), the app crashes. I'm a premium user and I can't find anything. Please fix this! Also, the search results should be sortable by date. This is a massive issue for me.",
+        "difficulty_tags": [
+          "hard_limits",
+          "strict_format"
+        ],
+        "checks": [
+          {
+            "id": "c1",
+            "type": "json_valid",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c2",
+            "type": "one_of",
+            "path": "component",
+            "value": [
+              "search"
+            ],
+            "label": "lost_track"
+          },
+          {
+            "id": "c3",
+            "type": "max_words",
+            "path": "fix",
+            "value": 12,
+            "label": "hard_limit_violation"
+          },
+          {
+            "id": "c4",
+            "type": "not_contains",
+            "path": "fix",
+            "value": "just",
+            "whole_word": true,
+            "label": "ignored_constraint"
+          },
+          {
+            "id": "c5",
+            "type": "not_contains",
+            "value": "sortable",
+            "label": "hallucinated_step"
+          },
+          {
+            "id": "c6",
+            "type": "regex",
+            "path": "version",
+            "value": "^v0\\.9\\.8$",
+            "label": "wrong_format"
+          }
+        ]
+      }
+    },
+    {
+      "source_task_id": "t04",
+      "reason": "difficulty_tags must be a non-empty list from ['arithmetic', 'hard_limits', 'long_instructions', 'similar_steps', 'step_order', 'strict_format']",
+      "raw": {
+        "title": "Invoice summary: high value with discount and distraction",
+        "input": "Invoice #9921 from Global Tech Solutions. Order includes 10 x keyboards at 25.50 each and 2 x monitors at 150.00 each. Note: Discount code 'SAVE10' was applied at checkout, but the invoice also mentions a separate shipping fee of 50.00 which should be ignored.",
+        "difficulty_tags": [
+          "arithmetic",
+          "strict_format",
+          "lost_track"
+        ],
+        "checks": [
+          {
+            "id": "c1",
+            "type": "json_valid",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c2",
+            "type": "json_keys",
+            "value": [
+              "vendor",
+              "invoice",
+              "subtotal",
+              "discount",
+              "tax",
+              "total"
+            ],
+            "label": "skipped_step"
+          },
+          {
+            "id": "c3",
+            "type": "regex",
+            "path": "invoice",
+            "value": "^INV-9921$",
+            "label": "wrong_format"
+          },
+          {
+            "id": "c4",
+            "type": "regex",
+            "path": "subtotal",
+            "value": "\"555\\.00\"",
+            "label": "lost_track"
+          },
+          {
+            "id": "c5",
+            "type": "regex",
+            "path": "discount",
+            "value": "\"55\\.50\"",
+            "label": "lost_track"
+          },
+          {
+            "id": "c6",
+            "type": "regex",
+            "path": "tax",
+            "value": "\"40\\.04\"",
+            "label": "lost_track"
+          },
+          {
+            "id": "c7",
+            "type": "regex",
+            "path": "total",
+            "value": "\"539\\.54\"",
+            "label": "lost_track"
+          }
+        ]
+      }
+    },
+    {
+      "source_task_id": "t07",
+      "reason": "difficulty_tags must be a non-empty list from ['arithmetic', 'hard_limits', 'long_instructions', 'similar_steps', 'step_order', 'strict_format']",
+      "raw": {
+        "title": "Trip day planner: distracting information and overnight transition",
+        "input": "Our flight lands at 23:15. The hotel booking reference is #AX-992. The taxi ride to the hotel will take 40 minutes. Dinner is at 19:30 the following evening.",
+        "difficulty_tags": [
+          "arithmetic",
+          "long_instructions",
+          "distracting_info"
+        ],
+        "checks": [
+          {
+            "id": "c1",
+            "type": "regex",
+            "value": "(?m)^Leave airport: 00:00$",
+            "label": "lost_track"
+          },
+          {
+            "id": "c2",
+            "type": "regex",
+            "value": "(?m)^Hotel arrival: 00:40$",
+            "label": "lost_track"
+          },
+          {
+            "id": "c3",
+            "type": "regex",
+            "value": "(?m)^Check-in: 15:00$",
+            "label": "lost_track"
+          },
+          {
+            "id": "c4",
+            "type": "regex",
+            "value": "(?m)^Free minutes before dinner: 1410$",
+            "label": "lost_track"
+          },
+          {
+            "id": "c5",
+            "type": "order",
+            "value": [
+              "Leave airport:",
+              "Hotel arrival:",
+              "Check-in:",
+              "Free minutes before dinner:"
+            ],
+            "label": "wrong_format"
+          }
+        ]
+      }
+    }
+  ]
+}

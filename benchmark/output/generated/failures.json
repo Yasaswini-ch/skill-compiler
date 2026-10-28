@@ -1,0 +1,40 @@
+[
+  {
+    "failure_id": "f001",
+    "task_id": "t01-v2",
+    "mode": "harness",
+    "label": "wrong_format",
+    "what_went_wrong": "c2: pattern '^v5\\\\.5\\\\.0$' did not match",
+    "failed_checks": [
+      "c2"
+    ],
+    "output_excerpt": "```json\n{\n  \"bug\": \"Login screen hangs on Android 14 when tapping the submit button.\",\n  \"impact\": \"Android 14 users cannot access their accounts due to login hangs.\",\n  \"version\": \"5.5.0\",\n  \"os\": \"Android 14\",\n  \"severity\": \"critical\",\n  \"component\": \"login\",\n  \"fix\": \"Update the app to resolve..."
+  },
+  {
+    "failure_id": "f002",
+    "task_id": "t05-v1",
+    "mode": "plain",
+    "label": "other",
+    "what_went_wrong": "c4: pattern '441\\\\.60' did not match; c5: pattern '44\\\\.16' did not match; c6: pattern '31.80' did not match; c7: pattern '429.24' did not match",
+    "failed_checks": [
+      "c4",
+      "c5",
+      "c6",
+      "c7"
+    ],
+    "output_excerpt": "```json\n{\n  \"vendor\": \"Global Tech Ltd.\",\n  \"invoice\": \"INV-8821\",\n  \"subtotal\": \"441.50\",\n  \"discount\": \"44.15\",\n  \"tax\": \"31.83\",\n  \"total\": \"429.18\"\n}\n```",
+    "label_note": "arithmetic error: wrong subtotal, later numbers follow it"
+  },
+  {
+    "failure_id": "f003",
+    "task_id": "t07-v2",
+    "mode": "plain",
+    "label": "other",
+    "what_went_wrong": "c4: pattern '(?m)^Free minutes before dinner: 200$' did not match",
+    "failed_checks": [
+      "c4"
+    ],
+    "output_excerpt": "Leave airport: 15:05\nHotel arrival: 16:10\nCheck-in: 16:10\nFree minutes before dinner: 190",
+    "label_note": "arithmetic error: free minutes 190 instead of 200"
+  }
+]

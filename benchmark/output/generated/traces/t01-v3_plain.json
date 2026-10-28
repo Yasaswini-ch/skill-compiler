@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-002",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "After moving to v1.1.1 on macOS 14, the payment button is greyed out. Our account managers cannot process any invoices, which is stopping our revenue flow.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"bug\": \"The payment button is greyed out after updating to v1.1.1.\",\n  \"impact\": \"Account managers cannot process invoices, which stops all revenue flow.\",\n  \"version\": \"v1.1.1\",\n  \"os\": \"macOS 14\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Enable the payment button functionality for version 1.1.1.\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 17892,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

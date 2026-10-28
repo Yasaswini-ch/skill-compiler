@@ -1,0 +1,1377 @@
+[
+  {
+    "task_id": "t01-v1",
+    "title": "Bug triage: Distractor and strict length limits",
+    "skill_file": "skills/bug-report-triage/SKILL.md",
+    "input": "I love the new dark mode! However, since updating to v3.0.2 on iOS 16, searching for items causes a hang. My customers can't find products, so they leave. Fix this immediately!",
+    "difficulty_tags": [
+      "hard_limits",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "max_words",
+        "path": "bug",
+        "value": 15,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c3",
+        "type": "max_words",
+        "path": "fix",
+        "value": 12,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c4",
+        "type": "not_contains",
+        "path": "bug",
+        "value": "dark mode",
+        "label": "hallucinated_step"
+      },
+      {
+        "id": "c5",
+        "type": "one_of",
+        "path": "component",
+        "value": [
+          "login",
+          "payments",
+          "search",
+          "other"
+        ],
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t01",
+    "generated": true
+  },
+  {
+    "task_id": "t01-v2",
+    "title": "Bug triage: Similar steps and specific versioning",
+    "skill_file": "skills/bug-report-triage/SKILL.md",
+    "input": "The login screen hangs on Android 14 (version 5.5.0) when tapping 'Submit'. Users are unable to access their accounts at all. We need this fixed for our 500 users.",
+    "difficulty_tags": [
+      "similar_steps",
+      "hard_limits"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_keys",
+        "value": [
+          "bug",
+          "impact",
+          "version",
+          "os",
+          "severity",
+          "component",
+          "fix"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "path": "version",
+        "value": "^v5\\.5\\.0$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "max_words",
+        "path": "bug",
+        "value": 15,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "impact",
+        "value": 15,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "one_of",
+        "path": "severity",
+        "value": [
+          "critical",
+          "major",
+          "minor"
+        ],
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t01",
+    "generated": true
+  },
+  {
+    "task_id": "t01-v3",
+    "title": "Bug triage: Complex impact and negative constraints",
+    "skill_file": "skills/bug-report-triage/SKILL.md",
+    "input": "After moving to v1.1.1 on macOS 14, the payment button is greyed out. Our account managers cannot process any invoices, which is stopping our revenue flow.",
+    "difficulty_tags": [
+      "hard_limits",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "path": "component",
+        "value": "(?i)^payments$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "not_contains",
+        "path": "fix",
+        "value": "just",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "fix",
+        "value": 12,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "impact",
+        "value": "(?i)(account managers|cannot|invoices|revenue|stopping)",
+        "label": "merged_steps"
+      }
+    ],
+    "source_task_id": "t01",
+    "generated": true
+  },
+  {
+    "task_id": "t03-v1",
+    "title": "Candidate screen: Arithmetic and strict constraints",
+    "skill_file": "skills/candidate-screen/SKILL.md",
+    "input": "Alex Chen. Worked as Dev at TechCorp (2018-2021) and Junior Dev at SoftSys (2021-present). Skills: Python, Java, C++, AWS, Docker, Kubernetes. Total experience is 6 years.",
+    "difficulty_tags": [
+      "arithmetic",
+      "hard_limits",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "name",
+          "experience",
+          "skills",
+          "years",
+          "meets_minimum",
+          "reason",
+          "note"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "years",
+        "value": "^6$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "path": "skills",
+        "value": "^[^,\\[\\]]+(,[^,\\[\\]]+){0,4}$",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "max_words",
+        "path": "experience",
+        "value": 20,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c6",
+        "type": "one_of",
+        "path": "meets_minimum",
+        "value": [
+          "yes",
+          "no"
+        ],
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t03",
+    "generated": true
+  },
+  {
+    "task_id": "t03-v2",
+    "title": "Candidate screen: Negative requirement and distractor",
+    "skill_file": "skills/candidate-screen/SKILL.md",
+    "input": "Jordan Smith. 5 years experience in Data Science. Skills: SQL, Tableau, R, Statistics. Note: Previously used Python in 2015, but no longer uses it.",
+    "difficulty_tags": [
+      "long_instructions",
+      "similar_steps",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "name",
+          "experience",
+          "skills",
+          "years",
+          "meets_minimum",
+          "reason",
+          "note"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "one_of",
+        "path": "meets_minimum",
+        "value": [
+          "no"
+        ],
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "reason",
+        "value": 10,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "starts_with",
+        "path": "note",
+        "value": "Recommend:",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "skills",
+        "value": "^[^,]+(,[^,]+){0,4}$",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t03",
+    "generated": true
+  },
+  {
+    "task_id": "t03-v3",
+    "title": "Candidate screen: Complex formatting and multiple constraints",
+    "skill_file": "skills/candidate-screen/SKILL.md",
+    "input": "Taylor Reed. 4 years as a Python Engineer. Skills: Python, Django, Flask, PostgreSQL, Docker, Git. Very experienced in backend development.",
+    "difficulty_tags": [
+      "hard_limits",
+      "strict_format",
+      "similar_steps"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "name",
+          "experience",
+          "skills",
+          "years",
+          "meets_minimum",
+          "reason",
+          "note"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "one_of",
+        "path": "meets_minimum",
+        "value": [
+          "yes"
+        ],
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "one_of",
+        "path": "reason",
+        "value": [
+          "none"
+        ],
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "skills",
+        "value": "^[^,\\[\\]]+(,[^,\\[\\]]+){0,4}$",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c6",
+        "type": "max_words",
+        "path": "experience",
+        "value": 20,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c7",
+        "type": "contains",
+        "path": "note",
+        "value": "Taylor",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t03",
+    "generated": true
+  },
+  {
+    "task_id": "t04-v2",
+    "title": "Invoice summary: similar numbers and precision",
+    "skill_file": "skills/invoice-summary/SKILL.md",
+    "input": "Vendor: Zenith Corp. Invoice: 882. Items: 15 units of item A at 1.15 each, 12 units of item B at 12.10 each. Total items: 27.",
+    "difficulty_tags": [
+      "arithmetic",
+      "similar_steps"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "path": "invoice",
+        "value": "^INV-882$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "subtotal",
+        "value": "\"161\\.55\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "path": "discount",
+        "value": "\"16\\.16\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "tax",
+        "value": "\"11.63\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "total",
+        "value": "\"156.99\"",
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t04",
+    "generated": true
+  },
+  {
+    "task_id": "t04-v3",
+    "title": "Invoice summary: strict JSON and no discount threshold",
+    "skill_file": "skills/invoice-summary/SKILL.md",
+    "input": "Brighton Co. (Ref: 77) - 5 x pens at 2.00, 10 x pads at 10.00. Tax must be calculated after discount. Keep output under 100 words.",
+    "difficulty_tags": [
+      "hard_limits",
+      "strict_format",
+      "step_order"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "max_words",
+        "value": 100,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "invoice",
+        "value": "^INV-77$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "path": "subtotal",
+        "value": "\"110\\.00\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "discount",
+        "value": "\"11\\.00\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "tax",
+        "value": "\"7\\.92\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c7",
+        "type": "regex",
+        "path": "total",
+        "value": "\"106.92\"",
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t04",
+    "generated": true
+  },
+  {
+    "task_id": "t05-v1",
+    "title": "Invoice summary: complex arithmetic and precision handling",
+    "skill_file": "skills/invoice-summary/SKILL.md",
+    "input": "Supplier: Global Tech Ltd. Invoice #8821-A. Items: 3 x Mechanical Keyboards at 125.55 each, 5 x Mousepads at 12.99 each. Note: Shipping fee of 15.00 is excluded from subtotal calculations.",
+    "difficulty_tags": [
+      "arithmetic",
+      "step_order",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "vendor",
+          "invoice",
+          "subtotal",
+          "discount",
+          "tax",
+          "total"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "invoice",
+        "value": "^INV-8821$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "path": "subtotal",
+        "value": "441\\.60",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "discount",
+        "value": "44\\.16",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "tax",
+        "value": "31.80",
+        "label": "lost_track"
+      },
+      {
+        "id": "c7",
+        "type": "regex",
+        "path": "total",
+        "value": "429.24",
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t05",
+    "generated": true
+  },
+  {
+    "task_id": "t05-v2",
+    "title": "Invoice summary: distracting details and strict formatting",
+    "skill_file": "skills/invoice-summary/SKILL.md",
+    "input": "Vendor: Zenith Supplies (Contact: Sarah). Ref: 990. We ordered 10 units of 'Widget A' at 15.25 each and 2 units of 'Widget B' at 45.00 each. Please process this immediately. Tax rate is standard 8%.",
+    "difficulty_tags": [
+      "strict_format",
+      "arithmetic"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "vendor",
+          "invoice",
+          "subtotal",
+          "discount",
+          "tax",
+          "total"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "invoice",
+        "value": "^INV-990$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "path": "subtotal",
+        "value": "\"242\\.50\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "discount",
+        "value": "\"24\\.25\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "tax",
+        "value": "\"17.46\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c7",
+        "type": "regex",
+        "path": "total",
+        "value": "\"235.71\"",
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t05",
+    "generated": true
+  },
+  {
+    "task_id": "t05-v3",
+    "title": "Invoice summary: low value subtotal and rounding logic",
+    "skill_file": "skills/invoice-summary/SKILL.md",
+    "input": "From: Tiny Tools Inc. Invoice 005. 2 x Screwdrivers at 9.50 each, 1 x Pliers at 15.00 each. The subtotal is well under the threshold for a discount.",
+    "difficulty_tags": [
+      "arithmetic",
+      "similar_steps"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "vendor",
+          "invoice",
+          "subtotal",
+          "discount",
+          "tax",
+          "total"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "invoice",
+        "value": "^INV-005$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "path": "subtotal",
+        "value": "\"34\\.00\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "discount",
+        "value": "\"0\\.00\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "tax",
+        "value": "\"2\\.72\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c7",
+        "type": "regex",
+        "path": "total",
+        "value": "\"36\\.72\"",
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t05",
+    "generated": true
+  },
+  {
+    "task_id": "t06-v1",
+    "title": "Recipe scaler: Distracting units and large scale",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Oatmeal Cookies, serves 12: 500 g oats, 250 g sugar, 120 g butter, 5 g salt. Note: I prefer using 1000g increments for bulk, but scale this recipe to serve 30. Ignore the preference note.",
+    "difficulty_tags": [
+      "arithmetic",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "starts_with",
+        "value": "| Ingredient | Original | Scaled |",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*oats\\s*\\|\\s*500\\s*g\\s*\\|\\s*1.3\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*sugar\\s*\\|\\s*250\\s*g\\s*\\|\\s*625.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*butter\\s*\\|\\s*120\\s*g\\s*\\|\\s*300.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*2\\.5\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t06",
+    "generated": true
+  },
+  {
+    "task_id": "t06-v2",
+    "title": "Recipe scaler: Similar steps and unit confusion",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Spicy Soup, serves 2: 150 ml broth, 10 g chili, 800 g potato, 200 g onion. Scale it to serve 5.",
+    "difficulty_tags": [
+      "arithmetic",
+      "similar_steps",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*broth\\s*\\|\\s*150\\s*ml\\s*\\|\\s*375.0\\s*ml\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*potato\\s*\\|\\s*800\\s*g\\s*\\|\\s*2.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*onion\\s*\\|\\s*200\\s*g\\s*\\|\\s*500.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*2\\.5\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t06",
+    "generated": true
+  },
+  {
+    "task_id": "t06-v3",
+    "title": "Recipe scaler: Strict order and specific precision",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Berry Smoothie, serves 5: 200 g berries, 150 ml yogurt, 10 g honey. Scale to 12 servings.",
+    "difficulty_tags": [
+      "step_order",
+      "strict_format",
+      "arithmetic"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "order",
+        "value": [
+          "berries",
+          "yogurt",
+          "honey"
+        ],
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*berries\\s*\\|\\s*200\\s*g\\s*\\|\\s*480.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*yogurt\\s*\\|\\s*150\\s*ml\\s*\\|\\s*360.0\\s*ml\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*honey\\s*\\|\\s*10\\s*g\\s*\\|\\s*24.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*2\\.4\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t06",
+    "generated": true
+  },
+  {
+    "task_id": "t07-v2",
+    "title": "Trip day planner: multiple time units and strict format",
+    "skill_file": "skills/trip-day-planner/SKILL.md",
+    "input": "The plane touches down at 14:20. We need 45 minutes for customs. The shuttle to the hotel takes exactly 1 hour and 5 minutes. Dinner is set for 19:30.",
+    "difficulty_tags": [
+      "arithmetic",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?m)^Leave airport: 15:05$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?m)^Hotel arrival: 16:10$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?m)^Check-in: 16:10$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?m)^Free minutes before dinner: 200$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "\\A(?:[^\\n]+\\n){3}[^\\n]+\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t07",
+    "generated": true
+  },
+  {
+    "task_id": "t07-v3",
+    "title": "Trip day planner: similar time values and check-in logic",
+    "skill_file": "skills/trip-day-planner/SKILL.md",
+    "input": "Landing is at 14:45. Customs and bags take 45 minutes. The taxi takes 15 minutes. Dinner is at 19:30.",
+    "difficulty_tags": [
+      "similar_steps",
+      "arithmetic",
+      "step_order"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?m)^Leave airport: 15:30$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?m)^Hotel arrival: 15:45$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?m)^Check-in: 15:45$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?m)^Free minutes before dinner: 225$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "order",
+        "value": [
+          "Leave airport:",
+          "Hotel arrival:",
+          "Check-in:",
+          "Free minutes before dinner:"
+        ],
+        "label": "wrong_format"
+      }
+    ],
+    "source_task_id": "t07",
+    "generated": true
+  },
+  {
+    "task_id": "t08-v1",
+    "title": "Recipe scaler: Scale up 3 to 10 servings with kg conversion and distraction",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Summer Salad, serves 3: 450 g feta cheese, 1200 g cucumber, 15 ml olive oil, 0.5 tsp salt. The chef suggests adding 200 g olives for extra flavor. Scale the original recipe to 10 servings.",
+    "difficulty_tags": [
+      "arithmetic",
+      "strict_format",
+      "similar_steps"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "starts_with",
+        "value": "| Ingredient | Original | Scaled |",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*feta cheese\\s*\\|\\s*450\\s*g\\s*\\|\\s*1500\\.0\\s*g\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*cucumber\\s*\\|\\s*1200\\s*g\\s*\\|\\s*4\\.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*olive oil\\s*\\|\\s*15\\s*ml\\s*\\|\\s*50\\.0\\s*ml\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*salt\\s*\\|\\s*0\\.5\\s*tsp\\s*\\|\\s*1\\.7\\s*tsp\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "not_contains",
+        "value": "olives",
+        "label": "hallucinated_step"
+      },
+      {
+        "id": "c7",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*3\\.33?\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t08",
+    "generated": true
+  },
+  {
+    "task_id": "t08-v2",
+    "title": "Recipe scaler: Scale 5 to 2 servings, strict order and decimal precision",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Basic Sauce, serves 5: 250 ml milk, 50 g butter, 5 g flour, 2 g nutmeg. Scale to serve 2.",
+    "difficulty_tags": [
+      "arithmetic",
+      "step_order",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*milk\\s*\\|\\s*250\\s*ml\\s*\\|\\s*100\\.0\\s*ml\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*butter\\s*\\|\\s*50\\s*g\\s*\\|\\s*20\\.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*flour\\s*\\|\\s*5\\s*g\\s*\\|\\s*2\\.0\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*nutmeg\\s*\\|\\s*2\\s*g\\s*\\|\\s*0\\.8\\s*g\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "order",
+        "value": [
+          "milk",
+          "butter",
+          "flour",
+          "nutmeg"
+        ],
+        "label": "wrong_format"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*0\\.4\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t08",
+    "generated": true
+  },
+  {
+    "task_id": "t08-v3",
+    "title": "Recipe scaler: Large scale up with heavy unit conversion focus",
+    "skill_file": "skills/recipe-scaler/SKILL.md",
+    "input": "Giant Stew, serves 2: 1500 g beef, 500 g potatoes, 100 g onions, 10 ml soy sauce. Scale up to 20 servings.",
+    "difficulty_tags": [
+      "arithmetic",
+      "strict_format",
+      "hard_limits"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*beef\\s*\\|\\s*1500\\s*g\\s*\\|\\s*15\\.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*potatoes\\s*\\|\\s*500\\s*g\\s*\\|\\s*5\\.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*onions\\s*\\|\\s*100\\s*g\\s*\\|\\s*1\\.0\\s*kg\\s*\\|\\s*$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "(?im)^\\|\\s*soy sauce\\s*\\|\\s*10\\s*ml\\s*\\|\\s*100\\.0\\s*ml\\s*\\|\\s*$",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "(?m)^Scale factor:\\s*10(\\.0)?\\s*\\Z",
+        "label": "ignored_constraint"
+      }
+    ],
+    "source_task_id": "t08",
+    "generated": true
+  },
+  {
+    "task_id": "t09-v1",
+    "title": "Release announcement: distraction and character constraints",
+    "skill_file": "skills/release-announcement/SKILL.md",
+    "input": "Product: AeroStream Pro. Release date: 03/05/2027. Features: whisper-quiet motor, 5-speed settings, and HEPA filtration. Note: The product was designed in Sweden. Do not mention the origin in the announcement. Write the announcement.",
+    "difficulty_tags": [
+      "hard_limits",
+      "long_instructions"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "headline",
+          "summary",
+          "bullets",
+          "closing",
+          "hashtags"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "not_contains",
+        "path": "summary",
+        "value": "Sweden",
+        "label": "hallucinated_step"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "headline",
+        "value": 8,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "closing",
+        "value": "^Available.*03/05/2027",
+        "label": "wrong_format"
+      }
+    ],
+    "source_task_id": "t09",
+    "generated": true
+  },
+  {
+    "task_id": "t09-v2",
+    "title": "Release announcement: strict length and negative constraints",
+    "skill_file": "skills/release-announcement/SKILL.md",
+    "input": "Product: ZenMat. Release date: 12 January 2025. Features: memory foam core, non-slip texture, and washable cover. Write the announcement.",
+    "difficulty_tags": [
+      "hard_limits",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "max_words",
+        "path": "summary",
+        "value": 15,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c3",
+        "type": "not_contains",
+        "path": "summary",
+        "value": "revolutionary",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "bullets.0",
+        "value": 5,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "hashtags",
+        "value": "^#[a-z]+ #[a-z]+$",
+        "label": "wrong_format"
+      }
+    ],
+    "source_task_id": "t09",
+    "generated": true
+  },
+  {
+    "task_id": "t09-v3",
+    "title": "Release announcement: similar steps and specific date format",
+    "skill_file": "skills/release-announcement/SKILL.md",
+    "input": "Product: TitanWatch. Release date: 2028-09-30. Features: sapphire glass, 100m water resistance, and solar charging. Write the announcement.",
+    "difficulty_tags": [
+      "similar_steps",
+      "hard_limits"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "starts_with",
+        "path": "headline",
+        "value": "Meet the",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "path": "closing",
+        "value": "Available.*30/09/2028",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "summary",
+        "value": 25,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "order",
+        "path": "bullets",
+        "value": [
+          "sapphire",
+          "water",
+          "solar"
+        ],
+        "label": "lost_track"
+      }
+    ],
+    "source_task_id": "t09",
+    "generated": true
+  },
+  {
+    "task_id": "t10-v1",
+    "title": "Release announcement: complex constraints and word exclusions",
+    "skill_file": "skills/release-announcement/SKILL.md",
+    "input": "Product: AeroStream Pro. Release date: 14 January 2027. Features: real-time wind analysis, automatic route optimization, and low-latency data streaming. Note: The product is part of the AeroSeries, but do not mention the series. Audience: pilots.",
+    "difficulty_tags": [
+      "hard_limits",
+      "strict_format"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "headline",
+          "summary",
+          "bullets",
+          "closing",
+          "hashtags"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "not_contains",
+        "value": "AeroSeries",
+        "label": "hallucinated_step"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "headline",
+        "value": 8,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "closing",
+        "value": "^Available.*14/01/2027$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "hashtags",
+        "value": "^#[a-z]+ #[a-z]+$",
+        "label": "wrong_format"
+      }
+    ],
+    "source_task_id": "t10",
+    "generated": true
+  },
+  {
+    "task_id": "t10-v2",
+    "title": "Release announcement: similar steps and strict length",
+    "skill_file": "skills/release-announcement/SKILL.md",
+    "input": "Product: ZenFocus Timer. Release date: 5 May 2025. Features: biometric tracking, haptic feedback, and ambient soundscapes. Target: professionals. (Note: Avoid the word 'advanced' or 'smart' anywhere in the text).",
+    "difficulty_tags": [
+      "similar_steps",
+      "hard_limits"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "not_contains",
+        "value": "advanced",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c3",
+        "type": "not_contains",
+        "value": "smart",
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "summary",
+        "value": 25,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "max_words",
+        "path": "bullets.0",
+        "value": 10,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "closing",
+        "value": "05/05/2025",
+        "label": "wrong_format"
+      }
+    ],
+    "source_task_id": "t10",
+    "generated": true
+  },
+  {
+    "task_id": "t10-v3",
+    "title": "Release announcement: distraction and specific formatting",
+    "skill_file": "skills/release-announcement/SKILL.md",
+    "input": "Product: TitanVault. Release date: 22 November 2028. Features: biometric encryption, instant cloud backup, and hardware-level protection. A separate product, TitanKey, is launching next year. Audience: cybersecurity experts.",
+    "difficulty_tags": [
+      "long_instructions",
+      "hard_limits"
+    ],
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "not_contains",
+        "value": "TitanKey",
+        "label": "hallucinated_step"
+      },
+      {
+        "id": "c3",
+        "type": "starts_with",
+        "path": "headline",
+        "value": "Meet the",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c4",
+        "type": "max_words",
+        "path": "bullets.2",
+        "value": 10,
+        "label": "ignored_constraint"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "path": "closing",
+        "value": "^Available.*22/11/2028$",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "path": "hashtags",
+        "value": "^#[a-z0-9]+ #[a-z0-9]+$",
+        "label": "wrong_format"
+      }
+    ],
+    "source_task_id": "t10",
+    "generated": true
+  }
+]

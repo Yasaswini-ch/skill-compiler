@@ -1,0 +1,101 @@
+{
+  "run_id": "r-1c7cba44",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Spicy Soup, serves 2: 150 ml broth, 10 g chili, 800 g potato, 200 g onion. Scale it to serve 5.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract serving numbers",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "{\"original_servings\": 2, \"target_servings\": 5}",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 5722
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Compute scale factor",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "2.5",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 10581
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract ingredients",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "[\n  {\"original_ingredient\": \"broth\", \"original_quantity\": \"150\", \"original_unit\": \"ml\"},\n  {\"original_ingredient\": \"chili\", \"original_quantity\": \"10\", \"original_unit\": \"g\"},\n  {\"original_ingredient\": \"potato\", \"original_quantity\": \"800\", \"original_unit\": \"g\"},\n  {\"original_ingredient\": \"onion\", \"original_quantity\": \"200\", \"original_unit\": \"g\"}\n]",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 5026
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Scale quantities",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "[\n  {\"original_ingredient\": \"broth\", \"scaled_quantity\": \"375\", \"original_unit\": \"ml\"},\n  {\"original_ingredient\": \"chili\", \"scaled_quantity\": \"25\", \"original_unit\": \"g\"},\n  {\"original_ingredient\": \"potato\", \"scaled_quantity\": \"2000\", \"original_unit\": \"g\"},\n  {\"original_ingredient\": \"onion\", \"scaled_quantity\": \"500\", \"original_unit\": \"g\"}\n]",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 10484
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Format quantities",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 375.0 ml\n- 25.0 g\n- 2.0 kg\n- 500.0 g",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2984
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Generate final output",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| broth | 150 ml | 375.0 ml |\n| chili | 10 g | 25.0 g |\n| potato | 800 g | 2.0 kg |\n| onion | 200 g | 500.0 g |\n\nScale factor: 2.5",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4512
+        }
+      ]
+    }
+  ],
+  "final_output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| broth | 150 ml | 375.0 ml |\n| chili | 10 g | 25.0 g |\n| potato | 800 g | 2.0 kg |\n| onion | 200 g | 500.0 g |\n\nScale factor: 2.5",
+  "totals": {
+    "llm_calls": 13,
+    "latency_ms": 68564,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

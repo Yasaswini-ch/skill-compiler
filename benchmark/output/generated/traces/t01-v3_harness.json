@@ -1,0 +1,129 @@
+{
+  "run_id": "r-ec921c93",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "After moving to v1.1.1 on macOS 14, the payment button is greyed out. Our account managers cannot process any invoices, which is stopping our revenue flow.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Summarize the bug",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "The payment button is greyed out on macOS 14 after updating to v1.1.1.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output is a single sentence of 13 words describing the broken functionality.",
+          "latency_ms": 3296
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize user impact",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Account managers cannot process invoices, preventing revenue flow on macOS 14.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 50444
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract app version",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "v1.1.1",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2811
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract operating system",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "macOS 14",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output correctly extracts both the name and the version number as requested.",
+          "latency_ms": 52760
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Classify severity",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "critical",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 6673
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Classify component",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "payments",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2310
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Suggest a fix",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Update the software to version 1.1.2 to resolve this issue.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2872
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"bug\": \"Payment button is greyed out on macOS 14 after updating to v1.1.1.\",\n  \"impact\": \"Account managers cannot process invoices, which prevents revenue flow.\",\n  \"version\": \"v1.1.1\",\n  \"os\": \"macOS 14\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Update the software to version 1.1.2 to resolve this issue.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 62091
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"bug\": \"Payment button is greyed out on macOS 14 after updating to v1.1.1.\",\n  \"impact\": \"Account managers cannot process invoices, which prevents revenue flow.\",\n  \"version\": \"v1.1.1\",\n  \"os\": \"macOS 14\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Update the software to version 1.1.2 to resolve this issue.\"\n}\n```",
+  "totals": {
+    "llm_calls": 18,
+    "latency_ms": 204481,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

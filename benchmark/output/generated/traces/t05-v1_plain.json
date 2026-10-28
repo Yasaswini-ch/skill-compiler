@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-003",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "invoice-summary",
+  "input": "Supplier: Global Tech Ltd. Invoice #8821-A. Items: 3 x Mechanical Keyboards at 125.55 each, 5 x Mousepads at 12.99 each. Note: Shipping fee of 15.00 is excluded from subtotal calculations.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"vendor\": \"Global Tech Ltd.\",\n  \"invoice\": \"INV-8821\",\n  \"subtotal\": \"441.50\",\n  \"discount\": \"44.15\",\n  \"tax\": \"31.83\",\n  \"total\": \"429.18\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3440,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

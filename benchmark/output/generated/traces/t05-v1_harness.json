@@ -1,0 +1,143 @@
+{
+  "run_id": "r-80dbbed2",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "invoice-summary",
+  "input": "Supplier: Global Tech Ltd. Invoice #8821-A. Items: 3 x Mechanical Keyboards at 125.55 each, 5 x Mousepads at 12.99 each. Note: Shipping fee of 15.00 is excluded from subtotal calculations.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract vendor name",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Global Tech Ltd.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2620
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Extract invoice number",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "INV-8821",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 50478
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "List line items",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 3 x Mechanical Keyboards at 125.55 each\n- 5 x Mousepads at 12.99 each",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "verifier unavailable, accepted (LLM call failed after 3 tries: 500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}})",
+          "latency_ms": 28160
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Compute line totals",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 376.65\n- 64.95",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 47337
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Compute subtotal",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "441.60",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 66806
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Compute discount",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "44.16",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4927
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Compute tax",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "31.80",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "(441.60 - 44.16) * 0.08 = 31.80. The calculation is correct.",
+          "latency_ms": 3337
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Compute total",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "429.24",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2406
+        }
+      ]
+    },
+    {
+      "step_id": 9,
+      "title": "Format final JSON output",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"vendor\": \"Global Tech Ltd.\",\n  \"invoice\": \"INV-8821\",\n  \"subtotal\": \"441.60\",\n  \"discount\": \"44.16\",\n  \"tax\": \"31.80\",\n  \"total\": \"429.24\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 8446
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"vendor\": \"Global Tech Ltd.\",\n  \"invoice\": \"INV-8821\",\n  \"subtotal\": \"441.60\",\n  \"discount\": \"44.16\",\n  \"tax\": \"31.80\",\n  \"total\": \"429.24\"\n}\n```",
+  "totals": {
+    "llm_calls": 18,
+    "latency_ms": 218626,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

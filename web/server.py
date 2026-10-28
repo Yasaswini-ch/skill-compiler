@@ -60,6 +60,10 @@ import arena  # noqa: E402  (needs the sys.path entries above)
 arena.configure_provider()      # ARENA_PROVIDER=local points the harness at a local model
 app.register_blueprint(arena.bp)
 
+import doctor  # noqa: E402
+
+app.register_blueprint(doctor.bp)
+
 # Never serve attendee text or server code through the static route below.
 PRIVATE_NAMES = ("arena_log.jsonl",)
 PRIVATE_PREFIXES = ("arena_traces/",)

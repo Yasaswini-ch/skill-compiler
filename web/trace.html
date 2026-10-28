@@ -11,6 +11,7 @@
 <script src="mock/mock.js"></script>
 <script src="data/data.js"></script>
 <script src="common.js"></script>
+<script src="report.js"></script>
 </head>
 <body>
 <main>
@@ -33,6 +34,9 @@ function show(trace, note) {
   if (!trace || typeof trace !== "object" || !("steps" in trace)) { msg.textContent = "That does not look like a trace.json (no steps field)."; return; }
   mockBanner(trace.mock === true, "MOCK TRACE - produced by a stand-in, not the real harness");
   out.replaceChildren(el("p", { class: "hint" }, note || ""));
+  const dl = el("button", { type: "button", class: "ghost" }, "Download report (one HTML file)");
+  dl.addEventListener("click", () => ProofReport.download(trace));
+  out.append(el("p", {}, dl));
   const box = el("div"); out.append(box);
   renderTrace(trace, box, { replay: true });
 }

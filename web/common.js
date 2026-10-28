@@ -28,7 +28,7 @@ async function loadJSON(name) {
 }
 
 function nav(current) {
-  const pages = [["index.html", "Score"], ["museum.html", "Fail Museum"], ["trace.html", "Trace viewer"], ["xray.html", "X-ray"], ["arena.html", "Arena"], ["lint.html", "Linter"], ["live.html", "Live"]];
+  const pages = [["index.html", "Score"], ["museum.html", "Fail Museum"], ["trace.html", "Trace viewer"], ["xray.html", "X-ray"], ["arena.html", "Arena"], ["lint.html", "Linter"], ["doctor.html", "Doctor"], ["live.html", "Live"]];
   const h = el("header", { class: "top" }, el("span", { class: "brand" }, el("span", { class: "brand-mark", "aria-hidden": "true" }), "Skill Compiler", el("em", {}, "+ Gemma Fail Museum")));
   for (const [href, label] of pages) h.append(el("a", { href, ...(href === current ? { "aria-current": "page" } : {}) }, label));
   h.append(el("a", { href: REPO_URL }, "GitHub"));

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06080c">
+<title>Skill Compiler · Skill Doctor</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🩺</text></svg>">
+<link rel="stylesheet" href="style.css">
+<script src="mock/mock.js"></script>
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<style>
+  .dr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.2em; }
+  @media (max-width: 900px) { .dr-grid { grid-template-columns: 1fr; } }
+  .dr-box { border: 1px solid var(--line-2); border-radius: var(--r); background: var(--surface); padding: 1em 1.2em; margin-bottom: 1em; }
+  .dr-box h2 { margin: 0 0 .5em; font-size: 1.05em; }
+  textarea { width: 100%; font: 14px/1.5 var(--mono); background: var(--code-bg); color: var(--ink); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: .6em .8em; }
+  input[type="text"], input[type="number"] { font: inherit; padding: .35em .6em; background: var(--code-bg); color: var(--ink); border: 1px solid var(--line-2); border-radius: var(--r-sm); }
+  .dr-row { display: flex; flex-wrap: wrap; gap: .8em; align-items: center; margin: .5em 0; }
+  .dr-score { font: 800 54px/1 var(--mono); }
+  .dr-score[data-level="low"] { color: var(--pass); } .dr-score[data-level="medium"] { color: var(--rep); } .dr-score[data-level="high"] { color: var(--fail); }
+  .dr-find { margin: .3em 0; padding-left: .8em; border-left: 4px solid var(--rep); }
+  .dr-unv { display: inline-block; font: 700 12px var(--mono); text-transform: uppercase; color: var(--rep); border: 1.5px solid var(--rep); border-radius: var(--r-pill); padding: .1em .7em; }
+  .dr-diff { font: 13px/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; background: var(--code-bg); border-radius: var(--r-sm); padding: .6em .8em; max-height: 22em; overflow: auto; }
+  .dr-diff .add { background: var(--pass-soft); color: var(--pass); display: block; } .dr-diff .del { background: var(--fail-soft); color: var(--fail); display: block; } .dr-diff .same { display: block; color: var(--muted); }
+  .dr-steps li { margin: .4em 0; } .dr-steps small { color: var(--muted); font-family: var(--mono); }
+  .dr-res { border-left: 5px solid var(--line-2); padding-left: .8em; margin: .6em 0; }
+  .dr-res[data-pass="true"] { border-color: var(--pass); } .dr-res[data-pass="false"] { border-color: var(--fail); }
+  .dr-res pre { margin: .3em 0; font: 13px/1.45 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 12em; overflow: auto; }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Skill Doctor</p>
+  <h1>Will a small model follow this skill?</h1>
+  <p class="sub">Paste a SKILL.md. The lint score is a free risk estimate (no model). Everything else says <span class="dr-unv">unverified</span> unless you add checks and try it.</p>
+  <p id="msg" class="err" role="alert"></p>
+
+  <section class="dr-box">
+    <h2>1. Your skill</h2>
+    <textarea id="skill" rows="12" spellcheck="false" placeholder="---&#10;name: my-skill&#10;description: What it does&#10;---&#10;1. First step.&#10;2. Second step.&#10;3. Output JSON with keys a, b."></textarea>
+    <div class="dr-row">
+      <button id="analyze" type="button">Analyze (free)</button>
+      <button id="steps" type="button" class="ghost" disabled>Show the steps (1 to 2 model calls)</button>
+      <button id="rewrite" type="button" class="ghost" disabled>Suggest a rewrite (1 model call)</button>
+      <select id="example" aria-label="Example"><option value="">Load an example…</option></select>
+    </div>
+  </section>
+
+  <div class="dr-grid">
+    <section class="dr-box" id="lintBox" hidden></section>
+    <section class="dr-box" id="stepsBox" hidden></section>
+  </div>
+  <section class="dr-box" id="rewriteBox" hidden></section>
+
+  <section class="dr-box">
+    <h2>2. Try it with your own checks <span class="dr-unv">optional</span></h2>
+    <p class="hint">Add at least one simple check and an example input. Plain Gemma and the harness each run once and are scored only by your checks (about 15 model calls, up to two minutes). One run each is not a pass rate.</p>
+    <label for="input">Example input <span class="hint" id="inputCount"></span></label>
+    <textarea id="input" rows="4" spellcheck="false"></textarea>
+    <div class="dr-row">
+      <label>At most <input type="number" id="cMax" min="1" max="2000" style="width:6em"> words</label>
+      <label>Starts with <input type="text" id="cStart" style="width:12em"></label>
+      <label>Contains <input type="text" id="cHas" style="width:12em"></label>
+      <label>JSON keys <input type="text" id="cKeys" placeholder="a, b" style="width:12em"></label>
+    </div>
+    <div class="dr-row"><button id="try" type="button" disabled>Try plain vs harness</button></div>
+    <div id="tryBox"></div>
+  </section>
+</main>
+<script>
+nav("doctor.html");
+const $ = id => document.getElementById(id), MAX_INPUT = 1500;
+const post = async (url, body) => {
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || `The server answered ${r.status}.`);
+  return data;
+};
+const busy = async (btn, work) => {
+  const label = btn.textContent; btn.disabled = true; btn.textContent = "Working…"; $("msg").textContent = "";
+  try { await work(); } catch (e) { $("msg").textContent = /Failed to fetch|NetworkError/.test(e.message) ? "The server is not running. Start it with: python web/server.py" : e.message; }
+  btn.textContent = label; btn.disabled = false; gate();
+};
+const skill = () => $("skill").value;
+function gate() {
+  const has = skill().trim().length > 0;
+  $("steps").disabled = !has; $("rewrite").disabled = !has;
+  const checks = !!($("cMax").value || $("cStart").value.trim() || $("cHas").value.trim() || $("cKeys").value.trim());
+  $("try").disabled = !(has && checks && $("input").value.trim() && $("input").value.length <= MAX_INPUT);
+  $("inputCount").textContent = `${$("input").value.length} / ${MAX_INPUT}`;
+}
+
+function lintView(report, title) {
+  const box = el("div", {}, el("h2", {}, title), el("div", { class: "dr-score", "data-level": report.level }, String(report.score)),
+    el("p", { class: "hint" }, `${report.level} risk for small models · ${report.steps} steps · a risk estimate, not a measured pass rate`));
+  for (const f of report.findings) box.append(el("div", { class: "dr-find" }, el("b", {}, f.rule), ` ${f.step ? "step " + f.step + ": " : ""}${f.message}`));
+  if (!report.findings.length) box.append(el("p", {}, "No findings."));
+  return box;
+}
+
+$("analyze").addEventListener("click", () => busy($("analyze"), async () => {
+  const report = await post("lint", { skill_text: skill() });
+  const box = $("lintBox"); box.hidden = false; box.replaceChildren(lintView(report, "Lint report"));
+  gate();
+}));
+
+$("steps").addEventListener("click", () => busy($("steps"), async () => {
+  const plan = await post("doctor/compile", { skill_text: skill() });
+  const ol = el("ol", { class: "dr-steps" });
+  for (const s of plan.steps) ol.append(el("li", {}, el("b", {}, s.title), el("br"), s.instruction, " ", el("small", {}, `[${s.output_format}]`)));
+  const box = $("stepsBox"); box.hidden = false;
+  box.replaceChildren(el("h2", {}, "Steps the harness would run ", el("span", { class: "dr-unv" }, "unverified")), ol, el("p", { class: "hint" }, plan.note),
+    ...(plan.warnings.length ? [el("p", { class: "err" }, "Plan warning: " + plan.warnings.join(" "))] : []));
+}));
+
+/* a small line diff (longest common subsequence) */
+function diffLines(a, b) {
+  const x = a.split("\n"), y = b.split("\n"), dp = Array.from({ length: x.length + 1 }, () => new Array(y.length + 1).fill(0));
+  for (let i = x.length - 1; i >= 0; i--) for (let j = y.length - 1; j >= 0; j--) dp[i][j] = x[i] === y[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const out = []; let i = 0, j = 0;
+  while (i < x.length && j < y.length) {
+    if (x[i] === y[j]) { out.push(["same", x[i]]); i++; j++; } else if (dp[i + 1][j] >= dp[i][j + 1]) out.push(["del", x[i++]]); else out.push(["add", y[j++]]);
+  }
+  while (i < x.length) out.push(["del", x[i++]]); while (j < y.length) out.push(["add", y[j++]]);
+  return out;
+}
+
+$("rewrite").addEventListener("click", () => busy($("rewrite"), async () => {
+  const r = await post("doctor/rewrite", { skill_text: skill() });
+  const diff = el("div", { class: "dr-diff" });
+  for (const [kind, text] of diffLines(skill().replace(/\s+$/, ""), r.rewritten.replace(/\s+$/, ""))) diff.append(el("span", { class: kind }, (kind === "add" ? "+ " : kind === "del" ? "- " : "  ") + text));
+  const use = el("button", { type: "button", class: "ghost" }, "Use the rewrite");
+  use.addEventListener("click", () => { $("skill").value = r.rewritten; gate(); });
+  const box = $("rewriteBox"); box.hidden = false;
+  box.replaceChildren(el("h2", {}, "Suggested rewrite ", el("span", { class: "dr-unv" }, "unverified")),
+    el("div", { class: "dr-grid" }, lintView(r.lint_before, "Lint before"), lintView(r.lint_after, "Lint after")),
+    el("p", { class: r.lost.length ? "err" : "hint" }, r.note), diff, el("p", {}, use));
+}));
+
+$("try").addEventListener("click", () => busy($("try"), async () => {
+  $("tryBox").replaceChildren(el("p", { class: "hint" }, "Running plain and harness once each… this can take a minute or two."));
+  const r = await post("doctor/try", { skill_text: skill(), input: $("input").value,
+    checks: { max_words: $("cMax").value, starts_with: $("cStart").value, contains: $("cHas").value, json_keys: $("cKeys").value } });
+  const side = (name, s, extra) => el("div", { class: "dr-res", "data-pass": String(s.passed) }, el("b", {}, `${name}: ${s.passed ? "passed all your checks" : "broke a check"}`), extra || "",
+    el("pre", {}, s.output || "(no output)"), ...s.failed.map(f => el("div", { class: "err" }, `${f.check}${f.reason ? " — " + f.reason : ""}`)));
+  $("tryBox").replaceChildren(el("p", {}, "Your checks: " + r.checks.join("; ")), side("Plain Gemma", r.plain), side("With the harness", r.harness, ` (${r.harness.model_calls} model calls)`), el("p", { class: "hint" }, r.note));
+}));
+
+fetch("presets").then(r => r.json()).then(list => {
+  for (const p of list) $("example").append(el("option", { value: p.name }, p.name));
+  $("example").addEventListener("change", e => { const p = list.find(x => x.name === e.target.value); if (p) { $("skill").value = p.skill_text; $("input").value = p.input; gate(); } });
+}).catch(() => { /* examples are optional */ });
+for (const id of ["skill", "input", "cMax", "cStart", "cHas", "cKeys"]) $(id).addEventListener("input", gate);
+gate();
+</script>
+</body>
+</html>

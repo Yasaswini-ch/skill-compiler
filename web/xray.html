@@ -14,6 +14,7 @@
 <script src="common.js"></script>
 <script src="xray-core.js"></script>
 <script src="xray.js"></script>
+<script src="report.js"></script>
 </head>
 <body>
 <main>
@@ -35,6 +36,7 @@
       <select id="speed" aria-label="Replay speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
     </label>
     <label>Or load a file <input type="file" id="file" accept=".ndjson,.json,.jsonl,application/json"></label>
+    <button id="report" type="button" class="ghost" title="Needs a finished run">Download report</button>
   </div>
   <p id="msg" class="err" role="alert"></p>
   <div id="banner"></div>
@@ -83,6 +85,11 @@ pauseBtn.addEventListener("click", () => {
   if (pauseBtn.textContent === "Pause") { xray.pause(); pauseBtn.textContent = "Resume"; } else { xray.resume(); pauseBtn.textContent = "Pause"; }
 });
 speedSel.addEventListener("change", () => xray.setSpeed(Number(speedSel.value)));
+document.getElementById("report").addEventListener("click", () => {
+  const trace = xray.state.trace;
+  if (!trace) { msg.textContent = "The report needs a finished run: wait for it to end (or press Replay and let it finish)."; return; }
+  msg.textContent = ""; ProofReport.download(trace);
+});
 sampleSel.addEventListener("change", () => loadSample(sampleSel.value));
 document.getElementById("file").addEventListener("change", e => {
   const f = e.target.files[0]; if (!f) return;

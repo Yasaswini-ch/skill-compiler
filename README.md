@@ -75,6 +75,18 @@ What changed: the harness fixed three tasks plain failed (running arithmetic acr
 
 These numbers come from `benchmark/output/results.json` and nowhere else. Anything shown with a red MOCK DATA banner is an example of the format, not a result.
 
+### Harness settings
+
+The numbers above use the defaults. Everything below is opt-in and changes behaviour only when you set it (details in [docs/HARNESS.md](docs/HARNESS.md)).
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `SKILLCOMPILER_MODE` | `full` | `adaptive` skips the verifier on steps that look safe; `auto` can run a plain route for low-risk skills. Not part of the official results. |
+| `SKILLCOMPILER_VERIFY` | on | Model verifier on each step. |
+| `SKILLCOMPILER_COPY_RULE` | `0` | `1` adds a rule that copies a plain answer through unchanged. Mixed results; off by default. |
+| `GEMMA_RPM` | `25` | Requests per minute the client allows itself. |
+| `GEMMA_TIMEOUT` | `240` | Seconds before a model call is given up. |
+
 ## Failure labels
 
 | Label | Meaning |
@@ -93,6 +105,9 @@ These numbers come from `benchmark/output/results.json` and nowhere else. Anythi
 - **Score page**: `web/index.html`, plain vs harness.
 - **Trace viewer**: `web/trace.html`, see a retry step by step.
 - **Skill linter**: `tools/lint_skill.py`, tells you which skills are risky for small models (rules L01 to L09: too many steps, long step, similar steps, no output format, vague words, several actions in one step, nested condition, unnumbered steps, no steps found).
+- **X-ray**: `web/xray.html`, watch a run step by step (live from the server, or a REPLAY of a recording). **Download report** saves one self-contained HTML proof file for any trace.
+- **Break Gemma Arena**: `web/arena.html`, try to make plain Gemma fail while the harness runs beside it. Tested challenges are scored; free play is marked UNVERIFIED and never counted. Operator notes and privacy rules: [docs/ARENA_OPERATOR.md](docs/ARENA_OPERATOR.md).
+- **Skill Doctor**: `web/doctor.html`, paste a skill to get the free lint score, the steps the harness would make, and a suggested rewrite (it lists numbers or quoted phrases the rewrite dropped). Add your own simple checks to try plain vs harness once each.
 - **Live mode**: `web/live.html`, run plain and harness side by side.
 - **Dataset**: [`benchmark/dataset/`](benchmark/dataset/) and its card [`DATASET_CARD.md`](benchmark/DATASET_CARD.md).
 - **Harness details**: [docs/HARNESS.md](docs/HARNESS.md).

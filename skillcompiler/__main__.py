@@ -50,6 +50,9 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--trace", help="write the trace here (default: not saved)")
     run.add_argument("--model", help="model name (default: GEMMA_MODEL from .env)")
     run.add_argument("--max-retries", type=int, default=2, help="retries per step (default 2)")
+    run.add_argument("--mode", choices=("full", "adaptive"), default=None,
+                     help="full: model verifier on every step (default); adaptive: verifier only on risky "
+                          "steps. Env SKILLCOMPILER_MODE sets the default; this flag wins.")
     run.add_argument("--no-verify", action="store_true",
                      help="format check only, skip the model verification call")
     return parser
@@ -85,7 +88,8 @@ def _cmd_run(args: argparse.Namespace) -> int:
                   if args.input_file else args.input)
     plan = load_plan(args.plan) if args.plan else None
     trace = run_skill(skill_text, user_input.strip(), args.model,
-                      max_retries=args.max_retries, verify=False if args.no_verify else None, plan=plan)
+                      max_retries=args.max_retries, verify=False if args.no_verify else None, plan=plan,
+                      mode=args.mode)
     for step in trace["steps"]:
         print(f"step {step['step_id']} {step['status']:<8} "
               f"({len(step['attempts'])} attempt) {step['title']}", file=sys.stderr)

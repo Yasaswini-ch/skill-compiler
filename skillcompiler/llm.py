@@ -15,6 +15,10 @@ load_dotenv()
 _client = None
 
 
+class ConfigError(RuntimeError):
+    """A setting is missing (no API key). Retrying cannot fix it, so call_llm raises at once."""
+
+
 class Stats:
     """Counters the runner reads to fill trace.json totals.
 
@@ -58,8 +62,16 @@ def _get_client():
     global _client
     if _client is None:
         from google import genai
+        from google.genai import types
 
-        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        # Without a limit a stalled connection can wait forever (a benchmark run once hung on
+        # one call with no error). GEMMA_TIMEOUT is in seconds; the slowest call seen with
+        # default thinking took about 160 s, hence 240.
+        timeout_ms = int(float(os.environ.get("GEMMA_TIMEOUT", "240")) * 1000)
+        if not os.environ.get("GEMINI_API_KEY"):
+            raise ConfigError("GEMINI_API_KEY is not set: copy .env.example to .env and add your key")
+        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"],
+                               http_options=types.HttpOptions(timeout=timeout_ms))
     return _client
 
 
@@ -151,6 +163,8 @@ def call_llm(prompt: str, model: str | None = None, retries: int = 3) -> str:
         start = time.time()
         try:
             text = _generate(prompt, model)
+        except ConfigError:
+            raise
         except Exception as exc:  # SDK raises several error types
             last_error = exc
             stats.errors += 1

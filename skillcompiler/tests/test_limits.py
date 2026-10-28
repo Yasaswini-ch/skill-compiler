@@ -93,8 +93,9 @@ def test_changed_answer_is_still_rejected(monkeypatch):
     assert t["steps"][0]["status"] == "fail" and len(t["steps"][0]["attempts"]) == 3
 
 
-def test_answer_returned_to_after_a_change_is_accepted(monkeypatch):
-    """travel -> other -> travel: the verifier flip-flopped, the model is consistent."""
+def test_flip_flop_is_not_overruled_it_stays_a_failure(monkeypatch):
+    """travel -> other -> travel: the model dropped an answer and came back to it. The verifier's
+    objections stand (benchmark t04: it was right), so the step fails instead of 'repairing'."""
     answers = iter(["travel", "other", "travel"])
 
     def fake(prompt, model):
@@ -102,8 +103,8 @@ def test_answer_returned_to_after_a_change_is_accepted(monkeypatch):
 
     monkeypatch.setattr(llm, "_generate", fake)
     t = run_skill("", "x", plan=STEP_PLAN, model="m")
-    assert t["steps"][0]["status"] == "repaired" and len(t["steps"][0]["attempts"]) == 3
-    assert t["final_output"] == "travel"
+    assert t["steps"][0]["status"] == "fail" and len(t["steps"][0]["attempts"]) == 3
+    assert not any("overruled" in a["checker_note"] for a in t["steps"][0]["attempts"])
 
 
 def test_verifier_switch_by_environment(monkeypatch):
@@ -121,3 +122,46 @@ def test_verifier_switch_by_environment(monkeypatch):
     assert run_skill("", "x", plan=STEP_PLAN, model="m")["totals"]["llm_calls"] == 2
     monkeypatch.setenv("SKILLCOMPILER_VERIFY", "0")
     assert run_skill("", "x", plan=STEP_PLAN, model="m", verify=True)["totals"]["llm_calls"] == 2
+
+
+JSON_STEP = {"id": 8, "title": "Format", "instruction": "Output JSON.", "output_format": "json",
+             "expected_output": "", "depends_on": [5]}
+EARLIER = "\nResults of earlier steps:\nStep 5 (Check): no\n"
+
+
+def test_json_assembly_step_is_told_to_copy_results_verbatim_when_enabled(monkeypatch):
+    from skillcompiler.runner import COPY_RULE, build_prompt
+    monkeypatch.setenv("SKILLCOMPILER_COPY_RULE", "1")
+    prompt = build_prompt(JSON_STEP, "input", EARLIER)
+    assert COPY_RULE in prompt and "not true or false" in prompt
+    # ... and only there: no earlier results, or not a JSON step, leaves the prompt as it was
+    assert COPY_RULE not in build_prompt({**JSON_STEP, "depends_on": []}, "input", "")
+    assert COPY_RULE not in build_prompt({**JSON_STEP, "output_format": "text"}, "input", EARLIER)
+
+
+def test_copy_rule_is_off_by_default(monkeypatch):
+    from skillcompiler.runner import COPY_RULE, build_prompt
+    monkeypatch.delenv("SKILLCOMPILER_COPY_RULE", raising=False)
+    assert COPY_RULE not in build_prompt(JSON_STEP, "input", EARLIER)
+
+
+@pytest.mark.parametrize("env,expected_ms", [(None, 240000), ("7", 7000), ("0.5", 500)])
+def test_client_gets_a_request_timeout(monkeypatch, env, expected_ms):
+    import google.genai as genai
+
+    seen = {}
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            seen.update(kwargs)
+
+    monkeypatch.setattr(genai, "Client", FakeClient)
+    monkeypatch.setattr(llm, "_client", None)
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    if env is None:
+        monkeypatch.delenv("GEMMA_TIMEOUT", raising=False)
+    else:
+        monkeypatch.setenv("GEMMA_TIMEOUT", env)
+    llm._get_client()
+    assert seen["http_options"].timeout == expected_ms
+    monkeypatch.setattr(llm, "_client", None)  # do not leak the fake client

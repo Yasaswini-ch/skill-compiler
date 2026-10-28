@@ -50,7 +50,7 @@ def test_run_start_says_whether_it_will_split(monkeypatch):
     fake_api(monkeypatch, ["billing"])
     seen = []
     run_skill("", "in", plan=PLAN, model="m", on_event=seen.append)
-    assert seen[0] == {"type": "run_start", "will_split": False}
+    assert seen[0] == {"type": "run_start", "will_split": False, "mode": "full"}
 
 
 def test_a_broken_listener_does_not_break_the_run(monkeypatch):

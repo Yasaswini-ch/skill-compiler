@@ -26,13 +26,22 @@ from benchmark.scorer import score_output
 OUT_DIR = Path(__file__).with_name("output")
 OVERRIDES_FILE = Path(__file__).with_name("label_overrides.json")
 EXCERPT_CHARS = 300
-SETTINGS_KEYS = ("model", "gemma_thinking", "verifier", "cache_used", "harness_is_mock")
+SETTINGS_KEYS = ("model", "provider", "gemma_thinking", "verifier", "cache_used", "harness_is_mock")
+SETTINGS_DEFAULTS = {"provider": "gemini"}  # results.json files written before the provider option existed
 MODES = ("plain", "harness")
 
 
-def load_overrides(path: Path = OVERRIDES_FILE) -> dict:
-    """Hand-reviewed labels: {task_id: {"label", "reason", optional "mode"}}. Missing file = none."""
-    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+def load_overrides(path: Path | None = OVERRIDES_FILE) -> dict:
+    """Hand-reviewed labels: {task_id: {"label", "reason", optional "mode"}}. Missing file or None = none."""
+    return json.loads(path.read_text(encoding="utf-8")) if path and path.exists() else {}
+
+
+def overrides_path(args: argparse.Namespace) -> Path | None:
+    """The overrides file to use. The default file holds hand-reviewed labels for the official Gemini run, so it is
+    never applied to another provider's (for example a local model's) failures unless --overrides names a file."""
+    if args.overrides is not None:
+        return args.overrides
+    return OVERRIDES_FILE if args.provider == client.GEMINI else None
 
 
 def apply_override(task_id: str, mode: str, cell: dict, overrides: dict) -> dict:
@@ -143,6 +152,8 @@ def build_failures(task_results: list[dict]) -> list[dict]:
 def current_settings(args: argparse.Namespace) -> dict:
     return {
         "model": client.current_model(),
+        "provider": client.provider(),
+        "base_url": client.base_url() or None,
         "gemma_thinking": client.thinking_level(),
         "verifier": harness_adapter.verifier_setting(),
         "cache_used": bool(args.cache),
@@ -154,6 +165,8 @@ def write_outputs(out_dir: Path, settings: dict, task_results: list[dict], tasks
     out_dir.mkdir(parents=True, exist_ok=True)
     results = {
         "model": settings["model"],
+        "provider": settings["provider"],
+        "base_url": settings["base_url"],
         "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "tasks_sha256": tasks_hash or tasks_sha256(),
         "harness_is_mock": settings["harness_is_mock"],
@@ -175,7 +188,7 @@ def load_previous(out_dir: Path, settings: dict) -> list[dict]:
         return []
     old = json.loads(path.read_text(encoding="utf-8"))
     for key in SETTINGS_KEYS:
-        if old.get(key) != settings[key]:
+        if old.get(key, SETTINGS_DEFAULTS.get(key)) != settings[key]:
             raise SystemExit(f"error: --resume would mix settings: results.json has {key}={old.get(key)!r}, "
                              f"this run has {settings[key]!r}. Use a different --out-dir or delete {path}.")
     return [t for t in old["tasks"] if all(m in t for m in MODES)]
@@ -214,8 +227,13 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     ap.add_argument("--sleep", type=float, default=2.0, help="seconds between calls (default 2)")
     ap.add_argument("--out-dir", type=Path, default=OUT_DIR)
     ap.add_argument("--tasks", type=Path, help="tasks file (default benchmark/tasks.json)")
-    ap.add_argument("--overrides", type=Path, default=OVERRIDES_FILE,
-                    help="label overrides file (default benchmark/label_overrides.json; a separate file for generated tasks)")
+    ap.add_argument("--overrides", type=Path, default=None,
+                    help="label overrides file (default benchmark/label_overrides.json for Gemini, none for another provider; "
+                         "use a separate file for generated tasks)")
+    ap.add_argument("--provider", choices=[client.GEMINI, client.OPENAI_COMPATIBLE], default=client.GEMINI,
+                    help="model server for BOTH plain and harness (default gemini)")
+    ap.add_argument("--base-url", help="server URL for openai-compatible, e.g. http://localhost:11434/v1 (Ollama)")
+    ap.add_argument("--model", help="model name; overrides GEMMA_MODEL (for Ollama, the tag from `ollama list`)")
     ap.add_argument("--relabel", action="store_true",
                     help="only re-apply label_overrides.json to --out-dir/results.json (offline, no model calls)")
     return ap.parse_args(argv)
@@ -224,11 +242,23 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.relabel:
-        n = relabel(args.out_dir, load_overrides(args.overrides))
+        n = relabel(args.out_dir, load_overrides(overrides_path(args)))
         print(f"relabel: {n} label(s) changed in {args.out_dir / 'results.json'}; failures.json rebuilt (no API calls)")
         return 0
     if args.no_verify:
         os.environ["SKILLCOMPILER_VERIFY"] = "0"
+    if args.provider != client.GEMINI and args.out_dir.resolve() == OUT_DIR.resolve():
+        print("error: a run with another provider must not write into benchmark/output/ (the official results); "
+              "pass --out-dir with a new folder", file=sys.stderr)
+        return 1
+    if args.model:
+        os.environ["GEMMA_MODEL"] = args.model  # both the plain client and the harness read it
+    try:
+        client.configure_provider(args.provider, args.base_url)
+        harness_adapter.configure_provider(args.provider, args.base_url)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     client.configure_cache(args.cache)
     harness_adapter.configure_harness_cache(args.cache, str(Path(__file__).with_name(".cache") / "harness"))
     settings = current_settings(args)
@@ -245,7 +275,7 @@ def main(argv: list[str] | None = None) -> int:
     done_ids = {t["task_id"] for t in done}
     todo = [t for t in tasks if t["task_id"] not in done_ids]
     todo = todo[: args.limit] if args.limit else todo
-    overrides = load_overrides(args.overrides)
+    overrides = load_overrides(overrides_path(args))
     tasks_hash = tasks_sha256(args.tasks)
     runners ={"plain": run_plain, "harness": harness_adapter.run_skill, "sleep": args.sleep}
     results = list(done)

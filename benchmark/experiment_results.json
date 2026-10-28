@@ -1,0 +1,46 @@
+{
+  "mock": false,
+  "generated_at": "2026-10-28T23:40:51+05:30",
+  "tasks_file": "benchmark/tasks.json",
+  "tasks_sha256": "53351f62f15b026cb6c653e43c591c60ce1b4877ba9f3522b1c6fba1f427bfd2",
+  "n_tasks": 10,
+  "settings": {
+    "thinking": "MINIMAL",
+    "verifier": "on",
+    "cache": false,
+    "runs_per_config": 1
+  },
+  "configs": [
+    {
+      "name": "Gemma 4 26B A4B via Gemini API, plain",
+      "model": "gemma-4-26b-a4b-it",
+      "provider": "gemini",
+      "mode": "plain",
+      "passed": 7,
+      "total": 10,
+      "llm_calls": 10,
+      "latency_s": 35.7,
+      "failed_tasks": [
+        "t04",
+        "t05",
+        "t08"
+      ],
+      "notes": "Official run 1 of 3 (verifier on, full harness mode). Runs 2 and 3 gave the same pass counts; see benchmark/RESULTS_NOTE.md. Harness costs about 16 times the calls."
+    },
+    {
+      "name": "Gemma 4 26B A4B via Gemini API, harness",
+      "model": "gemma-4-26b-a4b-it",
+      "provider": "gemini",
+      "mode": "harness",
+      "passed": 9,
+      "total": 10,
+      "llm_calls": 162,
+      "latency_s": 499.1,
+      "failed_tasks": [
+        "t03"
+      ],
+      "notes": "Official run 1 of 3 (verifier on, full harness mode). Runs 2 and 3 gave the same pass counts; see benchmark/RESULTS_NOTE.md. Harness costs about 16 times the calls."
+    }
+  ],
+  "harness_commit": "76ca531"
+}

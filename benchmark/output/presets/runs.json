@@ -1,0 +1,1224 @@
+{
+  "settings": {
+    "model": "gemma-4-26b-a4b-it",
+    "provider": "gemini",
+    "base_url": null,
+    "gemma_thinking": "MINIMAL",
+    "gemma_rpm": 25,
+    "verifier": "on",
+    "harness_mode": "adaptive",
+    "harness_is_mock": false,
+    "started_at": "2026-10-28T23:40:05+05:30"
+  },
+  "runs": [
+    {
+      "preset_id": "p01",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-28T23:40:11+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"subtotal\": \"173.35\",\n  \"discount\": \"20.80\",\n  \"tax\": \"11.44\",\n  \"total\": \"163.99\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 6186,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p01",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-28T23:40:16+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"subtotal\": \"173.00\",\n  \"discount\": \"20.76\",\n  \"tax\": \"11.42\",\n  \"total\": \"163.66\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2231,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p01",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-28T23:40:49+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"subtotal\": \"173.25\",\n  \"discount\": \"20.79\",\n  \"tax\": \"11.44\",\n  \"total\": \"163.90\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 31678,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p01",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-28T23:41:17+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"subtotal\": \"172.15\",\n  \"discount\": \"20.66\",\n  \"tax\": \"11.36\",\n  \"total\": \"162.85\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 25366,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p01",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-28T23:41:21+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"subtotal\": \"178.45\",\n  \"discount\": \"21.41\",\n  \"tax\": \"11.78\",\n  \"total\": \"168.82\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2248,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p01",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-28T23:42:45+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"subtotal\": \"171.10\",\n  \"discount\": \"20.53\",\n  \"tax\": \"11.29\",\n  \"total\": \"161.86\"\n}\n```",
+      "llm_calls": 13,
+      "latency_ms": 79969,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 6,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p01",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-28T23:44:04+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "{\"subtotal\": \"166.20\", \"discount\": \"19.94\", \"tax\": \"11.01\", \"total\": \"157.27\"}",
+      "llm_calls": 13,
+      "latency_ms": 75289,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 6,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p01",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-28T23:45:54+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"subtotal\": \"157.50\",\n  \"discount\": \"18.90\",\n  \"tax\": \"10.39\",\n  \"total\": \"148.99\"\n}\n```",
+      "llm_calls": 13,
+      "latency_ms": 62499,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 6,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-28T23:46:07+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: next day",
+      "llm_calls": 1,
+      "latency_ms": 11107,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-28T23:46:11+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: next day",
+      "llm_calls": 1,
+      "latency_ms": 1370,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-28T23:46:14+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: next day",
+      "llm_calls": 1,
+      "latency_ms": 1416,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-28T23:46:23+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: next day",
+      "llm_calls": 1,
+      "latency_ms": 7408,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-28T23:46:38+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: next day",
+      "llm_calls": 1,
+      "latency_ms": 12115,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-28T23:47:52+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: next day",
+      "llm_calls": 15,
+      "latency_ms": 72409,
+      "api_errors_in_run": 0,
+      "retries": 2,
+      "steps": {
+        "pass": 4,
+        "repaired": 0,
+        "fail": 1
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-28T23:49:06+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: next day",
+      "llm_calls": 13,
+      "latency_ms": 68699,
+      "api_errors_in_run": 0,
+      "retries": 1,
+      "steps": {
+        "pass": 4,
+        "repaired": 1,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p02",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-28T23:49:59+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3"
+      ],
+      "error": null,
+      "output": "Local arrival: 02:15\nDay: same day",
+      "llm_calls": 13,
+      "latency_ms": 51009,
+      "api_errors_in_run": 0,
+      "retries": 1,
+      "steps": {
+        "pass": 4,
+        "repaired": 1,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-28T23:50:07+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4.0",
+      "llm_calls": 1,
+      "latency_ms": 3530,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-28T23:50:12+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4.0",
+      "llm_calls": 1,
+      "latency_ms": 3280,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-28T23:50:17+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4.0",
+      "llm_calls": 1,
+      "latency_ms": 3225,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-28T23:50:23+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4.0",
+      "llm_calls": 1,
+      "latency_ms": 3318,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-28T23:50:32+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4.0",
+      "llm_calls": 1,
+      "latency_ms": 7712,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-28T23:51:47+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4",
+      "llm_calls": 11,
+      "latency_ms": 64100,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 5,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-28T23:52:19+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4",
+      "llm_calls": 9,
+      "latency_ms": 25874,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 4,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p03",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-28T23:52:54+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| beans | 900 g | 3.6 kg |\n| tomatoes | 1200 g | 4.8 kg |\n| beef | 450 g | 1.8 kg |\n| oil | 3 tbsp | 12.0 tbsp |\n| salt | 1.2 tsp | 4.8 tsp |\n\nScale factor: 4",
+      "llm_calls": 9,
+      "latency_ms": 29217,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 4,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-28T23:52:59+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2509,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-28T23:53:08+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 7201,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-28T23:53:12+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2316,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-28T23:53:17+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2377,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-28T23:53:21+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2392,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-28T23:54:26+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 13,
+      "latency_ms": 57001,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 6,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-28T23:55:23+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 13,
+      "latency_ms": 51114,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 6,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p04",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-28T23:56:25+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"price_a\": \"199.99\",\n  \"price_b\": \"169.99\",\n  \"tax\": \"13.60\",\n  \"final\": \"183.59\"\n}\n```",
+      "llm_calls": 11,
+      "latency_ms": 57632,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 5,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-28T23:56:29+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"final_balance\": \"47.25\",\n  \"overdrafts\": 1\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2096,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-28T23:56:35+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"final_balance\": \"47.25\",\n  \"overdrafts\": 1\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 1985,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-28T23:56:38+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"final_balance\": \"47.25\",\n  \"overdrafts\": 1\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 1772,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-28T23:56:42+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"final_balance\": \"47.25\",\n  \"overdrafts\": 1\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 1783,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-28T23:56:46+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"final_balance\": \"47.25\",\n  \"overdrafts\": 1\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2110,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-28T23:57:46+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\"final_balance\": \"-46.75\", \"overdrafts\": 3}\n```",
+      "llm_calls": 9,
+      "latency_ms": 55419,
+      "api_errors_in_run": 0,
+      "retries": 1,
+      "steps": {
+        "pass": 2,
+        "repaired": 1,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-28T23:58:45+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4"
+      ],
+      "error": null,
+      "output": "{\"final_balance\": \"49.25\", \"overdrafts\": 1}",
+      "llm_calls": 13,
+      "latency_ms": 56926,
+      "api_errors_in_run": 0,
+      "retries": 3,
+      "steps": {
+        "pass": 1,
+        "repaired": 1,
+        "fail": 1
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p05",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-29T00:00:02+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4"
+      ],
+      "error": null,
+      "output": "{\"final_balance\": \"27.25\", \"overdrafts\": 1}",
+      "llm_calls": 11,
+      "latency_ms": 73260,
+      "api_errors_in_run": 0,
+      "retries": 2,
+      "steps": {
+        "pass": 2,
+        "repaired": 0,
+        "fail": 1
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-29T00:00:06+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"quiz_average\": \"89.0\",\n  \"final_grade\": \"90.4\",\n  \"letter\": \"A\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2158,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-29T00:00:13+05:30",
+      "passed": null,
+      "failed_checks": [],
+      "api_error": true,
+      "error": "RuntimeError: LLM call failed after 3 tries: 500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}",
+      "output": "",
+      "llm_calls": 0,
+      "latency_ms": 0
+    },
+    {
+      "preset_id": "p06",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-29T00:00:20+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"quiz_average\": \"89.0\",\n  \"final_grade\": \"90.8\",\n  \"letter\": \"A\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2587,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-29T00:00:24+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"quiz_average\": \"89.0\",\n  \"final_grade\": \"90.4\",\n  \"letter\": \"A\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 1971,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-29T00:00:28+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"quiz_average\": \"89.0\",\n  \"final_grade\": \"90.8\",\n  \"letter\": \"A\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 1988,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-29T00:00:51+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c4"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"quiz_average\": \"89.0\",\n  \"final_grade\": \"90.4\",\n  \"letter\": \"A\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 21153,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-29T00:02:22+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5"
+      ],
+      "error": null,
+      "output": "{\"quiz_average\": \"85.3\", \"final_grade\": \"88.8\", \"letter\": \"B\"}",
+      "llm_calls": 14,
+      "latency_ms": 80877,
+      "api_errors_in_run": 0,
+      "retries": 2,
+      "steps": {
+        "pass": 5,
+        "repaired": 0,
+        "fail": 1
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-29T00:04:03+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c4"
+      ],
+      "error": null,
+      "output": "{\"quiz_average\": \"89.0\", \"final_grade\": \"91.4\", \"letter\": \"A\"}",
+      "llm_calls": 16,
+      "latency_ms": 98615,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 7,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p06",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-29T00:05:28+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "```json\n{\n  \"quiz_average\": \"89.0\",\n  \"final_grade\": \"91.2\",\n  \"letter\": \"A\"\n}\n```",
+      "llm_calls": 16,
+      "latency_ms": 76106,
+      "api_errors_in_run": 0,
+      "retries": 1,
+      "steps": {
+        "pass": 5,
+        "repaired": 1,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-29T00:05:42+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"weight_fee\": \"8.10\",\n  \"surcharge\": \"2.00\",\n  \"vat\": \"1.01\",\n  \"total\": \"11.11\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 12326,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-29T00:05:52+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"weight_fee\": \"8.10\",\n  \"surcharge\": \"2.00\",\n  \"vat\": \"1.01\",\n  \"total\": \"11.11\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 5768,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-29T00:05:56+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"weight_fee\": \"7.50\",\n  \"surcharge\": \"2.00\",\n  \"vat\": \"0.95\",\n  \"total\": \"10.45\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2148,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-29T00:06:00+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"weight_fee\": \"8.10\",\n  \"surcharge\": \"2.00\",\n  \"vat\": \"1.01\",\n  \"total\": \"11.11\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2198,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-29T00:06:05+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "```json\n{\n  \"weight_fee\": \"8.10\",\n  \"surcharge\": \"2.00\",\n  \"vat\": \"1.01\",\n  \"total\": \"11.11\"\n}\n```",
+      "llm_calls": 1,
+      "latency_ms": 2118,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-29T00:12:01+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "{\"weight_fee\": \"0.00\", \"surcharge\": \"2.00\", \"vat\": \"0.52\", \"total\": \"2.52\"}",
+      "llm_calls": 18,
+      "latency_ms": 339411,
+      "api_errors_in_run": 0,
+      "retries": 6,
+      "steps": {
+        "pass": 3,
+        "repaired": 1,
+        "fail": 2
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-29T00:16:10+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c4",
+        "c5",
+        "c6"
+      ],
+      "error": "LLM call failed: LLM call failed after 3 tries: 500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}",
+      "output": "{\"weight_fee\": \"9.30\", \"surcharge\": \"0.00\", \"vat\": \"0.00\", \"total\": \"9.30\"}",
+      "llm_calls": 18,
+      "latency_ms": 206407,
+      "api_errors_in_run": 1,
+      "retries": 5,
+      "steps": {
+        "pass": 3,
+        "repaired": 2,
+        "fail": 1
+      },
+      "api_error": true
+    },
+    {
+      "preset_id": "p07",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-29T00:24:54+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": "LLM call failed: LLM call failed after 3 tries: 500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}",
+      "output": "{\"weight_fee\": \"7.80\", \"surcharge\": \"2.00\", \"vat\": \"0.98\", \"total\": \"10.78\"}",
+      "llm_calls": 15,
+      "latency_ms": 220240,
+      "api_errors_in_run": 1,
+      "retries": 2,
+      "steps": {
+        "pass": 5,
+        "repaired": 1,
+        "fail": 0
+      },
+      "api_error": true
+    },
+    {
+      "preset_id": "p07",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-29T00:29:25+05:30",
+      "passed": false,
+      "failed_checks": [
+        "c3",
+        "c5",
+        "c6"
+      ],
+      "error": null,
+      "output": "{\"weight_fee\": \"7.70\", \"surcharge\": \"2.00\", \"vat\": \"0.97\", \"total\": \"10.67\"}",
+      "llm_calls": 13,
+      "latency_ms": 258540,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 6,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p07",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-29T00:31:07+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "{\"weight_fee\": \"10.50\", \"surcharge\": \"2.00\", \"vat\": \"1.25\", \"total\": \"13.75\"}",
+      "llm_calls": 17,
+      "latency_ms": 83500,
+      "api_errors_in_run": 0,
+      "retries": 2,
+      "steps": {
+        "pass": 4,
+        "repaired": 2,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "plain",
+      "index": 1,
+      "finished_at": "2026-10-29T00:31:12+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer, we will ship a replacement to you immediately. Your new package is being prioritized to ensure it reaches you quickly. We appreciate your patience.\n\nBest regards, Support",
+      "llm_calls": 1,
+      "latency_ms": 1920,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "plain",
+      "index": 2,
+      "finished_at": "2026-10-29T00:32:20+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer,\n\nWe will ship your replacement immediately. A new package with all components is being prepared for priority delivery to your address.\n\nBest regards, Support",
+      "llm_calls": 1,
+      "latency_ms": 66599,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "plain",
+      "index": 3,
+      "finished_at": "2026-10-29T00:33:42+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer,\n\nWe will ship your replacement immediately to ensure you receive a complete unit as soon as possible. Thank you for your patience.\n\nBest regards, Support",
+      "llm_calls": 1,
+      "latency_ms": 79619,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "plain",
+      "index": 4,
+      "finished_at": "2026-10-29T00:33:46+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer,\n\nWe will send a replacement immediately. Your new package is being prepared for priority shipping. Thank you for your patience while we resolve this.\n\nBest regards, Support",
+      "llm_calls": 1,
+      "latency_ms": 2038,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "plain",
+      "index": 5,
+      "finished_at": "2026-10-29T00:33:50+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer,\n\nWe will send a replacement immediately to resolve this. A new parcel is being prepared for expedited shipping now. Thank you for your patience.\n\nBest regards, Support",
+      "llm_calls": 1,
+      "latency_ms": 1813,
+      "api_errors_in_run": 0,
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "harness",
+      "index": 1,
+      "finished_at": "2026-10-29T00:36:16+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer,\n\nI will arrange a replacement for you immediately. A new unit will be shipped via expedited delivery. Please confirm your shipping address so I can process this request right away.\n\nBest regards, Support",
+      "llm_calls": 5,
+      "latency_ms": 144046,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 3,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "harness",
+      "index": 2,
+      "finished_at": "2026-10-29T00:39:02+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer,\n\nThank you for reaching out. I will arrange a replacement via expedited shipping immediately. Please confirm your current shipping address so I can process this request right away.\n\nBest regards, Support",
+      "llm_calls": 5,
+      "latency_ms": 76427,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 3,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    },
+    {
+      "preset_id": "p08",
+      "mode": "harness",
+      "index": 3,
+      "finished_at": "2026-10-29T00:39:26+05:30",
+      "passed": true,
+      "failed_checks": [],
+      "error": null,
+      "output": "Dear Customer,\n\nI will arrange a replacement immediately via expedited delivery. Please confirm your current shipping address so I can finalize this order right away.\n\nBest regards, Support",
+      "llm_calls": 5,
+      "latency_ms": 15982,
+      "api_errors_in_run": 0,
+      "retries": 0,
+      "steps": {
+        "pass": 3,
+        "repaired": 0,
+        "fail": 0
+      },
+      "api_error": false
+    }
+  ]
+}

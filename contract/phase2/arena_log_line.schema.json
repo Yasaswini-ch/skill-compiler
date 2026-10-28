@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "one line of arena_log.jsonl (written by C, read by B). passed/broke_plain are null for free play.",
+  "type": "object",
+  "required": [
+    "ts",
+    "attempt_id",
+    "nickname",
+    "kind",
+    "preset_id",
+    "skill_text",
+    "input",
+    "consent",
+    "plain",
+    "harness",
+    "broke_plain",
+    "reviewed"
+  ],
+  "properties": {
+    "ts": {
+      "type": "string"
+    },
+    "attempt_id": {
+      "type": "string"
+    },
+    "nickname": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "preset",
+        "free"
+      ]
+    },
+    "preset_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "skill_text": {
+      "type": "string"
+    },
+    "input": {
+      "type": "string"
+    },
+    "consent": {
+      "type": "boolean"
+    },
+    "plain": {
+      "type": "object",
+      "required": [
+        "output",
+        "passed",
+        "failed_checks"
+      ],
+      "properties": {
+        "output": {
+          "type": "string"
+        },
+        "passed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "failed_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trace_file": {
+          "type": "string"
+        }
+      }
+    },
+    "harness": {
+      "type": "object",
+      "required": [
+        "output",
+        "passed",
+        "failed_checks"
+      ],
+      "properties": {
+        "output": {
+          "type": "string"
+        },
+        "passed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "failed_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trace_file": {
+          "type": "string"
+        }
+      }
+    },
+    "broke_plain": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "reviewed": {
+      "type": "boolean"
+    },
+    "mock": {
+      "type": "boolean"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "trace.mode_detail (optional field, written by A, read by C). Readers must not require it.",
+  "type": "object",
+  "required": [
+    "strategy",
+    "route",
+    "verified_steps",
+    "skipped_verify_steps"
+  ],
+  "properties": {
+    "strategy": {
+      "enum": [
+        "full",
+        "adaptive",
+        "auto"
+      ]
+    },
+    "route": {
+      "enum": [
+        "harness",
+        "plain"
+      ]
+    },
+    "verified_steps": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "skipped_verify_steps": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    }
+  }
+}

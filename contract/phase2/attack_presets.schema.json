@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "attack_presets.json (written by B, read by C)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "title",
+      "skill_text",
+      "input",
+      "checks",
+      "steps",
+      "why_it_breaks",
+      "tag",
+      "tested"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "mock": {
+        "type": "boolean"
+      },
+      "title": {
+        "type": "string"
+      },
+      "skill_text": {
+        "type": "string"
+      },
+      "input": {
+        "type": "string",
+        "maxLength": 1500
+      },
+      "checks": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "label"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "json_valid",
+                "json_keys",
+                "one_of",
+                "max_words",
+                "min_words",
+                "starts_with",
+                "contains",
+                "not_contains",
+                "regex",
+                "order"
+              ]
+            },
+            "label": {
+              "enum": [
+                "skipped_step",
+                "wrong_format",
+                "lost_track",
+                "merged_steps",
+                "hallucinated_step",
+                "ignored_constraint",
+                "other"
+              ]
+            },
+            "path": {
+              "type": "string"
+            },
+            "value": {}
+          }
+        }
+      },
+      "steps": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 6
+      },
+      "why_it_breaks": {
+        "type": "string"
+      },
+      "tag": {
+        "enum": [
+          "reliable",
+          "sometimes",
+          "untested"
+        ]
+      },
+      "tested": {
+        "type": "object",
+        "required": [
+          "model",
+          "date",
+          "plain_runs",
+          "plain_failed",
+          "harness_runs",
+          "harness_failed"
+        ],
+        "properties": {
+          "model": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "plain_runs": {
+            "type": "integer"
+          },
+          "plain_failed": {
+            "type": "integer"
+          },
+          "harness_runs": {
+            "type": "integer"
+          },
+          "harness_failed": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

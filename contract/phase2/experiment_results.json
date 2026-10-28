@@ -1,0 +1,22 @@
+{
+  "mock": true,
+  "generated_at": "2026-10-30T20:00:00+05:30",
+  "tasks_file": "benchmark/tasks.json",
+  "tasks_sha256": "53351f62f15b026cb6c653e43c591c60ce1b4877ba9f3522b1c6fba1f427bfd2",
+  "n_tasks": 10,
+  "settings": {"thinking": "MINIMAL", "verifier": "on", "cache": false, "runs_per_config": 1},
+  "configs": [
+    {"name": "small-alone", "model": "mock-small", "provider": "gemini", "mode": "plain",
+     "passed": 5, "total": 10, "llm_calls": 10, "latency_s": 40.0,
+     "failed_tasks": ["t02", "t04", "t05", "t07", "t08"], "notes": "MOCK numbers, shape only"},
+    {"name": "small-harness", "model": "mock-small", "provider": "gemini", "mode": "harness",
+     "passed": 8, "total": 10, "llm_calls": 160, "latency_s": 480.0,
+     "failed_tasks": ["t03", "t08"], "notes": "MOCK numbers, shape only"},
+    {"name": "small-adaptive", "model": "mock-small", "provider": "gemini", "mode": "adaptive",
+     "passed": 8, "total": 10, "llm_calls": 95, "latency_s": 290.0,
+     "failed_tasks": ["t03", "t08"], "notes": "MOCK numbers, shape only"},
+    {"name": "big-alone", "model": "mock-big", "provider": "gemini", "mode": "plain",
+     "passed": 7, "total": 10, "llm_calls": 10, "latency_s": 45.0,
+     "failed_tasks": ["t04", "t05", "t08"], "notes": "MOCK numbers, shape only"}
+  ]
+}

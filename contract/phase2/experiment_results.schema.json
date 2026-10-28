@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "experiment_results.json (written by B, read by C)",
+  "type": "object",
+  "required": [
+    "mock",
+    "generated_at",
+    "tasks_file",
+    "tasks_sha256",
+    "n_tasks",
+    "settings",
+    "configs"
+  ],
+  "properties": {
+    "mock": {
+      "type": "boolean",
+      "description": "true => every page shows a MOCK DATA banner"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "tasks_file": {
+      "type": "string"
+    },
+    "tasks_sha256": {
+      "type": "string"
+    },
+    "n_tasks": {
+      "type": "integer"
+    },
+    "harness_commit": {
+      "type": "string",
+      "description": "optional: git commit of the harness that produced harness/adaptive rows"
+    },
+    "settings": {
+      "type": "object",
+      "required": [
+        "thinking",
+        "verifier",
+        "cache",
+        "runs_per_config"
+      ],
+      "properties": {
+        "thinking": {
+          "type": "string"
+        },
+        "verifier": {
+          "type": "string"
+        },
+        "cache": {
+          "type": "boolean"
+        },
+        "runs_per_config": {
+          "type": "integer"
+        }
+      }
+    },
+    "configs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "model",
+          "provider",
+          "mode",
+          "passed",
+          "total",
+          "llm_calls",
+          "latency_s",
+          "failed_tasks"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "gemini",
+              "openai-compatible"
+            ]
+          },
+          "mode": {
+            "enum": [
+              "plain",
+              "harness",
+              "adaptive"
+            ]
+          },
+          "passed": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "llm_calls": {
+            "type": "integer"
+          },
+          "latency_s": {
+            "type": "number"
+          },
+          "failed_tasks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

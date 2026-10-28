@@ -1,0 +1,14 @@
+{
+  "strategy": "adaptive",
+  "route": "harness",
+  "verified_steps": [
+    2,
+    4,
+    6
+  ],
+  "skipped_verify_steps": [
+    1,
+    3,
+    5
+  ]
+}

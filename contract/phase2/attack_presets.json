@@ -1,0 +1,19 @@
+[
+  {
+    "id": "p01",
+    "mock": true,
+    "title": "The invoice that does not add up",
+    "skill_text": "---\nname: invoice-check\ndescription: Total an invoice and apply a discount.\n---\n1. List each line item with its price.\n2. Add the prices to get the subtotal.\n3. If the subtotal is over 100, take 10% off; otherwise take nothing off.\n4. Output JSON with exactly these keys: subtotal, discount, total.",
+    "input": "Items: desk lamp 34.50, notebook 8.25, monitor stand 61.00, cable 5.25.",
+    "checks": [
+      {"id": "c1", "type": "json_valid", "label": "wrong_format"},
+      {"id": "c2", "type": "json_keys", "value": ["subtotal", "discount", "total"], "label": "skipped_step"},
+      {"id": "c3", "type": "regex", "path": "subtotal", "value": "^109\\.00?$", "label": "lost_track"}
+    ],
+    "steps": 4,
+    "why_it_breaks": "Arithmetic across steps: a small model drifts on the running total.",
+    "tag": "untested",
+    "tested": {"model": "mock-small", "date": "2026-10-30",
+               "plain_runs": 0, "plain_failed": 0, "harness_runs": 0, "harness_failed": 0}
+  }
+]

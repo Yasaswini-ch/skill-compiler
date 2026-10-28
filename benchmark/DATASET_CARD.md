@@ -55,4 +55,4 @@ Generated results, if any, are kept separate from the official results and are n
 
 ## License
 
-The repository is under the MIT License (`LICENSE`), and this dataset is distributed under the same license. The model outputs in it were produced by Gemma; [PLACEHOLDER: confirm Gemma's terms for redistributing model outputs].
+The repository is under the MIT License (`LICENSE`), and this dataset is distributed under the same license. The model outputs in it were produced by Gemma; [PLACEHOLDER: confirm Gemma's terms for redistributing model outputs]. Owner must verify Google's terms before publishing.

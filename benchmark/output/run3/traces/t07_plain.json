@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-007",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "trip-day-planner",
+  "input": "Our flight lands at 10:35 and the taxi to the hotel takes 1 hour 50 minutes.",
+  "steps": [],
+  "final_output": "Leave airport: 11:20\nHotel arrival: 13:10\nCheck-in: 15:00\nFree minutes before dinner: 270",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 2015,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

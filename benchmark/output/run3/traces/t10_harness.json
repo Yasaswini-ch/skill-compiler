@@ -1,0 +1,129 @@
+{
+  "run_id": "r-505d6d4a",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "release-announcement",
+  "input": "Product: Quill Notes app. Release date: 3 December 2026. Features: handwriting search that finds words inside scanned notes, offline sync across 3 devices, and a focus mode that hides all notifications. Audience: students.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract product name",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Quill Notes app",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2194
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Extract main features",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "1. Handwriting search that finds words inside scanned notes\n2. Offline sync across 3 devices\n3. Focus mode that hides all notifications",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2813
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Write headline",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Meet the smarter way to take notes.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2557
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Write summary",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Launching December 2026, the Quill Notes app helps students via handwriting search, offline syncing, and a notification-free focus mode.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2914
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Write bullet points",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "* Search words inside scanned handwritten notes\n* Offline sync across three different devices\n* Focus mode that hides all incoming notifications",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2645
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Write closing line",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Available from 03/12/2026.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2694
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Write hashtags",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "#quillnotes #studentlife",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2527
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"headline\": \"Meet the smarter way to take notes.\",\n  \"summary\": \"Launching December 2026, the Quill Notes app helps students via handwriting search, offline syncing, and a notification-free focus mode.\",\n  \"bullets\": [\n    \"Search words inside scanned handwritten notes\",\n    \"Offline sync across three different devices\",\n    \"Focus mode that hides all incoming notifications\"\n  ],\n  \"closing\": \"Available from 03/12/2026.\",\n  \"hashtags\": \"#quillnotes #studentlife\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4943
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"headline\": \"Meet the smarter way to take notes.\",\n  \"summary\": \"Launching December 2026, the Quill Notes app helps students via handwriting search, offline syncing, and a notification-free focus mode.\",\n  \"bullets\": [\n    \"Search words inside scanned handwritten notes\",\n    \"Offline sync across three different devices\",\n    \"Focus mode that hides all incoming notifications\"\n  ],\n  \"closing\": \"Available from 03/12/2026.\",\n  \"hashtags\": \"#quillnotes #studentlife\"\n}\n```",
+  "totals": {
+    "llm_calls": 17,
+    "latency_ms": 42917,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

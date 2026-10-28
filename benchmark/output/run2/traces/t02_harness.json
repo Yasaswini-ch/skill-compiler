@@ -1,0 +1,129 @@
+{
+  "run_id": "r-f77e8898",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "Hi, search is really slow for me on Windows 11 (app 3.0.12). I type in the search box and results take about 20 seconds to show. Also it would be great to have a dark mode! Only me as far as I know, not urgent.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Summarize Bug",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Search is slow on Windows 11, taking 20 seconds to show results.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The summary is one sentence, 12 words long, and ignores the feature request.",
+          "latency_ms": 11224
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize User Impact",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Windows 11 users cannot quickly access search results due to slow response times.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 6045
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract App Version",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "v3.0.12",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2236
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract Operating System",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Windows 11",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2339
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Classify Severity",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "minor",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2290
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Classify Component",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "search",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2243
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Suggest Fix",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Update the application to the latest version to improve performance.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2462
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format Final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"bug\": \"Search results take twenty seconds to appear on Windows 11.\",\n  \"impact\": \"Users experience significant delays when trying to access search results.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"minor\",\n  \"component\": \"search\",\n  \"fix\": \"Update the application to the latest version to improve performance.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4487
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"bug\": \"Search results take twenty seconds to appear on Windows 11.\",\n  \"impact\": \"Users experience significant delays when trying to access search results.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"minor\",\n  \"component\": \"search\",\n  \"fix\": \"Update the application to the latest version to improve performance.\"\n}\n```",
+  "totals": {
+    "llm_calls": 17,
+    "latency_ms": 52790,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

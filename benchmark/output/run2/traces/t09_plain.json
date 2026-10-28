@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-006",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "release-announcement",
+  "input": "Product: Lumo Desk Lamp. Release date: 14 November 2026. Features: it dims from 5% to 100% with a touch slider, it has a built-in wireless phone charger, and its battery lasts 12 hours. Write the announcement.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"headline\": \"Meet the Lumo Desk Lamp\",\n  \"summary\": \"Enhance your workspace with this versatile lamp featuring integrated charging and long battery life.\",\n  \"bullets\": [\n    \"Dim lights from 5% to 100% via touch slider\",\n    \"Built-in wireless phone charger included\",\n    \"Twelve hour battery life\"\n  ],\n  \"closing\": \"Available 14/11/2026\",\n  \"hashtags\": \"#lumodesklamp #workspace\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 4134,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

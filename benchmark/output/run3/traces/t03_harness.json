@@ -1,0 +1,129 @@
+{
+  "run_id": "r-1f2fac38",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "candidate-screen",
+  "input": "Priya Nair, Data Analyst at Orbit Retail for 2 years. Skills: SQL, Excel, Tableau, Power BI, R, statistics. Python: none.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract full name",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Priya Nair",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2296
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize work experience",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Priya Nair has two years of experience as a Data Analyst at Orbit Retail using SQL and Tableau.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 16201
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "List skills",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "SQL, Excel, Tableau, Power BI, R",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2675
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract years of experience",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "2",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 129548
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Evaluate minimum requirement",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "no",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output \"no\" correctly follows the logic that the candidate lacks both the required years of experience and the Python skill.",
+          "latency_ms": 6244
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Generate rejection/acceptance reason",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Lacks required Python skills.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output provides a reason for \"no\" in under 10 words.",
+          "latency_ms": 3398
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Write recruiter note",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Recommend: Priya is a strong candidate with solid data analysis skills in SQL, Excel, Tableau, and Power BI.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2659
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Priya Nair has two years of experience as a Data Analyst at Orbit Retail using SQL and Tableau.\",\n  \"skills\": [\n    \"SQL\",\n    \"Excel\",\n    \"Tableau\",\n    \"Power BI\",\n    \"R\"\n  ],\n  \"years\": 2,\n  \"meets_minimum\": false,\n  \"reason\": \"Lacks required Python skills.\",\n  \"note\": \"Recommend: Priya is a strong candidate with solid data analysis skills in SQL, Excel, Tableau, and Power BI.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 6073
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Priya Nair has two years of experience as a Data Analyst at Orbit Retail using SQL and Tableau.\",\n  \"skills\": [\n    \"SQL\",\n    \"Excel\",\n    \"Tableau\",\n    \"Power BI\",\n    \"R\"\n  ],\n  \"years\": 2,\n  \"meets_minimum\": false,\n  \"reason\": \"Lacks required Python skills.\",\n  \"note\": \"Recommend: Priya is a strong candidate with solid data analysis skills in SQL, Excel, Tableau, and Power BI.\"\n}\n```",
+  "totals": {
+    "llm_calls": 17,
+    "latency_ms": 187429,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "run_id": "r-6f5457d0",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "invoice-summary",
+  "input": "Invoice no. 3392 from Harlow Office Co. 4 x monitor stands at 45.50 each, 10 x USB hubs at 12.40 each, 2 x ergonomic chairs at 89.99 each. Net 15.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract Vendor Name",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Harlow Office Co.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2336
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Extract Invoice Number",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "INV-3392",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2515
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "List Line Items",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 4 x monitor stands (Quantity: 4, Unit Price: 45.50)\n- 10 x USB hubs (Quantity: 10, Unit Price: 12.40)\n- 2 x ergonomic chairs (Quantity: 2, Unit Price: 89.99)",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 5060
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Compute Line Totals",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 182.00\n- 124.00\n- 179.98",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3124
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Compute Subtotal",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "485.98",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2327
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Compute Discount",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "48.60",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "10% of 485.98 is 48.598, which rounds to 48.60.",
+          "latency_ms": 2897
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Compute Tax",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "34.99",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "(485.98 - 48.60) * 0.08 = 34.9904, which rounds to 34.99.",
+          "latency_ms": 3145
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Compute Total",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "472.37",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "485.98 - 48.60 + 34.99 = 472.37. The calculation follows the given instruction.",
+          "latency_ms": 4180
+        }
+      ]
+    },
+    {
+      "step_id": 9,
+      "title": "Format Final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"vendor\": \"Harlow Office Co.\",\n  \"invoice\": \"INV-3392\",\n  \"subtotal\": \"485.98\",\n  \"discount\": \"48.60\",\n  \"tax\": \"34.99\",\n  \"total\": \"472.37\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3859
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"vendor\": \"Harlow Office Co.\",\n  \"invoice\": \"INV-3392\",\n  \"subtotal\": \"485.98\",\n  \"discount\": \"48.60\",\n  \"tax\": \"34.99\",\n  \"total\": \"472.37\"\n}\n```",
+  "totals": {
+    "llm_calls": 19,
+    "latency_ms": 48502,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

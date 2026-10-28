@@ -1,0 +1,129 @@
+{
+  "run_id": "r-b813abce",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "Hi, search is really slow for me on Windows 11 (app 3.0.12). I type in the search box and results take about 20 seconds to show. Also it would be great to have a dark mode! Only me as far as I know, not urgent.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Summarize Bug",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Search functionality on Windows 11 is experiencing significant delays when displaying results.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 13233
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize User Impact",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Windows 11 users cannot quickly access search results due to slow performance.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 11399
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract App Version",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "v3.0.12",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2435
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract Operating System",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Windows 11",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2449
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Classify Severity",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "major",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2164
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Classify Component",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "search",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 7048
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Suggest Fix",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Update the application to the latest version to improve search speed.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2895
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format Final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"bug\": \"Search functionality on Windows 11 is experiencing significant delays when displaying results.\",\n  \"impact\": \"Windows 11 users cannot quickly access search results due to slow performance.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"major\",\n  \"component\": \"search\",\n  \"fix\": \"Update the application to the latest version to improve search speed.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4600
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"bug\": \"Search functionality on Windows 11 is experiencing significant delays when displaying results.\",\n  \"impact\": \"Windows 11 users cannot quickly access search results due to slow performance.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"major\",\n  \"component\": \"search\",\n  \"fix\": \"Update the application to the latest version to improve search speed.\"\n}\n```",
+  "totals": {
+    "llm_calls": 18,
+    "latency_ms": 83032,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

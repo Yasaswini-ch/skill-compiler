@@ -1,0 +1,129 @@
+{
+  "run_id": "r-7985607c",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "candidate-screen",
+  "input": "Priya Nair, Data Analyst at Orbit Retail for 2 years. Skills: SQL, Excel, Tableau, Power BI, R, statistics. Python: none.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract full name",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Priya Nair",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 10527
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize work experience",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Priya Nair has two years of experience as a Data Analyst at Orbit Retail.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 9368
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "List skills",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "SQL, Excel, Tableau, Power BI, R",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3094
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract years of experience",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "2",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 9169
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Check minimum requirement",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "no",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2568
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Determine reason",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Does not possess Python skills.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output is a reason of 5 words, meeting the length constraint.",
+          "latency_ms": 2640
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Write recruiter note",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Recommend: Priya is a strong candidate with 2 years of experience and proficiency in SQL, Excel, Tableau, Power BI, and R.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2954
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Priya Nair has two years of experience as a Data Analyst at Orbit Retail.\",\n  \"skills\": \"SQL, Excel, Tableau, Power BI, R\",\n  \"years\": 2,\n  \"meets_minimum\": false,\n  \"reason\": \"Does not possess Python skills.\",\n  \"note\": \"Recommend: Priya is a strong candidate with 2 years of experience and proficiency in SQL, Excel, Tableau, Power BI, and R.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4713
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Priya Nair has two years of experience as a Data Analyst at Orbit Retail.\",\n  \"skills\": \"SQL, Excel, Tableau, Power BI, R\",\n  \"years\": 2,\n  \"meets_minimum\": false,\n  \"reason\": \"Does not possess Python skills.\",\n  \"note\": \"Recommend: Priya is a strong candidate with 2 years of experience and proficiency in SQL, Excel, Tableau, Power BI, and R.\"\n}\n```",
+  "totals": {
+    "llm_calls": 17,
+    "latency_ms": 48924,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

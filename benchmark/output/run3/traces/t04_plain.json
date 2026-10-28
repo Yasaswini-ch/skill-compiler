@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-004",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "invoice-summary",
+  "input": "Invoice no. 20417 from Brightwell Supplies. 12 x notebooks at 3.50 each, 5 x desk lamps at 18.00 each, 3 x staplers at 6.25 each. Please pay within 30 days.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"vendor\": \"Brightwell Supplies\",\n  \"invoice\": \"INV-20417\",\n  \"subtotal\": \"155.75\",\n  \"discount\": \"0.00\",\n  \"tax\": \"12.46\",\n  \"total\": \"168.21\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 4437,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

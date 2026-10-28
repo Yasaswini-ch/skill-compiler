@@ -1,0 +1,129 @@
+{
+  "run_id": "r-d925d15a",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "Since I updated to version 2.4.1 on Android 13, the app crashes every time I tap Pay on the checkout page. Nobody on my team can place orders now, so our whole sales desk is blocked.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Summarize Bug",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "The app crashes on Android 13 when tapping Pay during checkout.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output is a single sentence of 11 words and accurately describes the bug.",
+          "latency_ms": 2842
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize User Impact",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "The sales desk cannot place orders due to app crashes during checkout.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3067
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract App Version",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "v2.4.1",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2191
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract Operating System",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Android 13",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2184
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Classify Severity",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "critical",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2787
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Classify Component",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "payments",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2887
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Suggest Fix",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Revert to version 2.4.0 or patch the Android 13 compatibility issue.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2917
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format Final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"bug\": \"The app crashes on Android 13 when tapping Pay during checkout.\",\n  \"impact\": \"The sales desk cannot place orders due to app crashes during checkout.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Revert to version 2.4.0 or patch the Android 13 compatibility issue.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4593
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"bug\": \"The app crashes on Android 13 when tapping Pay during checkout.\",\n  \"impact\": \"The sales desk cannot place orders due to app crashes during checkout.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Revert to version 2.4.0 or patch the Android 13 compatibility issue.\"\n}\n```",
+  "totals": {
+    "llm_calls": 18,
+    "latency_ms": 59856,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

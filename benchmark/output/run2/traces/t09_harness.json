@@ -1,0 +1,129 @@
+{
+  "run_id": "r-5cd4e478",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "release-announcement",
+  "input": "Product: Lumo Desk Lamp. Release date: 14 November 2026. Features: it dims from 5% to 100% with a touch slider, it has a built-in wireless phone charger, and its battery lasts 12 hours. Write the announcement.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract product name",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Lumo Desk Lamp",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 8886
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Extract main features",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- Dims from 5% to 100% with a touch slider\n- Built-in wireless phone charger\n- 12-hour battery life",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3332
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Write headline",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Meet the Lumo Desk Lamp",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2468
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Write summary",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "The Lumo Desk Lamp features adjustable brightness via a touch slider, a built-in wireless charger, and a 12-hour battery life.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2979
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Write bullet points",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- Dims from 5% to 100% via touch slider\n- Built-in wireless phone charger\n- Long 12-hour battery life",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2695
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Write closing line",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Available from 14/11/2026.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2477
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Write hashtags",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "#lumodesklamp #smartlighting",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2239
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Format final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"headline\": \"Meet the Lumo Desk Lamp\",\n  \"summary\": \"The Lumo Desk Lamp features adjustable brightness via a touch slider, a built-in wireless charger, and a 12-hour battery life.\",\n  \"bullets\": [\n    \"Dims from 5% to 100% via touch slider\",\n    \"Built-in wireless phone charger\",\n    \"Long 12-hour battery life\"\n  ],\n  \"closing\": \"Available from 14/11/2026.\",\n  \"hashtags\": \"#lumodesklamp #smartlighting\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 5225
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"headline\": \"Meet the Lumo Desk Lamp\",\n  \"summary\": \"The Lumo Desk Lamp features adjustable brightness via a touch slider, a built-in wireless charger, and a 12-hour battery life.\",\n  \"bullets\": [\n    \"Dims from 5% to 100% via touch slider\",\n    \"Built-in wireless phone charger\",\n    \"Long 12-hour battery life\"\n  ],\n  \"closing\": \"Available from 14/11/2026.\",\n  \"hashtags\": \"#lumodesklamp #smartlighting\"\n}\n```",
+  "totals": {
+    "llm_calls": 17,
+    "latency_ms": 48393,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

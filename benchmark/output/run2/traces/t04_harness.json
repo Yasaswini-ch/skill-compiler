@@ -1,0 +1,143 @@
+{
+  "run_id": "r-c9db62e7",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "invoice-summary",
+  "input": "Invoice no. 20417 from Brightwell Supplies. 12 x notebooks at 3.50 each, 5 x desk lamps at 18.00 each, 3 x staplers at 6.25 each. Please pay within 30 days.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Extract vendor name",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Brightwell Supplies",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2415
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Extract invoice number",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "INV-20417",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 1989
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract line items",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 12 x notebooks at 3.50 each\n- 5 x desk lamps at 18.00 each\n- 3 x staplers at 6.25 each",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3156
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Compute line totals",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "- 42.00\n- 90.00\n- 18.75",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2867
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Compute subtotal",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "150.75",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2653
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Compute discount",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "0.00",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 3571
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Compute tax",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "12.06",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2335
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Compute total",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "162.81",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 2455
+        }
+      ]
+    },
+    {
+      "step_id": 9,
+      "title": "Format final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"vendor\": \"Brightwell Supplies\",\n  \"invoice\": \"INV-20417\",\n  \"subtotal\": \"150.75\",\n  \"discount\": \"0.00\",\n  \"tax\": \"12.06\",\n  \"total\": \"162.81\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "ok",
+          "latency_ms": 4042
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"vendor\": \"Brightwell Supplies\",\n  \"invoice\": \"INV-20417\",\n  \"subtotal\": \"150.75\",\n  \"discount\": \"0.00\",\n  \"tax\": \"12.06\",\n  \"total\": \"162.81\"\n}\n```",
+  "totals": {
+    "llm_calls": 19,
+    "latency_ms": 44960,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-006",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Pancakes, serves 4: 400 g flour, 300 ml milk, 2 eggs, 45 g butter. Scale it to serve 14.",
+  "steps": [],
+  "final_output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 eggs | 7.0 eggs |\n| butter | 45 g | 157.5 g |\n\nScale factor: 3.5",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3066,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

@@ -82,13 +82,14 @@ python -m skillcompiler run skillcompiler/examples/ticket-triage/SKILL.md \
 | `--model NAME` | both | Overrides `GEMMA_MODEL`. |
 | `--max-retries N` | run | Retries per step (default 2). |
 | `--no-verify` | run | Skip the verifier call. |
+| `--mode full\|adaptive` | run | `full` (default): model verifier on every step. `adaptive`: verifier only on risky steps (section 13). Env `SKILLCOMPILER_MODE`; the flag wins. |
 | `--cache` / `--replay` / `--cache-dir DIR` | both | See section 6. |
 | `--provider`, `--base-url URL` | both | See section 7. |
 
 Progress lines go to stderr, so `stdout` can be piped. A missing file, missing `.env` or bad plan prints a short `error:` line and exits with code 1.
 
 Environment (`.env` in the repo root, never committed): `GEMINI_API_KEY`, `GEMMA_MODEL`,
-optional `GEMMA_THINKING`, `GEMMA_RPM` (section 8) and `SKILLCOMPILER_VERIFY=0` (turns the verifier call off for every run; an explicit `verify=` argument or `--no-verify` still wins), `OPENAI_API_KEY` and `OPENAI_BASE_URL` for the other provider.
+optional `GEMMA_THINKING`, `GEMMA_RPM`, `GEMMA_TIMEOUT` (seconds per request, default 240), `SKILLCOMPILER_MODE`, `SKILLCOMPILER_COPY_RULE` (section 13) and `SKILLCOMPILER_VERIFY=0` (turns the verifier call off for every run; an explicit `verify=` argument or `--no-verify` still wins), `OPENAI_API_KEY` and `OPENAI_BASE_URL` for the other provider.
 
 From Python:
 
@@ -137,6 +138,10 @@ These are the real problems the live runs exposed, and what was changed. All are
 | **The verifier made a correct answer worse.** | On `2 x 3.50 + 4 x 1.25 + 8.00` the model answered `20.00` (correct); the verifier rejected it twice with wrong arithmetic, the model switched to `19.00`, and that was accepted. In another task it flip-flopped on an ambiguous label (`travel`, `other`, `travel`). | If the model gives an answer it already gave earlier in the same step and only the verifier objects, the answer is kept (step status `repaired`, note `model repeated its answer; verifier objection overruled`). A format or rule failure is never overruled. |
 | **A rule for the final answer did not reach the last step.** | Skill said the text must begin with "Meet the"; the final text began "Meet this" and every step passed. | The splitter prompt now says to repeat rules that apply to the final answer in the last step's instruction. This relies on the model following it. |
 | **Run counters were global.** | Two runs at once (live mode, a web server) would have mixed their `totals`. | `llm.stats` is now kept per thread. |
+| **The verifier overrule hid a real failure.** | Post-benchmark run, task t04: the verifier rejected the final JSON twice, correctly (it contradicted the earlier steps). The model then flip-flopped back to its first wrong answer and the old rule ("the model gave this answer before") accepted it as `repaired`. | The overrule now covers only the **same answer twice in a row**. The flip-flop stays a failure. The old rule fired in none of the 37 official and repeat harness traces, so the official behaviour is unchanged. |
+| **The final JSON step changed a value's type.** | Benchmark task t03 failed in all three official runs: step 5 produced the text `no`, and the final "format JSON" step wrote `false`. The checker only verifies valid JSON. | A rule for JSON steps that combine earlier results: copy each exactly and keep its type. **Off by default** (`SKILLCOMPILER_COPY_RULE=1`): it passed t03 3 of 3 re-runs, but it was written after seeing the failure and a full re-run was mixed (section 13), so the default stays as in the official runs. |
+| **A run once hung on one call, with no error** (benchmark run 2). | The Gemini client had no request timeout. Cause not proven. | `GEMMA_TIMEOUT` sets a per-request limit (default 240 s). The stream also has a whole-run `timeout_s` (section 13). |
+| **A missing API key was retried with delays.** | `os.environ["GEMINI_API_KEY"]` raised inside the retry loop. | It is now a `ConfigError`: no retry, a clear message. |
 | The splitter sometimes adds small wording. | One plan added "Use the rating and reason from step 3" to the final step. | Not changed. The plan can be saved and edited (`compile -o`, then `--plan`). |
 
 ## 9. Live runs of the examples (single runs, after all the changes above)
@@ -211,3 +216,36 @@ python -m pytest skillcompiler/tests      # 104 tests, no API key, about 9 secon
 ```
 
 A fake model replaces the API in the unit tests. Provider tests use a small local HTTP server. Live runs are manual (sections 6 to 9).
+
+## 13. Adaptive mode, the live stream's limits, and the settings that change behaviour (added 28 Oct)
+
+**Adaptive mode** (`run_skill(..., mode="adaptive")`, `--mode adaptive`, or `SKILLCOMPILER_MODE=adaptive`). The format and rule checks run on every
+step in both modes. The model verifier call runs only on *risky* steps: a strict output format (anything but plain text), arithmetic (words such as
+add, total, tax, discount, percent, or digits with an operator), a hard rule (at most, at least, exactly, must begin with, never, only), a dependence on
+two or more earlier steps, or being the final step. The trace gets the optional field `mode_detail` = `{"strategy": "adaptive", "route": "harness",
+"verified_steps": [...], "skipped_verify_steps": [...]}`; full-mode traces are unchanged. `verify=False` or `SKILLCOMPILER_VERIFY=0` turns the verifier off in
+both modes, and an explicit argument beats the environment. The step list is the same in both modes, so calls drop by about one per skipped step.
+
+**Why adaptive is worth measuring.** In the official benchmark runs the verifier never rejected a step (0 retries in 76 steps in run 1), yet it
+roughly doubled the calls. The format and rule checks, which are not model calls, do the catching. Whether skipping the verifier costs any pass rate is the
+question the A4 measurements answer (below).
+
+**Stream limits** (`skillcompiler/stream.py`, `ndjson_events(skill_text, input, verify=, mode=, max_steps=, timeout_s=, ...)`):
+- `max_steps`: if the plan has more steps, the plan is sent, then one `error`, and nothing runs.
+- `timeout_s`: a whole-run limit. It also fires when one model call hangs: the error is sent at the deadline, and the run stops at its next event.
+- The model API failing 3 calls in a row (no quota, an outage, a missing key) stops the run with one error.
+- Every failure is exactly one `{"type": "error", "message": ...}` line, then the stream ends; the generator never raises into the web server.
+- On disconnect the run stops at its next event and queued events are dropped.
+- Optional event fields: `run_start.mode`, `step_end.verified` (whether the model verifier was used for that step).
+
+**Settings that change behaviour** (all default to the behaviour of the official benchmark runs):
+
+| Setting | Default | Effect |
+|---|---|---|
+| `SKILLCOMPILER_VERIFY` / `--no-verify` | verifier on | `0` removes the verifier call |
+| `SKILLCOMPILER_MODE` / `--mode` | `full` | `adaptive` verifies risky steps only |
+| `SKILLCOMPILER_COPY_RULE` | `0` | `1` adds the verbatim-copy rule to JSON assembly steps |
+| `GEMMA_THINKING` | `MINIMAL` | `default` uses the model's own thinking |
+| `GEMMA_RPM`, `GEMMA_TIMEOUT` | 25, 240 | request pacing, per-request time limit |
+
+Any benchmark number should record these settings and the harness commit.

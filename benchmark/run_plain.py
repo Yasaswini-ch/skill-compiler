@@ -3,16 +3,19 @@
 run_plain(skill_text, user_input, model=None) -> trace.json dict, mode "plain".
 
 Batch use (scores every task, prints a summary, no harness involved):
-    python -m benchmark.run_plain [--limit N] [--cache] [--only t01,t02]
+    python -m benchmark.run_plain [--limit N] [--cache] [--only t01,t02] [--out FILE]
+It also saves every full output, score and the run settings to benchmark/output/plain_baseline.json.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import itertools
 import json
 import re
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 from benchmark import client
@@ -71,6 +74,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--only", help="comma-separated task ids")
     ap.add_argument("--cache", action="store_true", help="cache responses (debugging only)")
     ap.add_argument("--sleep", type=float, default=2.0, help="seconds between calls (default 2)")
+    ap.add_argument("--out", type=Path, default=Path(__file__).with_name("output") / "plain_baseline.json",
+                    help="where to save full outputs and scores")
     args = ap.parse_args(argv)
     client.configure_cache(args.cache)
     tasks = load_tasks(include_generated=True)
@@ -78,15 +83,25 @@ def main(argv: list[str] | None = None) -> int:
         wanted = set(args.only.split(","))
         tasks = [t for t in tasks if t["task_id"] in wanted]
     tasks = tasks[: args.limit] if args.limit else tasks
-    passed = 0
+    passed, rows = 0, []
     for task in tasks:
         trace = run_plain(read_skill(task), task["input"])
         score = score_output(task, trace["final_output"])
         passed += score["passed"]
+        rows.append({"task_id": task["task_id"], "title": task["title"], **score,
+                     "llm_calls": trace["totals"]["llm_calls"], "latency_ms": trace["totals"]["latency_ms"],
+                     "output": trace["final_output"]})
         print(f"{task['task_id']}  {'PASS' if score['passed'] else 'FAIL'}  failed={score['failed_checks']}  "
               f"label={score['failure_label']}", flush=True)
         time.sleep(args.sleep)
-    print(f"\nplain: {passed}/{len(tasks)} passed  settings={client.settings()}  cache={args.cache}")
+    tasks_file = Path(__file__).with_name("tasks.json")
+    report = {"generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+              "settings": {**client.settings(), "cache_used": args.cache},
+              "tasks_sha256": hashlib.sha256(tasks_file.read_bytes()).hexdigest(),
+              "summary": {"passed": passed, "total": len(tasks)}, "tasks": rows}
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"\nplain: {passed}/{len(tasks)} passed  settings={client.settings()}  cache={args.cache}  saved={args.out}")
     return 0
 
 

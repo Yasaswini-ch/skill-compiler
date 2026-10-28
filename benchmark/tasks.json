@@ -54,7 +54,7 @@
         "id": "c6",
         "type": "regex",
         "path": "component",
-        "value": "^payments$",
+        "value": "(?i)^payments$",
         "label": "lost_track"
       },
       {

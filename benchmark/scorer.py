@@ -5,6 +5,8 @@ score_output(task, output) applies every check in task["checks"] to the model ou
 Check types (see contract 2.4):
   json_valid    output parses as JSON (after stripping a markdown code fence).
   json_keys     parsed object has EXACTLY the keys in "value" (no missing, no extra, any order).
+                On failure the label is skipped_step if any key is missing, else wrong_format (extra
+                keys only), whatever label the task gives. Non-JSON output keeps the task's label.
   one_of        the value is exactly one of the strings in "value" (case-sensitive).
   max_words     at most "value" whitespace-separated words.
   min_words     at least "value" words.
@@ -111,7 +113,8 @@ def _check_json_keys(check, ctx):
     missing, extra = sorted(want - have), sorted(have - want)
     if missing or extra:
         parts = ([f"missing keys {missing}"] if missing else []) + ([f"extra keys {extra}"] if extra else [])
-        return False, "; ".join(parts)
+        # Missing keys mean something was skipped; only extra keys mean the structure is wrong.
+        return False, "; ".join(parts), ("skipped_step" if missing else "wrong_format")
     return True, "ok"
 
 
@@ -199,15 +202,20 @@ CHECKS = {
 }
 
 
-def run_check(check: dict, ctx: _Ctx) -> tuple[bool, str]:
-    """Run one check. A malformed check or bad regex fails with a reason instead of raising."""
+def run_check(check: dict, ctx: _Ctx) -> tuple[bool, str, str | None]:
+    """Run one check. Returns (ok, reason, label override or None).
+
+    A malformed check or bad regex fails with a reason instead of raising. Only json_keys sets a
+    label override (see _check_json_keys); every other failure uses the label written in the task.
+    """
     fn = CHECKS.get(check.get("type"))
     if fn is None:
-        return False, f"unknown check type {check.get('type')!r}"
+        return False, f"unknown check type {check.get('type')!r}", None
     try:
-        return fn(check, ctx)
+        result = fn(check, ctx)
     except (KeyError, TypeError, re.error) as exc:
-        return False, f"bad check definition: {exc!r}"
+        return False, f"bad check definition: {exc!r}", None
+    return result if len(result) == 3 else (*result, None)
 
 
 def score_output(task: dict, output: str) -> dict:
@@ -221,10 +229,10 @@ def score_output(task: dict, output: str) -> dict:
     details: dict[str, str] = {}
     label = None
     for check in task["checks"]:
-        ok, reason = run_check(check, ctx)
+        ok, reason, override = run_check(check, ctx)
         details[check["id"]] = reason
         if not ok:
             failed.append(check["id"])
             if label is None:
-                label = check.get("label") or "other"
+                label = override or check.get("label") or "other"
     return {"passed": not failed, "failed_checks": failed, "failure_label": label, "details": details}

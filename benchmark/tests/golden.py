@@ -81,7 +81,9 @@ GOLDEN = {
         "good": [j(**T01), "```json\n" + j(**T01) + "\n```"],
         "bad": [
             (with_(T01, bug="The app crashes every single time that anyone taps the Pay button on the checkout page of the app"), {"c3"}),  # 19 words
-            (with_(T01, version="2.4.1", component="Payments"), {"c5", "c6"}),
+            (with_(T01, version="2.4.1"), {"c5"}),
+            (with_(T01, component="Payments"), set()),  # case is ignored for the component
+            (with_(T01, component="checkout"), {"c6"}),
             (with_(T01, impact="App crashes when tapping Pay on checkout."), {"c7"}),
             ("The app crashes on Android 13 when you tap Pay.", {"c1", "c2", "c3", "c4", "c5", "c6", "c7"}),
         ],

@@ -166,3 +166,31 @@ def test_unknown_type_and_bad_regex_fail_instead_of_raising():
 def test_empty_output():
     assert not passes({"type": "json_valid"}, "")
     assert not passes({"type": "min_words", "value": 1}, "")
+
+
+def test_json_keys_label_extra_keys_only_is_wrong_format():
+    task = {"checks": [{"id": "c1", "type": "json_keys", "value": ["a", "b"], "label": "skipped_step"}]}
+    r = score_output(task, '{"a": 1, "b": 2, "z": 3}')
+    assert r["failed_checks"] == ["c1"] and r["failure_label"] == "wrong_format"
+
+
+def test_json_keys_label_missing_keys_is_skipped_step():
+    task = {"checks": [{"id": "c1", "type": "json_keys", "value": ["a", "b"], "label": "wrong_format"}]}
+    r = score_output(task, '{"a": 1}')
+    assert r["failed_checks"] == ["c1"] and r["failure_label"] == "skipped_step"
+
+
+def test_json_keys_label_missing_wins_over_extra():
+    task = {"checks": [{"id": "c1", "type": "json_keys", "value": ["a", "b"], "label": "other"}]}
+    assert score_output(task, '{"a": 1, "z": 3}')["failure_label"] == "skipped_step"
+
+
+def test_json_keys_non_json_keeps_the_task_label():
+    task = {"checks": [{"id": "c1", "type": "json_keys", "value": ["a"], "label": "other"}]}
+    assert score_output(task, "plain text")["failure_label"] == "other"
+
+
+def test_json_keys_label_applies_only_when_it_is_the_first_failure():
+    task = {"checks": [{"id": "c1", "type": "contains", "value": "zzz", "label": "ignored_constraint"},
+                       {"id": "c2", "type": "json_keys", "value": ["a"], "label": "skipped_step"}]}
+    assert score_output(task, '{"a": 1, "b": 2}')["failure_label"] == "ignored_constraint"

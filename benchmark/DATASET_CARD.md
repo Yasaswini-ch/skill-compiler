@@ -32,17 +32,29 @@ A failure line has: `failure_id`, `task_id`, `task_title`, `difficulty_tags`, `m
 
 Counts in this dataset: `wrong_format` 2, `other` 2, and 0 for each of the other five labels.
 
-## Generated tasks (Phase 2, not done yet)
+## Generated tasks
+
+Gemma was asked to write 3 harder variants of each hand-written task (`gen_variants.py`). The generated tasks are a separate, supplementary set: they are not in `tasks.jsonl` or `failures.jsonl`, and their results are not part of the official 7 of 10 vs 9 of 10.
 
 | | Count |
 |---|---|
-| Hand-written tasks used | 10 |
-| Generated tasks | [PLACEHOLDER] |
-| Generated tasks dropped by schema validation | [PLACEHOLDER] |
-| Generated tasks hand-checked | [PLACEHOLDER] |
-| Generated tasks dropped after hand-check | [PLACEHOLDER] |
+| Hand-written tasks used (official) | 10 |
+| Generated variants requested | 30 |
+| Dropped at schema validation | 5 (t02 x 3: invalid check label; t04 x 1 and t07 x 1: invalid difficulty tag) |
+| Valid generated tasks | 25 |
+| Hand-reviewed (random sample, seed 1) | 12 |
+| Dropped after hand-check | 5 (t04-v2, t04-v3, t03-v1, t03-v2, t09-v1) |
+| Kept and used | 7 |
+| Unreviewed, excluded | 13 |
 
-Generated results, if any, are kept separate from the official results and are not in `failures.jsonl`.
+5 of the 12 hand-reviewed generated tasks (42%) had broken or ambiguous checks, so the 13 unreviewed tasks are not used anywhere.
+
+Two checks of kept tasks were edited after review, and nothing else (details and hashes in `GENERATED_REVIEW.md`):
+
+- **t05-v1**, checks c4 to c7: the literal quote characters were removed from the regexes, because they could never match the unquoted field value.
+- **t08-v3**, check c5: the scale factor line now accepts `10` or `10.0`.
+
+The 7 kept tasks (`tasks_generated_reviewed.json`, SHA-256 `3b0d781b…`) were run once, plain against harness, with the same settings as the official run: plain 5 of 7, harness 6 of 7, 3 failures. Results are in `output/generated/` (see its `README.md`).
 
 ## Known limits
 
@@ -52,6 +64,7 @@ Generated results, if any, are kept separate from the official results and are n
 - Labels were reviewed by one person. Arithmetic errors have no label of their own and are filed under `other`. Five of the seven labels have no real example yet.
 - `output_excerpt` is cut at 300 characters.
 - The harness never needed a retry in run 1, so these harness failures say nothing about the retry mechanism.
+- The verifier can demand things a step did not ask for: in the generated run, t01-v2 step 4 ("Extract OS") was retried because the verifier asked for the app version in the OS value.
 
 ## License
 

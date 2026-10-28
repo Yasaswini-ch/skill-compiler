@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-006",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "trip-day-planner",
+  "input": "Landing is at 14:45. Customs and bags take 45 minutes. The taxi takes 15 minutes. Dinner is at 19:30.",
+  "steps": [],
+  "final_output": "Leave airport: 15:30\nHotel arrival: 15:45\nCheck-in: 15:45\nFree minutes before dinner: 225",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3097,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

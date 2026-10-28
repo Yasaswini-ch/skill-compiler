@@ -1,0 +1,4 @@
+{
+  "t05-v1": {"mode": "plain", "label": "other", "reason": "arithmetic error: wrong subtotal, later numbers follow it"},
+  "t07-v2": {"mode": "plain", "label": "other", "reason": "arithmetic error: free minutes 190 instead of 200"}
+}

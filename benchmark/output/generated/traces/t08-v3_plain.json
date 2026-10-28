@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-007",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Giant Stew, serves 2: 1500 g beef, 500 g potatoes, 100 g onions, 10 ml soy sauce. Scale up to 20 servings.",
+  "steps": [],
+  "final_output": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beef | 1500 g | 15.0 kg |\n| potatoes | 500 g | 5.0 kg |\n| onions | 100 g | 1.0 kg |\n| soy sauce | 10 ml | 100.0 ml |\n\nScale factor: 10.0",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3337,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

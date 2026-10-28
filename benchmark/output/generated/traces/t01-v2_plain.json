@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-001",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "bug-report-triage",
+  "input": "The login screen hangs on Android 14 (version 5.5.0) when tapping 'Submit'. Users are unable to access their accounts at all. We need this fixed for our 500 users.",
+  "steps": [],
+  "final_output": "```json\n{\n  \"bug\": \"The login screen hangs when tapping the submit button.\",\n  \"impact\": \"All 500 users are unable to access their accounts.\",\n  \"version\": \"v5.5.0\",\n  \"os\": \"Android 14\",\n  \"severity\": \"critical\",\n  \"component\": \"login\",\n  \"fix\": \"Investigate the submit button event handler for hang issues.\"\n}\n```",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 5536,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

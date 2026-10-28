@@ -1,0 +1,323 @@
+{
+  "model": "gemma-4-26b-a4b-it",
+  "generated_at": "2026-10-28T17:26:09+05:30",
+  "tasks_sha256": "3b0d781b32ac77a3c32f34d7bac6397e5c5d78b98a2bf431a016c90bb7da7e5b",
+  "harness_is_mock": false,
+  "gemma_thinking": "MINIMAL",
+  "verifier": "on",
+  "cache_used": false,
+  "summary": {
+    "plain": {
+      "passed": 5,
+      "total": 7
+    },
+    "harness": {
+      "passed": 6,
+      "total": 7
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "t01-v2",
+      "title": "Bug triage: Similar steps and specific versioning",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 5536,
+        "output_excerpt": "```json\n{\n  \"bug\": \"The login screen hangs when tapping the submit button.\",\n  \"impact\": \"All 500 users are unable to access their accounts.\",\n  \"version\": \"v5.5.0\",\n  \"os\": \"Android 14\",\n  \"severity\": \"critical\",\n  \"component\": \"login\",\n  \"fix\": \"Investigate the submit button event handler for h...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        }
+      },
+      "harness": {
+        "passed": false,
+        "failed_checks": [
+          "c2"
+        ],
+        "failure_label": "wrong_format",
+        "llm_calls": 20,
+        "latency_ms": 218745,
+        "output_excerpt": "```json\n{\n  \"bug\": \"Login screen hangs on Android 14 when tapping the submit button.\",\n  \"impact\": \"Android 14 users cannot access their accounts due to login hangs.\",\n  \"version\": \"5.5.0\",\n  \"os\": \"Android 14\",\n  \"severity\": \"critical\",\n  \"component\": \"login\",\n  \"fix\": \"Update the app to resolve...",
+        "details": {
+          "c1": "ok",
+          "c2": "pattern '^v5\\\\.5\\\\.0$' did not match",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        },
+        "retries": 1,
+        "steps": {
+          "pass": 7,
+          "repaired": 1,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t01-v3",
+      "title": "Bug triage: Complex impact and negative constraints",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 17892,
+        "output_excerpt": "```json\n{\n  \"bug\": \"The payment button is greyed out after updating to v1.1.1.\",\n  \"impact\": \"Account managers cannot process invoices, which stops all revenue flow.\",\n  \"version\": \"v1.1.1\",\n  \"os\": \"macOS 14\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Enable the payment butt...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 18,
+        "latency_ms": 204481,
+        "output_excerpt": "```json\n{\n  \"bug\": \"Payment button is greyed out on macOS 14 after updating to v1.1.1.\",\n  \"impact\": \"Account managers cannot process invoices, which prevents revenue flow.\",\n  \"version\": \"v1.1.1\",\n  \"os\": \"macOS 14\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Update the softw...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 8,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t05-v1",
+      "title": "Invoice summary: complex arithmetic and precision handling",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c4",
+          "c5",
+          "c6",
+          "c7"
+        ],
+        "failure_label": "other",
+        "llm_calls": 1,
+        "latency_ms": 3440,
+        "output_excerpt": "```json\n{\n  \"vendor\": \"Global Tech Ltd.\",\n  \"invoice\": \"INV-8821\",\n  \"subtotal\": \"441.50\",\n  \"discount\": \"44.15\",\n  \"tax\": \"31.83\",\n  \"total\": \"429.18\"\n}\n```",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "pattern '441\\\\.60' did not match",
+          "c5": "pattern '44\\\\.16' did not match",
+          "c6": "pattern '31.80' did not match",
+          "c7": "pattern '429.24' did not match"
+        },
+        "scorer_label": "lost_track",
+        "label_note": "arithmetic error: wrong subtotal, later numbers follow it"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 18,
+        "latency_ms": 218626,
+        "output_excerpt": "```json\n{\n  \"vendor\": \"Global Tech Ltd.\",\n  \"invoice\": \"INV-8821\",\n  \"subtotal\": \"441.60\",\n  \"discount\": \"44.16\",\n  \"tax\": \"31.80\",\n  \"total\": \"429.24\"\n}\n```",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 9,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t06-v2",
+      "title": "Recipe scaler: Similar steps and unit confusion",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 3771,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n|---|---|---|\n| broth | 150 ml | 375.0 ml |\n| chili | 10 g | 25.0 g |\n| potato | 800 g | 2.0 kg |\n| onion | 200 g | 500.0 g |\n\nScale factor: 2.5",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 13,
+        "latency_ms": 68564,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| broth | 150 ml | 375.0 ml |\n| chili | 10 g | 25.0 g |\n| potato | 800 g | 2.0 kg |\n| onion | 200 g | 500.0 g |\n\nScale factor: 2.5",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 6,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t07-v2",
+      "title": "Trip day planner: multiple time units and strict format",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c4"
+        ],
+        "failure_label": "other",
+        "llm_calls": 1,
+        "latency_ms": 2655,
+        "output_excerpt": "Leave airport: 15:05\nHotel arrival: 16:10\nCheck-in: 16:10\nFree minutes before dinner: 190",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "pattern '(?m)^Free minutes before dinner: 200$' did not match",
+          "c5": "ok"
+        },
+        "scorer_label": "lost_track",
+        "label_note": "arithmetic error: free minutes 190 instead of 200"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 15,
+        "latency_ms": 46826,
+        "output_excerpt": "Leave airport: 15:05\nHotel arrival: 16:10\nCheck-in: 16:10\nFree minutes before dinner: 200",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 7,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t07-v3",
+      "title": "Trip day planner: similar time values and check-in logic",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 3097,
+        "output_excerpt": "Leave airport: 15:30\nHotel arrival: 15:45\nCheck-in: 15:45\nFree minutes before dinner: 225",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 15,
+        "latency_ms": 32854,
+        "output_excerpt": "Leave airport: 15:30\nHotel arrival: 15:45\nCheck-in: 15:45\nFree minutes before dinner: 225",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 7,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t08-v3",
+      "title": "Recipe scaler: Large scale up with heavy unit conversion focus",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 3337,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| beef | 1500 g | 15.0 kg |\n| potatoes | 500 g | 5.0 kg |\n| onions | 100 g | 1.0 kg |\n| soy sauce | 10 ml | 100.0 ml |\n\nScale factor: 10.0",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 13,
+        "latency_ms": 35245,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n|---|---|---|\n| beef | 1500 g | 15.0 kg |\n| potatoes | 500 g | 5.0 kg |\n| onions | 100 g | 1.0 kg |\n| soy sauce | 10 ml | 100.0 ml |\n\nScale factor: 10",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 6,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    }
+  ]
+}

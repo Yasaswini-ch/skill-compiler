@@ -1,0 +1,16 @@
+{
+  "run_id": "plain-004",
+  "mode": "plain",
+  "mock": false,
+  "model": "gemma-4-26b-a4b-it",
+  "skill": "recipe-scaler",
+  "input": "Spicy Soup, serves 2: 150 ml broth, 10 g chili, 800 g potato, 200 g onion. Scale it to serve 5.",
+  "steps": [],
+  "final_output": "| Ingredient | Original | Scaled |\n|---|---|---|\n| broth | 150 ml | 375.0 ml |\n| chili | 10 g | 25.0 g |\n| potato | 800 g | 2.0 kg |\n| onion | 200 g | 500.0 g |\n\nScale factor: 2.5",
+  "totals": {
+    "llm_calls": 1,
+    "latency_ms": 3771,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

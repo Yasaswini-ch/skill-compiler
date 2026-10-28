@@ -82,7 +82,8 @@ python -m skillcompiler run skillcompiler/examples/ticket-triage/SKILL.md \
 | `--model NAME` | both | Overrides `GEMMA_MODEL`. |
 | `--max-retries N` | run | Retries per step (default 2). |
 | `--no-verify` | run | Skip the verifier call. |
-| `--mode full\|adaptive` | run | `full` (default): model verifier on every step. `adaptive`: verifier only on risky steps (section 13). Env `SKILLCOMPILER_MODE`; the flag wins. |
+| `--mode full\|adaptive\|auto` | run | `full` (default): model verifier on every step. `adaptive`: verifier only on risky steps. `auto`: lint first, run easy skills plain, the rest adaptive (section 13). Env `SKILLCOMPILER_MODE`; the flag wins. |
+| `--escalate-model NAME` | run | A step that still fails after its retries gets one last attempt on this bigger model (section 13). |
 | `--cache` / `--replay` / `--cache-dir DIR` | both | See section 6. |
 | `--provider`, `--base-url URL` | both | See section 7. |
 
@@ -249,3 +250,13 @@ question the A4 measurements answer (below).
 | `GEMMA_RPM`, `GEMMA_TIMEOUT` | 25, 240 | request pacing, per-request time limit |
 
 Any benchmark number should record these settings and the harness commit.
+
+**Auto mode** (`--mode auto`). The skill is linted first (`tools/lint_skill.py`, no model call). A skill of at most 6 steps that the linter rates *low* risk runs
+**plain**: the whole skill in one call, a final format check (valid JSON if the skill mentions JSON, otherwise non-empty), and one retry. The trace then has
+`mode: "plain"`, no steps, and `mode_detail` = `{"strategy": "auto", "route": "plain", "reason": ..., "final_check": {"ok": ..., "note": ...}}`; a failed
+final check is reported there, not hidden. Any other skill, or no linter, runs the harness in adaptive mode (`route: "harness"`). A `route` event is sent either way.
+The 6-step and "low" thresholds are starting values, not tuned. **Status: tested with a fake model only**; its pass rate and cost on the frozen tasks are not measured.
+
+**Escalation** (`--escalate-model NAME`). A step that is still failing after its normal retries gets one last attempt, with the same feedback, on the named bigger model
+(the verifier call for that attempt also uses it). The attempt carries `"model"`, the step gets `"escalated": true`, and the trace lists `escalated_steps`
+(empty if none). A step that passes is never sent up, and escalating to the model already in use does nothing. **Status: tested with a fake model only; no real run yet.**

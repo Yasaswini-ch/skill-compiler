@@ -33,6 +33,26 @@
       "items": {
         "type": "integer"
       }
+    },
+    "reason": {
+      "type": "string",
+      "description": "auto mode: why this route (lint score, level, step count)"
+    },
+    "final_check": {
+      "type": "object",
+      "required": [
+        "ok",
+        "note"
+      ],
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "description": "auto mode, plain route: the result of the final format check"
     }
   }
 }

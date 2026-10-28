@@ -1,13 +1,13 @@
-{"type": "run_start", "will_split": false}
+{"type": "run_start", "will_split": false, "mode": "adaptive"}
 {"type": "plan", "skill": "ticket-triage", "steps": [{"id": 1, "title": "Extract customer name"}, {"id": 2, "title": "Classify"}], "warnings": []}
 {"type": "step_start", "step_id": 1, "title": "Extract customer name"}
 {"type": "attempt_start", "step_id": 1, "attempt": 1}
-{"type": "attempt_end", "step_id": 1, "attempt": 1, "ok": true, "output": "Ravi", "format_ok": true, "verified": true, "checker_note": "ok", "latency_ms": 640}
-{"type": "step_end", "step_id": 1, "status": "pass"}
+{"type": "attempt_end", "step_id": 1, "attempt": 1, "ok": true, "output": "Ravi", "format_ok": true, "verified": true, "checker_note": "ok (format only)", "latency_ms": 640}
+{"type": "step_end", "step_id": 1, "status": "pass", "verified": false}
 {"type": "step_start", "step_id": 2, "title": "Classify"}
 {"type": "attempt_start", "step_id": 2, "attempt": 1}
 {"type": "attempt_end", "step_id": 2, "attempt": 1, "ok": false, "output": "It looks like a billing issue", "format_ok": false, "verified": false, "checker_note": "Expected exactly one of: billing, technical, account", "latency_ms": 700}
 {"type": "attempt_start", "step_id": 2, "attempt": 2}
 {"type": "attempt_end", "step_id": 2, "attempt": 2, "ok": true, "output": "billing", "format_ok": true, "verified": true, "checker_note": "ok", "latency_ms": 700}
-{"type": "step_end", "step_id": 2, "status": "repaired"}
-{"type": "run_end", "trace": {"run_id": "r-cdaf00a8", "mode": "harness", "mock": true, "model": "mock-small", "skill": "ticket-triage", "input": "Hi, I was charged twice for my order.", "steps": [{"step_id": 1, "title": "Extract customer name", "status": "pass", "attempts": [{"output": "Ravi", "format_ok": true, "verified": true, "checker_note": "ok", "latency_ms": 0}]}, {"step_id": 2, "title": "Classify", "status": "repaired", "attempts": [{"output": "It looks like a billing issue", "format_ok": false, "verified": false, "checker_note": "Expected exactly one of: billing, technical, account", "latency_ms": 0}, {"output": "billing", "format_ok": true, "verified": true, "checker_note": "ok", "latency_ms": 0}]}], "final_output": "billing", "totals": {"llm_calls": 5, "latency_ms": 2900, "retries": 1, "cache_hits": 0}}}
+{"type": "step_end", "step_id": 2, "status": "repaired", "verified": true}
+{"type": "run_end", "trace": {"run_id": "r-024d8741", "mode": "harness", "mock": true, "model": "mock-small", "skill": "ticket-triage", "input": "Hi, I was charged twice for my order.", "steps": [{"step_id": 1, "title": "Extract customer name", "status": "pass", "attempts": [{"output": "Ravi", "format_ok": true, "verified": true, "checker_note": "ok (format only)", "latency_ms": 0}]}, {"step_id": 2, "title": "Classify", "status": "repaired", "attempts": [{"output": "It looks like a billing issue", "format_ok": false, "verified": false, "checker_note": "Expected exactly one of: billing, technical, account", "latency_ms": 0}, {"output": "billing", "format_ok": true, "verified": true, "checker_note": "ok", "latency_ms": 0}]}], "final_output": "billing", "totals": {"llm_calls": 4, "latency_ms": 2900, "retries": 1, "cache_hits": 0}, "mode_detail": {"strategy": "adaptive", "route": "harness", "verified_steps": [2], "skipped_verify_steps": [1]}}}

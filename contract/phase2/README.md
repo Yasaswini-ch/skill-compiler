@@ -18,8 +18,16 @@ Each shape has a JSON Schema (`*.schema.json`). `skillcompiler/tests/test_contra
 ## Event stream
 
 One JSON object per line. Types: `run_start`, `plan`, `step_start`, `attempt_start`, `attempt_end`, `step_end`, `run_end` (carries the full trace),
+`route` (auto mode only, sent right after `run_start`: `{"type": "route", "route": "plain"|"harness", "reason": "..."}`; a plain route sends no `plan` and no steps),
 and `error` (`{"type": "error", "message": "..."}`, always the last line). Optional fields may be added; readers must ignore unknown fields.
 `events_sample.ndjson` is a two-step run with one repaired step (mock). Real events come from `run_skill(..., on_event=...)`.
+
+## Optional fields added in the harness (readers must ignore what they do not know)
+
+- `run_start.mode` and `step_end.verified` (whether the model verifier was used on that step).
+- `trace.mode_detail` (`mode_detail.json`): written in adaptive and auto runs. Auto adds `reason` and, on the plain route, `final_check` `{ok, note}`.
+  A plain-route trace has `mode: "plain"` and no steps.
+- `trace.escalated_steps` (ids of steps sent to a bigger model; only when `--escalate-model` is used), `step.escalated: true`, and `attempt.model` on the escalated attempt.
 
 ## Rules that go with these files
 

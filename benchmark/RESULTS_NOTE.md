@@ -51,3 +51,4 @@ Every task had the same pass or fail result in all three runs.
 - **Latency varies much more than calls.** Calls were 16.2x to 16.6x. The latency ratio ranged from 7.6x to 16.3x, and run 3's t03 took 187 s against 41 to 49 s in the other runs.
 - **Step counts differ slightly** because the splitter is not deterministic: in run 2 it produced 7 steps for t07 instead of 6.
 - **Run 1's `tasks_sha256` was filled in afterwards.** It was added to `results.json` after the run, once the hash of `tasks.json` had been checked before and after that run. Runs 2 and 3 recorded it themselves.
+- **Code change after the measured runs:** After the measured runs, run_compare and run_plain were changed (commit 140d1f9) so tasks_generated.json is never loaded automatically. Official results were unaffected, since that file did not exist when they ran.

@@ -55,13 +55,11 @@ def run_plain(skill_text: str, user_input: str, model: str | None = None) -> dic
     }
 
 
-def load_tasks(path: Path | None = None, include_generated: bool = False) -> list[dict]:
+def load_tasks(path: Path | None = None) -> list[dict]:
+    """Tasks from `path` (default benchmark/tasks.json). Generated tasks are never added implicitly:
+    benchmark/tasks_generated.json is run only when passed explicitly, so it cannot leak into the official results."""
     path = path or Path(__file__).with_name("tasks.json")
-    tasks = json.loads(path.read_text(encoding="utf-8"))
-    generated = path.with_name("tasks_generated.json")
-    if include_generated and generated.exists():
-        tasks += json.loads(generated.read_text(encoding="utf-8"))
-    return tasks
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def read_skill(task: dict) -> str:
@@ -78,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="where to save full outputs and scores")
     args = ap.parse_args(argv)
     client.configure_cache(args.cache)
-    tasks = load_tasks(include_generated=True)
+    tasks = load_tasks()
     if args.only:
         wanted = set(args.only.split(","))
         tasks = [t for t in tasks if t["task_id"] in wanted]

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06080c">
+<title>Skill Compiler · X-ray</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🩻</text></svg>">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="xray.css">
+<script src="mock/mock.js"></script>
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<script src="xray-core.js"></script>
+<script src="xray.js"></script>
+</head>
+<body>
+<main>
+  <p class="kicker">X-ray</p>
+  <h1>Watch a run, step by step</h1>
+  <p class="sub">Steps light up as the harness works. A rejected attempt flashes red with the checker's reason, the retry turns green. Replays of recorded runs always say REPLAY.</p>
+
+  <div class="xr-controls">
+    <label>Recorded run
+      <select id="sample" aria-label="Recorded run">
+        <option value="events_repair.ndjson">ticket-triage · one repair (gemma-4-26b)</option>
+        <option value="events_fail.ndjson">ticket-triage · pass, repaired and failed steps (gemma3:4b)</option>
+        <option value="events_all_pass.ndjson">complaint-resolution · 12 steps, no retries</option>
+      </select>
+    </label>
+    <button id="play" type="button">Replay</button>
+    <button id="pause" type="button" class="ghost" disabled>Pause</button>
+    <label>Speed
+      <select id="speed" aria-label="Replay speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
+    </label>
+    <label>Or load a file <input type="file" id="file" accept=".ndjson,.json,.jsonl,application/json"></label>
+  </div>
+  <p id="msg" class="err" role="alert"></p>
+  <div id="banner"></div>
+  <div id="view"></div>
+</main>
+<script>
+nav("xray.html");
+const view = document.getElementById("view"), msg = document.getElementById("msg"), bannerBox = document.getElementById("banner");
+const playBtn = document.getElementById("play"), pauseBtn = document.getElementById("pause"), speedSel = document.getElementById("speed"), sampleSel = document.getElementById("sample");
+const xray = new XRay(view);
+let events = [], label = "";
+
+function banner(kind, text) {
+  bannerBox.replaceChildren(text ? el("div", { class: "xr-banner", "data-kind": kind, role: "status" }, text) : "");
+}
+function isMockTrace(evs) { const end = evs[evs.length - 1]; return !!(end && end.trace && end.trace.mock === true); }
+
+function replay() {
+  if (!events.length) return;
+  msg.textContent = "";
+  mockBanner(isMockTrace(events), "MOCK TRACE - produced by a stand-in, not the real harness");
+  banner("replay", `REPLAY — a recorded run, not live (${label})`);
+  pauseBtn.disabled = false; pauseBtn.textContent = "Pause"; playBtn.textContent = "Replay again";
+  xray.play(events, { speed: Number(speedSel.value), onDone: () => { pauseBtn.disabled = true; } });
+}
+function load(evs, name, autoplay = true) {
+  if (!Array.isArray(evs) || !evs.length || !evs.some(e => e && e.type === "run_start")) { msg.textContent = "That does not look like a run: no run_start event."; return; }
+  events = evs; label = name;
+  if (autoplay) replay(); else { xray.showAll(events); banner("replay", `REPLAY — a recorded run, not live (${label})`); }
+}
+async function loadSample(name) {
+  try {
+    const r = await fetch("mock/" + name);
+    if (!r.ok) throw new Error(r.status + " " + r.statusText);
+    load(XRayCore.parseEvents(await r.text()), name);
+  } catch (e) {
+    // Opened from a folder: fetch is blocked, so use the bundled mock trace instead (marked MOCK).
+    const t = window.__MOCK && window.__MOCK["trace.json"];
+    if (t) load(XRayCore.traceToEvents(t), "bundled mock trace");
+    else msg.textContent = `Could not load ${name} (${e.message}). Use "load a file" instead.`;
+  }
+}
+
+playBtn.addEventListener("click", () => (events.length ? replay() : loadSample(sampleSel.value)));
+pauseBtn.addEventListener("click", () => {
+  if (pauseBtn.textContent === "Pause") { xray.pause(); pauseBtn.textContent = "Resume"; } else { xray.resume(); pauseBtn.textContent = "Pause"; }
+});
+speedSel.addEventListener("change", () => xray.setSpeed(Number(speedSel.value)));
+sampleSel.addEventListener("change", () => loadSample(sampleSel.value));
+document.getElementById("file").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { try { load(XRayCore.parseEvents(r.result), f.name); } catch (err) { msg.textContent = err.message; } };
+  r.readAsText(f);
+});
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) { const r = new FileReader(); r.onload = () => { try { load(XRayCore.parseEvents(r.result), f.name); } catch (err) { msg.textContent = err.message; } }; r.readAsText(f); } });
+
+(async function () {
+  const q = new URLSearchParams(location.search);
+  const relative = p => !/^[a-z][a-z0-9+.-]*:/i.test(p) && !/^[\\/]{2}/.test(p) && !p.startsWith("\\") && new URL(p, location.href).origin === location.origin;
+  if (q.get("stream")) {                                   // a live harness run, streamed from this site
+    const url = q.get("stream");
+    if (!relative(url)) { msg.textContent = "?stream= must be a path on this site."; return; }
+    banner("live", "LIVE — this run is happening now");
+    playBtn.disabled = true; sampleSel.disabled = true;
+    try { await xray.follow(url); } catch (e) { msg.textContent = `Could not follow the stream: ${e.message}`; }
+    return;
+  }
+  if (q.get("events")) {
+    const p = q.get("events");
+    if (!relative(p)) { msg.textContent = "?events= must be a relative path on this site. Use the file picker for other files."; return; }
+    try { const r = await fetch(p); if (!r.ok) throw new Error(r.status + " " + r.statusText); return load(XRayCore.parseEvents(await r.text()), p); }
+    catch (e) { msg.textContent = `Could not fetch ${p} (${e.message}). On a local folder, use the file picker instead.`; }
+  }
+  loadSample(sampleSel.value);
+})();
+</script>
+</body>
+</html>

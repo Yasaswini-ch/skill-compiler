@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06080c">
+<title>Skill Compiler · Break Gemma</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🎯</text></svg>">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="xray.css">
+<script src="mock/mock.js"></script>
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<script src="xray-core.js"></script>
+<script src="xray.js"></script>
+<style>
+  .ar-top { display: flex; flex-wrap: wrap; gap: 1em 2em; align-items: center; justify-content: space-between; margin: 0 0 1em; }
+  .ar-count { display: flex; align-items: baseline; gap: .5em; }
+  .ar-count b { font: 800 clamp(48px, 7vw, 96px)/1 var(--mono); color: var(--fail); font-variant-numeric: tabular-nums; }
+  .ar-count span { color: var(--muted); max-width: 12em; }
+  .ar-meta { display: flex; flex-direction: column; gap: .4em; align-items: flex-end; }
+  .ar-panel { border: 2px solid var(--line-2); border-radius: var(--r); background: var(--surface); padding: 1em 1.2em; margin-bottom: 1em; }
+  .ar-panel h2 { margin: 0 0 .5em; font-size: 1.05em; }
+  .ar-notice { font-size: var(--text-sm); color: var(--muted); border-left: 4px solid var(--rep); padding-left: .8em; margin: .6em 0; }
+  .ar-row { display: flex; flex-wrap: wrap; gap: .8em; align-items: center; margin-bottom: .6em; }
+  .ar-row label { display: inline-flex; gap: .5em; align-items: center; }
+  .ar-tabs { display: flex; gap: .5em; margin-bottom: .8em; }
+  .ar-tabs button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .ar-presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .8em; }
+  .ar-preset { text-align: left; border: 2px solid var(--line-2); border-radius: var(--r); background: var(--surface-2); padding: .8em 1em; color: var(--ink); cursor: pointer; font: inherit; }
+  .ar-preset[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .ar-preset b { display: block; margin-bottom: .2em; }
+  .ar-preset small { color: var(--muted); display: block; margin-top: .3em; }
+  .ar-tag { font: 700 12px var(--mono); text-transform: uppercase; padding: .1em .6em; border-radius: var(--r-pill); border: 1.5px solid var(--line-2); color: var(--muted); }
+  .ar-tag[data-tag="reliable"] { color: var(--pass); border-color: var(--pass); }
+  .ar-tag[data-tag="sometimes"] { color: var(--rep); border-color: var(--rep); }
+  textarea { width: 100%; font: 14px/1.5 var(--mono); background: var(--code-bg); color: var(--ink); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: .6em .8em; }
+  input[type="text"] { font: inherit; padding: .4em .7em; background: var(--code-bg); color: var(--ink); border: 1px solid var(--line-2); border-radius: var(--r-sm); }
+  .ar-cols { display: grid; grid-template-columns: minmax(0, 38fr) minmax(0, 62fr); gap: 1.2em; align-items: start; }
+  @media (max-width: 1000px) { .ar-cols { grid-template-columns: 1fr; } }
+  .ar-verdict { margin: 0 0 1em; padding: .8em 1.1em; border-radius: var(--r); border: 3px solid var(--line-2); font-weight: 800; font-size: clamp(18px, 1.6vw, 28px); text-align: center; }
+  .ar-verdict[data-kind="broke"] { border-color: var(--fail); color: var(--fail); background: var(--fail-soft); }
+  .ar-verdict[data-kind="held"] { border-color: var(--pass); color: var(--pass); background: var(--pass-soft); }
+  .ar-verdict[data-kind="unverified"] { border-color: var(--rep); color: var(--rep); background: var(--rep-soft); }
+  .ar-queue { font-weight: 700; color: var(--accent); }
+  .ar-board ol { margin: 0; padding-left: 1.4em; }
+  .ar-help { color: var(--muted); font-size: var(--text-sm); }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Arena</p>
+  <h1>Can you break Gemma?</h1>
+  <p class="sub">Pick a challenge. Plain Gemma gets the whole skill in one go; the harness gets it one checked step at a time. A script scores both.</p>
+
+  <div id="banner"></div>
+  <div class="ar-top">
+    <div class="ar-count" aria-live="polite"><b id="count">0</b><span>failures collected (scored challenges where plain Gemma broke a rule)</span></div>
+    <div class="ar-meta"><span class="xr-chip" id="modeChip">mode: …</span><span class="xr-chip" id="provChip">model: …</span><span class="ar-help" id="queueInfo"></span></div>
+  </div>
+  <p id="msg" class="err" role="alert"></p>
+
+  <section class="ar-panel" id="setup" aria-label="Start an attempt">
+    <div class="ar-row">
+      <label>Nickname <input type="text" id="nick" maxlength="20" placeholder="guest-7" autocomplete="off"></label>
+      <span class="ar-help">1 to 20 letters, digits, spaces or . _ - (please not your real name)</span>
+    </div>
+    <p class="ar-notice"><b>Before you start.</b> Your text is sent to Google's Gemini API (free tier). Google may use it to improve its products, and people there may read it. It may also be added to a public dataset after a person at this booth has read it.
+      <b>Do not type personal data.</b> We store only your nickname and the text, never names, emails or IP addresses.</p>
+    <div class="ar-row"><label><input type="checkbox" id="consent"> I understand, and I agree.</label></div>
+
+    <div class="ar-tabs" role="group" aria-label="Mode">
+      <button type="button" id="tabChallenge" aria-pressed="true">Challenge (scored)</button>
+      <button type="button" id="tabFree" aria-pressed="false" class="ghost">Free play (unverified)</button>
+    </div>
+
+    <div id="challengeBox">
+      <div class="ar-presets" id="presets" role="group" aria-label="Challenges"></div>
+      <p class="ar-help" id="presetHelp"></p>
+    </div>
+    <div id="freeBox" hidden>
+      <p class="ar-notice">Free play is not scored. You will see both outputs side by side, marked <b>UNVERIFIED</b>: nobody has checked them, and they never count as failures. Up to 6 steps.</p>
+      <label for="skill">Instructions (a SKILL.md, numbered steps work best)</label>
+      <textarea id="skill" rows="7" spellcheck="false" placeholder="1. Pick the cheapest item.&#10;2. Write its price with a $ sign.&#10;3. Answer in one short sentence."></textarea>
+    </div>
+    <label for="input" style="display:block;margin-top:.8em">Input <span class="ar-help" id="inputCount"></span></label>
+    <textarea id="input" rows="5" spellcheck="false"></textarea>
+    <div class="ar-row" style="margin-top:.8em">
+      <button type="button" id="go" disabled>Run</button>
+      <button type="button" id="stop" class="ghost" hidden>Leave the queue / stop</button>
+      <button type="button" id="replay" class="ghost">Play a recorded run (REPLAY)</button>
+    </div>
+  </section>
+
+  <section id="stage" hidden aria-label="Result">
+    <div id="verdict"></div>
+    <div class="ar-cols"><div id="plainBox"></div><div id="xrayBox"></div></div>
+  </section>
+
+  <section class="ar-panel ar-board" aria-label="Leaderboard"><h2>Who broke Gemma most</h2><ol id="board"><li class="ar-help">Nobody yet.</li></ol></section>
+</main>
+<script>
+nav("arena.html");
+const $ = id => document.getElementById(id);
+const MAX_INPUT = 1500;
+let presets = [], selected = null, mode = "challenge", running = false, abort = null, stats = {};
+const xray = new XRay($("xrayBox"), { live: true });
+
+function setMsg(t) { $("msg").textContent = t || ""; }
+function banner(kind, text) { $("banner").replaceChildren(text ? el("div", { class: "xr-banner", "data-kind": kind, role: "status" }, text) : ""); }
+function ready() {
+  const nick = $("nick").value.trim(), text = $("input").value;
+  const okMode = mode === "challenge" ? !!selected : $("skill").value.trim().length > 0;
+  $("go").disabled = running || !(nick && $("consent").checked && text.trim() && text.length <= MAX_INPUT && okMode);
+  $("inputCount").textContent = `${text.length} / ${MAX_INPUT}`;
+}
+
+async function loadStats() {
+  try {
+    stats = await (await fetch("arena/stats")).json();
+    $("count").textContent = stats.failures_collected;
+    $("modeChip").textContent = `harness mode: ${stats.mode}`;
+    $("provChip").textContent = stats.provider;
+    $("queueInfo").textContent = stats.queue_length ? `${stats.queue_length} in the queue` : "";
+    $("board").replaceChildren(...(stats.leaderboard.length ? stats.leaderboard.map(r => el("li", {}, `${r.nickname}: broke plain Gemma ${r.broke_plain}×`)) : [el("li", { class: "ar-help" }, "Nobody yet.")]));
+    mockBanner(!!stats.mock, "MOCK DATA - a stand-in is answering, not the real model. Nothing here counts.");
+    if (!/^LOCAL/.test(stats.provider || "") && !$("banner").firstChild) banner("", "");
+    if (/^LOCAL/.test(stats.provider || "")) banner("local", `${stats.provider} — answering on this computer, no internet`);
+  } catch (e) { setMsg("The arena server is not running. Start it with: python web/server.py"); }
+}
+
+function renderPresets() {
+  $("presets").replaceChildren(...presets.map(p => {
+    const t = p.tested || {};
+    const rate = t.plain_runs ? `Tested: plain failed ${t.plain_failed} of ${t.plain_runs}, harness failed ${t.harness_failed} of ${t.harness_runs}` : "Not tested yet";
+    const b = el("button", { type: "button", class: "ar-preset", "aria-pressed": "false" },
+      el("b", {}, p.title), el("span", { class: "ar-tag", "data-tag": p.tag }, p.tag), el("small", {}, p.why_it_breaks), el("small", {}, `${p.steps} steps · ${rate}`));
+    b.addEventListener("click", () => {
+      selected = p; $("input").value = p.input;
+      for (const x of $("presets").children) x.setAttribute("aria-pressed", String(x === b));
+      $("presetHelp").textContent = p.mock ? "These challenges are examples (mock): they have not been tested on Gemma." : "You may change the input a little. Plain Gemma may still get it right: not every attempt breaks it.";
+      ready();
+    });
+    return b;
+  }));
+}
+
+async function loadPresets() {
+  try { presets = await (await fetch("arena/presets")).json(); renderPresets(); } catch (e) { setMsg("Could not load the challenges."); }
+}
+
+function setMode(m) {
+  mode = m;
+  $("challengeBox").hidden = m !== "challenge"; $("freeBox").hidden = m !== "free";
+  $("tabChallenge").setAttribute("aria-pressed", String(m === "challenge")); $("tabFree").setAttribute("aria-pressed", String(m === "free"));
+  $("tabChallenge").classList.toggle("ghost", m !== "challenge"); $("tabFree").classList.toggle("ghost", m !== "free");
+  if (m === "free") $("input").placeholder = "The text the instructions should work on."; ready();
+}
+
+function finish() { running = false; abort = null; $("go").hidden = false; $("stop").hidden = true; ready(); }
+
+function showVerdict(scored, preset) {
+  const box = $("verdict");
+  if (scored.unverified) { box.replaceChildren(el("div", { class: "ar-verdict", "data-kind": "unverified" }, "UNVERIFIED: nobody scored this. Free play never counts as a failure.")); return; }
+  if (scored.broke_plain === true) box.replaceChildren(el("div", { class: "ar-verdict", "data-kind": "broke" }, scored.counted ? "Plain Gemma broke a rule. Counted!" : "Plain Gemma broke a rule (not counted: stand-in or example data)."));
+  else if (scored.broke_plain === false) {
+    const t = preset && preset.tested && preset.tested.plain_runs ? ` Our tests: this one breaks plain Gemma ${preset.tested.plain_failed} of ${preset.tested.plain_runs} times.` : "";
+    box.replaceChildren(el("div", { class: "ar-verdict", "data-kind": "held" }, "Plain Gemma passed this time. Not every attempt breaks it." + t));
+  } else box.replaceChildren(el("div", { class: "ar-verdict", "data-kind": "unverified" }, "Plain Gemma's call failed, so this attempt is not scored."));
+}
+
+async function run() {
+  setMsg(""); running = true; $("go").hidden = true; $("stop").hidden = false; $("stage").hidden = false;
+  $("verdict").replaceChildren(); $("plainBox").replaceChildren(); xray.reset();
+  const body = { consent: $("consent").checked, nickname: $("nick").value.trim(), kind: mode === "challenge" ? "preset" : "free",
+    preset_id: mode === "challenge" ? selected.id : null, skill_text: mode === "free" ? $("skill").value : undefined, input: $("input").value };
+  abort = new AbortController();
+  try {
+    const joined = await fetch("arena/join", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: abort.signal });
+    const info = await joined.json();
+    if (!joined.ok) { setMsg(info.error || "Could not join."); $("stage").hidden = true; return finish(); }
+    $("queueInfo").textContent = `You are number ${info.position}. About ${info.estimated_wait_s} s.`;
+    const res = await fetch("arena/stream/" + info.attempt_id, { signal: abort.signal });
+    const reader = res.body.getReader(), dec = new TextDecoder(); let buf = "";
+    for (;;) {
+      const { value, done } = await reader.read(); if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let nl;
+      while ((nl = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1); if (!line) continue;
+        handle(JSON.parse(line));
+      }
+    }
+  } catch (e) {
+    if (e.name !== "AbortError") setMsg(`Lost the connection (${e.message}). You can play a recorded run instead, clearly marked REPLAY.`);
+  }
+  finish(); loadStats();
+}
+
+function handle(e) {
+  switch (e.type) {
+    case "queue": $("queueInfo").textContent = `You are number ${e.position} in the queue. About ${e.estimated_wait_s} s.`; break;
+    case "start": $("queueInfo").textContent = ""; banner(e.provider.startsWith("LOCAL") ? "local" : "live", e.provider.startsWith("LOCAL") ? `${e.provider} — answering on this computer` : `LIVE — harness mode: ${e.mode}`); break;
+    case "plain": XRay.renderPlain($("plainBox"), { output: e.result.output, passed: e.result.passed, failed_checks: e.result.failed_checks || [],
+      note: e.result.error ? `Plain call failed: ${e.result.error}` : "" }); break;
+    case "scored":
+      showVerdict(e, selected); $("count").textContent = e.failures_collected;
+      if (e.plain) XRay.renderPlain($("plainBox"), e.plain);
+      break;
+    default: xray.feed(e);
+  }
+}
+
+async function playReplay() {
+  setMsg(""); $("stage").hidden = false; $("verdict").replaceChildren();
+  banner("replay", "REPLAY — a recorded run, not live. Nothing here is being scored.");
+  XRay.renderPlain($("plainBox"), { output: "(not part of this replay)", passed: null, failed_checks: [], note: "A replay shows only the recorded harness run." });
+  try { const r = await fetch("mock/events_repair.ndjson"); xray.play(XRayCore.parseEvents(await r.text())); }
+  catch (e) { setMsg("Could not load the recorded run."); }
+}
+
+$("go").addEventListener("click", run);
+$("stop").addEventListener("click", () => { if (abort) abort.abort(); });
+$("replay").addEventListener("click", playReplay);
+$("tabChallenge").addEventListener("click", () => setMode("challenge"));
+$("tabFree").addEventListener("click", () => setMode("free"));
+for (const id of ["nick", "consent", "input", "skill"]) $(id).addEventListener("input", ready);
+loadPresets(); loadStats(); setInterval(loadStats, 8000); ready();
+</script>
+</body>
+</html>

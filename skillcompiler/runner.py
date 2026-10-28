@@ -295,7 +295,8 @@ def run_skill(skill_text: str, user_input: str, model: str | None = None,
         _emit(on_event, {"type": "run_start", "will_split": plan is None, "mode": mode})
     plan = plan or compile_skill(skill_text, model)
     _emit(on_event, {"type": "plan", "skill": plan.get("skill_name", "skill"),
-                     "steps": [{"id": st["id"], "title": st["title"]} for st in plan["steps"]],
+                     "steps": [{"id": st["id"], "title": st["title"], "instruction": st.get("instruction", "")}
+                               for st in plan["steps"]],
                      "warnings": plan.get("warnings", [])})
     outputs: dict[int, str] = {}
     titles = {s["id"]: s["title"] for s in plan["steps"]}

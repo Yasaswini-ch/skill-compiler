@@ -5,3 +5,6 @@ __pycache__/
 .DS_Store
 .skillcompiler_cache/
 .pytest_cache/
+# Break Gemma Arena: attendee text, never commit
+web/arena_log.jsonl
+web/arena_traces/

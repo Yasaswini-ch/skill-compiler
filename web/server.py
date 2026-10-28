@@ -15,11 +15,12 @@ import json
 import sys
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, abort, jsonify, request, send_from_directory
 
 WEB = Path(__file__).resolve().parent
 ROOT = WEB.parent
 sys.path.insert(0, str(ROOT))   # so `python web/server.py` can import skillcompiler, benchmark and tools
+sys.path.insert(0, str(WEB))    # and the arena module next to this file
 
 from tools import lint_skill  # noqa: E402  (tools is a regular package because tools/__init__.py exists)
 
@@ -54,14 +55,30 @@ except ImportError as e:
 
 app = Flask(__name__, static_folder=None)
 
+import arena  # noqa: E402  (needs the sys.path entries above)
+
+arena.configure_provider()      # ARENA_PROVIDER=local points the harness at a local model
+app.register_blueprint(arena.bp)
+
+# Never serve attendee text or server code through the static route below.
+PRIVATE_NAMES = ("arena_log.jsonl",)
+PRIVATE_PREFIXES = ("arena_traces/",)
+
 
 @app.get("/")
 def home():
     return send_from_directory(WEB, "index.html")
 
 
+def is_private(name: str) -> bool:
+    clean = name.replace("\\", "/").lstrip("/")
+    return clean in PRIVATE_NAMES or clean.startswith(PRIVATE_PREFIXES) or clean.endswith(".py") or "__pycache__" in clean
+
+
 @app.get("/<path:name>")
 def static_files(name):
+    if is_private(name):
+        abort(404)
     return send_from_directory(WEB, name)
 
 

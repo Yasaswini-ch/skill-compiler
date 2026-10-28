@@ -42,7 +42,8 @@ def test_events_in_order_with_a_repair(monkeypatch):
     assert second["ok"] is True and second["output"] == "billing"
     assert [e for e in seen if e["type"] == "step_end"][1]["status"] == "repaired"
     assert seen[-1]["trace"] == trace
-    assert seen[1]["steps"] == [{"id": 1, "title": "Name"}, {"id": 2, "title": "Class"}]
+    assert seen[1]["steps"] == [{"id": 1, "title": "Name", "instruction": "Extract the name."},
+                                {"id": 2, "title": "Class", "instruction": "Classify."}]
     json.dumps(seen)  # every event is plain JSON
 
 

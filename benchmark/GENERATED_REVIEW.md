@@ -76,3 +76,6 @@ Each of the 7 tasks has a hand-worked correct answer that passes every check, an
 - **t07-v2** fails an answer with Windows line endings (CRLF), because `$` does not match before a carriage return (c1 to c3 fail).
 - **Some regexes use an unescaped dot** (t06-v2 c1 to c3, t05-v1 c6 and c7), which matches any character.
 - **t05-v1 c4 to c7 are now unanchored patterns** (no `^` or `$`), so they match inside a longer value, for example `441.601` would still satisfy c4.
+- **The generated checks verify selected values, not complete answers:** t06-v2 does not require the chili row, t08-v3 does not require the table header, t07-v3 does not forbid extra lines, and t07-v2 does not check the order of its four lines. A pass means the checked values were right.
+- **Resuming a run after its overrides file changes** can leave old labels on already-completed tasks (not triggered in our runs).
+- **These limits were left unchanged** because the reviewed file was frozen before any run.

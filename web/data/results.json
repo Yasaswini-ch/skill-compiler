@@ -1,0 +1,492 @@
+{
+  "model": "gemma-4-26b-a4b-it",
+  "generated_at": "2026-10-28T12:30:22+05:30",
+  "harness_is_mock": false,
+  "gemma_thinking": "MINIMAL",
+  "verifier": "on",
+  "cache_used": false,
+  "summary": {
+    "plain": {
+      "passed": 7,
+      "total": 10
+    },
+    "harness": {
+      "passed": 9,
+      "total": 10
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "t01",
+      "title": "Bug triage: similar summary steps, strict JSON (checkout crash)",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 5283,
+        "output_excerpt": "```json\n{\n  \"bug\": \"The app crashes when tapping the Pay button on the checkout page.\",\n  \"impact\": \"The entire sales desk cannot place any customer orders.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Investigate the checkout butto...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 18,
+        "latency_ms": 93810,
+        "output_excerpt": "```json\n{\n  \"bug\": \"The app crashes on Android 13 when tapping Pay during checkout.\",\n  \"impact\": \"The sales desk cannot place orders due to app crashes during checkout.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Roll back to vers...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 8,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t02",
+      "title": "Bug triage: distracting feature request, forbidden word",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 4493,
+        "output_excerpt": "```json\n{\n  \"bug\": \"The search function exhibits high latency when retrieving results.\",\n  \"impact\": \"The user experiences significant delays when attempting to search.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"minor\",\n  \"component\": \"search\",\n  \"fix\": \"Optimize search query ...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 16,
+        "latency_ms": 66229,
+        "output_excerpt": "```json\n{\n  \"bug\": \"Search takes 20 seconds to display results on Windows 11.\",\n  \"impact\": \"Users experience significant delays when attempting to use the search functionality.\",\n  \"version\": \"v3.0.12\",\n  \"os\": \"Windows 11\",\n  \"severity\": \"major\",\n  \"component\": \"search\",\n  \"fix\": \"Update the ap...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 8,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t03",
+      "title": "Candidate screen: experience vs skills, decision logic",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 3379,
+        "output_excerpt": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Priya worked as a Data Analyst at Orbit Retail for two years.\",\n  \"skills\": \"SQL, Excel, Tableau, Power BI, R\",\n  \"years\": 2,\n  \"meets_minimum\": \"no\",\n  \"reason\": \"Less than 3 years experience and no Python skill.\",\n  \"note\": \"Recommend: Priya fo...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": false,
+        "failed_checks": [
+          "c4"
+        ],
+        "failure_label": "wrong_format",
+        "llm_calls": 17,
+        "latency_ms": 48924,
+        "output_excerpt": "```json\n{\n  \"name\": \"Priya Nair\",\n  \"experience\": \"Priya Nair has two years of experience as a Data Analyst at Orbit Retail.\",\n  \"skills\": \"SQL, Excel, Tableau, Power BI, R\",\n  \"years\": 2,\n  \"meets_minimum\": false,\n  \"reason\": \"Does not possess Python skills.\",\n  \"note\": \"Recommend: Priya is a st...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "pattern '(?i)^no$' did not match",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 8,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false,
+        "scorer_label": "lost_track",
+        "label_note": "boolean false instead of the required string 'no'; the verifier did not catch it"
+      }
+    },
+    {
+      "task_id": "t04",
+      "title": "Invoice summary: arithmetic chain, amounts as 2-decimal strings (no discount)",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c4",
+          "c6",
+          "c7"
+        ],
+        "failure_label": "other",
+        "llm_calls": 1,
+        "latency_ms": 3168,
+        "output_excerpt": "```json\n{\n  \"vendor\": \"Brightwell Supplies\",\n  \"invoice\": \"INV-20417\",\n  \"subtotal\": \"157.75\",\n  \"discount\": \"0.00\",\n  \"tax\": \"12.62\",\n  \"total\": \"170.37\"\n}\n```",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "pattern '\"subtotal\"\\\\s*:\\\\s*\"150\\\\.75\"' did not match",
+          "c5": "ok",
+          "c6": "pattern '\"tax\"\\\\s*:\\\\s*\"12\\\\.06\"' did not match",
+          "c7": "pattern '\"total\"\\\\s*:\\\\s*\"162\\\\.81\"' did not match"
+        },
+        "scorer_label": "lost_track",
+        "label_note": "arithmetic error: wrong subtotal, later steps follow it"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 19,
+        "latency_ms": 46170,
+        "output_excerpt": "```json\n{\n  \"vendor\": \"Brightwell Supplies\",\n  \"invoice\": \"INV-20417\",\n  \"subtotal\": \"150.75\",\n  \"discount\": \"0.00\",\n  \"tax\": \"12.06\",\n  \"total\": \"162.81\"\n}\n```",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 9,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t05",
+      "title": "Invoice summary: conditional discount and rounding carried into later steps",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c4",
+          "c5",
+          "c6",
+          "c7"
+        ],
+        "failure_label": "other",
+        "llm_calls": 1,
+        "latency_ms": 3134,
+        "output_excerpt": "```json\n{\n  \"vendor\": \"Harlow Office Co.\",\n  \"invoice\": \"INV-3392\",\n  \"subtotal\": \"462.78\",\n  \"discount\": \"46.28\",\n  \"tax\": \"33.32\",\n  \"total\": \"449.82\"\n}\n```",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "pattern '\"subtotal\"\\\\s*:\\\\s*\"485\\\\.98\"' did not match",
+          "c5": "pattern '\"discount\"\\\\s*:\\\\s*\"48\\\\.60\"' did not match",
+          "c6": "pattern '\"tax\"\\\\s*:\\\\s*\"34\\\\.99\"' did not match",
+          "c7": "pattern '\"total\"\\\\s*:\\\\s*\"472\\\\.37\"' did not match"
+        },
+        "scorer_label": "lost_track",
+        "label_note": "arithmetic error: wrong subtotal, later steps follow it"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 19,
+        "latency_ms": 48502,
+        "output_excerpt": "```json\n{\n  \"vendor\": \"Harlow Office Co.\",\n  \"invoice\": \"INV-3392\",\n  \"subtotal\": \"485.98\",\n  \"discount\": \"48.60\",\n  \"tax\": \"34.99\",\n  \"total\": \"472.37\"\n}\n```",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 9,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t06",
+      "title": "Recipe scaler: fixed table, scale 4 to 14 servings, grams to kg",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 3066,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n| --- | --- | --- |\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 eggs | 7.0 eggs |\n| butter | 45 g | 157.5 g |\n\nScale factor: 3.5",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 13,
+        "latency_ms": 33016,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n|---|---|---|\n| flour | 400 g | 1.4 kg |\n| milk | 300 ml | 1050.0 ml |\n| eggs | 2 eggs | 7.0 eggs |\n| butter | 45 g | 157.5 g |\nScale factor: 3.5",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 6,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t07",
+      "title": "Trip day planner: chained time arithmetic, exact 4-line output",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 2242,
+        "output_excerpt": "Leave airport: 11:20\nHotel arrival: 13:10\nCheck-in: 15:00\nFree minutes before dinner: 270",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 13,
+        "latency_ms": 31165,
+        "output_excerpt": "Leave airport: 11:20\nHotel arrival: 13:10\nCheck-in: 15:00\nFree minutes before dinner: 270",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 6,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t08",
+      "title": "Recipe scaler: scale down 8 to 2 servings, keep 1000 g unconverted in Original",
+      "plain": {
+        "passed": false,
+        "failed_checks": [
+          "c2"
+        ],
+        "failure_label": "wrong_format",
+        "llm_calls": 1,
+        "latency_ms": 3319,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n|---|---|---|\n| beef mince | 1000 g | 0.3 kg |\n| canned tomatoes | 800 g | 200.0 g |\n| tomato paste | 2 tbsp | 0.5 tbsp |\n| cumin | 1.6 tsp | 0.4 tsp |\n\nScale factor: 0.25",
+        "details": {
+          "c1": "ok",
+          "c2": "pattern '(?im)^\\\\|\\\\s*beef mince\\\\s*\\\\|\\\\s*1000\\\\s*g\\\\s*\\\\|\\\\s*250\\\\.0\\\\s*g\\\\s*\\\\|\\\\s*$' did not match",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "scorer_label": "wrong_format",
+        "label_note": "applied the grams-to-kg rule to 250 g and rounded it to 0.3 kg"
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 13,
+        "latency_ms": 33587,
+        "output_excerpt": "| Ingredient | Original | Scaled |\n|---|---|---|\n| beef mince | 1000 g | 250.0 g |\n| canned tomatoes | 800 g | 200.0 g |\n| tomato paste | 2 tbsp | 0.5 tbsp |\n| cumin | 1.6 tsp | 0.4 tsp |\n\nScale factor: 0.25",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 6,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t09",
+      "title": "Release announcement: headline and summary limits, forbidden words",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 3729,
+        "output_excerpt": "```json\n{\n  \"headline\": \"Meet the Lumo Desk Lamp\",\n  \"summary\": \"Enhance your workspace with this versatile lamp featuring adjustable brightness and convenient wireless charging capabilities.\",\n  \"bullets\": [\n    \"Adjustable brightness with a touch slider\",\n    \"Integrated wireless phone charging...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 17,
+        "latency_ms": 55659,
+        "output_excerpt": "```json\n{\n  \"headline\": \"Meet the Lumo Desk Lamp\",\n  \"summary\": \"The Lumo Desk Lamp features touch-slider dimming, a built-in wireless phone charger, and a long-lasting 12-hour battery.\",\n  \"bullets\": [\n    \"Touch slider dims light from 5% to 100%\",\n    \"Includes a built-in wireless phone charger...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 8,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    },
+    {
+      "task_id": "t10",
+      "title": "Release announcement: three bullet limits, hashtag format, zero-padded date",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 3870,
+        "output_excerpt": "```json\n{\n  \"headline\": \"Meet the Quill Notes app\",\n  \"summary\": \"A powerful digital notebook designed to help students organize their handwritten studies effortlessly.\",\n  \"bullets\": [\n    \"Search words inside your scanned handwritten notes\",\n    \"Sync your data offline across three devices\",\n  ...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 17,
+        "latency_ms": 41988,
+        "output_excerpt": "```json\n{\n  \"headline\": \"Meet the Quill Notes app for students\",\n  \"summary\": \"Quill Notes app helps students by offering handwriting search, offline synchronization across three devices, and a notification-free focus mode.\",\n  \"bullets\": [\n    \"Search handwriting within scanned notes\",\n    \"Offl...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 8,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    }
+  ],
+  "tasks_sha256": "53351f62f15b026cb6c653e43c591c60ce1b4877ba9f3522b1c6fba1f427bfd2"
+}

@@ -62,16 +62,18 @@ Tests (no API key needed): `python -m pytest skillcompiler/tests tools/tests`
 
 ## Results
 
-Results are on **[N] tasks** with model **[MODEL]**, verifier **[ON/OFF]**.
+Results are on **10 hand-written tasks** with model **gemma-4-26b-a4b-it** (through the Gemini API), the verifier **ON**, one official run. Two repeat runs with the same settings gave the same pass counts (`benchmark/RESULTS_NOTE.md`).
 
 | | Passed |
 |---|---|
-| Plain Gemma | [PLAIN x / y] |
-| With the harness | [HARNESS x / y] |
+| Plain Gemma | 7 / 10 |
+| With the harness | 9 / 10 |
 
-Cost of the harness: **[X] times** the calls and **[Y] times** the time of plain (see the overhead table in `benchmark/`).
+Cost of the harness: about **16 times** the calls (16.2 per task against 1.0) and about **14 times** the time (49.9 s per task against 3.6 s) of plain; see `benchmark/output/overhead.md`.
 
-These numbers are filled in only from real runs. Anything shown with a red MOCK DATA banner is an example of the format, not a result.
+What changed: the harness fixed three tasks plain failed (running arithmetic across steps in t04 and t05, and a fixed table in t08). It lost one that plain passed (t03: the final step turned the text `no` into the boolean `false`). On these tasks the verifier never rejected a step, so the retry mechanism was barely exercised.
+
+These numbers come from `benchmark/output/results.json` and nowhere else. Anything shown with a red MOCK DATA banner is an example of the format, not a result.
 
 ## Failure labels
 
@@ -92,7 +94,7 @@ These numbers are filled in only from real runs. Anything shown with a red MOCK 
 - **Trace viewer**: `web/trace.html`, see a retry step by step.
 - **Skill linter**: `tools/lint_skill.py`, tells you which skills are risky for small models (rules L01 to L09: too many steps, long step, similar steps, no output format, vague words, several actions in one step, nested condition, unnumbered steps, no steps found).
 - **Live mode**: `web/live.html`, run plain and harness side by side.
-- **Dataset**: [LINK TO benchmark/dataset/] and its card [LINK TO DATASET_CARD.md].
+- **Dataset**: [`benchmark/dataset/`](benchmark/dataset/) and its card [`DATASET_CARD.md`](benchmark/DATASET_CARD.md).
 - **Harness details**: [docs/HARNESS.md](docs/HARNESS.md).
 
 ## Contribute a failure
@@ -103,7 +105,7 @@ Found a skill where a small model goes wrong?
 ## Limitations
 
 - The harness costs extra API calls and time: each step takes at least one call, plus one for the verifier.
-- Results are on [N] tasks. A small benchmark can mislead.
+- Results are on 10 tasks and one official run, so a gain of two tasks is within what run-to-run variation could change. A small benchmark can mislead.
 - Checks are programmatic and can be wrong. A wrong check creates a fake failure, so labels were reviewed by hand.
 - The verifier is itself a small model, so it can pass a wrong answer that is well formed.
 - Free API tiers are rate limited, so long runs are slow.

@@ -17,6 +17,7 @@ import os
 import re
 import threading
 import time
+import urllib.request
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -94,8 +95,37 @@ def rpm() -> int:
         return 25
 
 
+GEMINI = "gemini"
+OPENAI_COMPATIBLE = "openai-compatible"
+LOCAL_THINKING = "n/a (openai-compatible provider)"
+REASONING_RE = re.compile(r"<(thought|think|thinking)>.*?</\1>", re.DOTALL | re.IGNORECASE)
+_provider = GEMINI
+_base_url = ""
+
+
+def configure_provider(provider: str = GEMINI, base_url: str | None = None) -> None:
+    """Choose the model server: Gemini (default) or any OpenAI-compatible one such as Ollama."""
+    global _provider, _base_url
+    if provider not in (GEMINI, OPENAI_COMPATIBLE):
+        raise ValueError(f"unknown provider {provider!r}; use {GEMINI} or {OPENAI_COMPATIBLE}")
+    _base_url = base_url or os.environ.get("OPENAI_BASE_URL", "")
+    if provider == OPENAI_COMPATIBLE and not _base_url:
+        raise ValueError("the openai-compatible provider needs a base URL, e.g. http://localhost:11434/v1 (Ollama)")
+    _provider = provider
+
+
+def provider() -> str:
+    return _provider
+
+
+def base_url() -> str:
+    return _base_url
+
+
 def thinking_level() -> str:
-    """The GEMMA_THINKING value in effect, as recorded in results.json."""
+    """The GEMMA_THINKING value in effect, as recorded in results.json (it only applies to Gemini)."""
+    if _provider != GEMINI:
+        return LOCAL_THINKING
     return os.environ.get("GEMMA_THINKING", "MINIMAL")
 
 
@@ -105,7 +135,8 @@ def current_model() -> str:
 
 def settings() -> dict:
     """Run settings worth recording next to the numbers."""
-    return {"model": current_model(), "gemma_thinking": thinking_level(), "gemma_rpm": rpm()}
+    return {"model": current_model(), "provider": _provider, "base_url": _base_url or None,
+            "gemma_thinking": thinking_level(), "gemma_rpm": rpm() if _provider == GEMINI else None}
 
 
 def configure_cache(enabled: bool) -> None:
@@ -114,7 +145,7 @@ def configure_cache(enabled: bool) -> None:
 
 
 def _cache_path(model: str, prompt: str) -> Path:
-    key = json.dumps([model, thinking_level().upper(), prompt], ensure_ascii=False)
+    key = json.dumps([_provider, _base_url, model, thinking_level().upper(), prompt], ensure_ascii=False)
     return CACHE_DIR / (hashlib.sha256(key.encode("utf-8")).hexdigest() + ".json")
 
 
@@ -128,8 +159,22 @@ def _get_client():
     return _client
 
 
+def _generate_openai_compatible(prompt: str, model: str, timeout: int = 600) -> str:
+    """One chat-completions request over plain HTTP (Ollama, vLLM, llama.cpp). Inline reasoning is stripped."""
+    body = json.dumps({"model": model, "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
+    if os.environ.get("OPENAI_API_KEY"):  # local servers usually need none
+        headers["Authorization"] = f"Bearer {os.environ['OPENAI_API_KEY']}"
+    request = urllib.request.Request(_base_url.rstrip("/") + "/chat/completions", data=body, headers=headers, method="POST")
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        data = json.load(response)
+    return REASONING_RE.sub("", data["choices"][0]["message"]["content"] or "").strip()
+
+
 def _generate(prompt: str, model: str) -> str:
     """One raw API request. Tests monkeypatch this."""
+    if _provider == OPENAI_COMPATIBLE:
+        return _generate_openai_compatible(prompt, model)
     from google.genai import types
 
     level = thinking_level()
@@ -160,7 +205,8 @@ def call_llm(prompt: str, model: str | None = None, retries: int = 3) -> str:
         return json.loads(path.read_text(encoding="utf-8"))["text"]
     last_error: Exception | None = None
     for attempt in range(retries):
-        _limiter.wait(rpm())
+        if _provider == GEMINI:  # the request pacing is the Gemini free tier's limit; a local server has none
+            _limiter.wait(rpm())
         start = time.time()
         try:
             text = _generate(prompt, model)

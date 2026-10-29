@@ -33,6 +33,13 @@ def verifier_setting() -> str:
     return "off" if os.environ.get("SKILLCOMPILER_VERIFY", "1") == "0" else "on"
 
 
+def configure_provider(provider: str, base_url: str | None) -> None:
+    """Point A's harness at the same model server as the plain client (gemini or openai-compatible). No-op for the stand-in."""
+    if not HARNESS_IS_MOCK:
+        from skillcompiler import providers
+        providers.configure(provider, base_url)
+
+
 def configure_harness_cache(enabled: bool, directory: str) -> None:
     """Turn on A's response cache (debugging only). No-op for the stand-in."""
     if enabled and not HARNESS_IS_MOCK:

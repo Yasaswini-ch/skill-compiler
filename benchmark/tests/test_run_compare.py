@@ -291,3 +291,74 @@ def test_relabel_with_a_separate_overrides_file(env, monkeypatch, tmp_path):
     fails = json.loads((out / "failures.json").read_text(encoding="utf-8"))
     assert [(f["task_id"], f["label"]) for f in fails] == [("t04", "other")]
     assert "did not match" in fails[0]["what_went_wrong"]  # the real reason is kept
+
+
+# --- another provider (a local model server) ----------------------------------------------------------------------
+
+@pytest.fixture
+def local(monkeypatch):
+    """Record the provider calls and put both providers back to Gemini afterwards."""
+    calls = []
+    monkeypatch.setattr(rc.harness_adapter, "configure_provider", lambda p, u: calls.append((p, u)))
+    yield calls
+    client.configure_provider(client.GEMINI)
+
+
+def test_local_run_records_provider_model_and_never_uses_gemini_overrides(env, monkeypatch, local):
+    wrong = json.dumps({**json.loads(good("t04")), "subtotal": "171.75"})
+    patch_runners(monkeypatch, lambda t: wrong if t == "t04" else good(t), lambda t: wrong if t == "t04" else good(t))
+    out = env / "local"
+    assert rc.main(["--out-dir", str(out), "--sleep", "0", "--limit", "5", "--provider", "openai-compatible",
+                    "--base-url", "http://localhost:11434/v1", "--model", "gemma-small"]) == 0
+    assert local == [("openai-compatible", "http://localhost:11434/v1")]
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    assert res["provider"] == "openai-compatible" and res["base_url"] == "http://localhost:11434/v1"
+    assert res["model"] == "gemma-small" and res["gemma_thinking"].startswith("n/a")
+    t04 = next(t for t in res["tasks"] if t["task_id"] == "t04")
+    # the hand-reviewed labels were written for Gemma 26B's outputs: not applied to another model
+    assert t04["plain"]["failure_label"] == "lost_track" and "label_note" not in t04["plain"] and "scorer_label" not in t04["plain"]
+
+
+def test_local_run_refuses_the_official_output_folder(env, monkeypatch, local, capsys):
+    patch_runners(monkeypatch, good, good)
+    assert rc.main(["--provider", "openai-compatible", "--base-url", "http://x/v1", "--model", "m"]) == 1
+    assert "must not write into benchmark/output" in capsys.readouterr().err
+    assert local == []
+
+
+def test_local_run_needs_a_base_url(env, monkeypatch, local, capsys):
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    patch_runners(monkeypatch, good, good)
+    assert rc.main(["--out-dir", str(env / "x"), "--provider", "openai-compatible", "--model", "m"]) == 1
+    assert "base URL" in capsys.readouterr().err
+
+
+def test_a_gemini_run_still_applies_the_official_overrides(env, monkeypatch, local):
+    wrong = json.dumps({**json.loads(good("t04")), "subtotal": "171.75"})
+    patch_runners(monkeypatch, lambda t: wrong if t == "t04" else good(t), good)
+    out = env / "gem"
+    rc.main(["--out-dir", str(out), "--sleep", "0", "--limit", "5"])
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    assert res["provider"] == "gemini" and res["base_url"] is None
+    assert next(t for t in res["tasks"] if t["task_id"] == "t04")["plain"]["failure_label"] == "other"
+
+
+def test_resume_refuses_to_mix_providers(env, monkeypatch, local):
+    patch_runners(monkeypatch, good, good)
+    out = env / "mix"
+    rc.main(["--out-dir", str(out), "--sleep", "0", "--limit", "1"])
+    with pytest.raises(SystemExit, match="mix settings"):
+        rc.main(["--out-dir", str(out), "--sleep", "0", "--resume", "--provider", "openai-compatible",
+                 "--base-url", "http://x/v1"])
+
+
+def test_old_results_without_a_provider_field_count_as_gemini(env, monkeypatch, local):
+    patch_runners(monkeypatch, good, good)
+    out = env / "old"
+    rc.main(["--out-dir", str(out), "--sleep", "0", "--limit", "1"])
+    path = out / "results.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    for k in ("provider", "base_url"):
+        data.pop(k)
+    path.write_text(json.dumps(data), encoding="utf-8")
+    assert rc.main(["--out-dir", str(out), "--sleep", "0", "--resume", "--limit", "2"]) == 0

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "p02",
+    "title": "Landing on the other side of midnight",
+    "plain_runs": 5,
+    "plain_failed": 0,
+    "reason": "plain Gemma passed all 5 runs, so it is not a challenge that breaks it"
+  },
+  {
+    "id": "p03",
+    "title": "The chili that outgrew the pot",
+    "plain_runs": 5,
+    "plain_failed": 0,
+    "reason": "plain Gemma passed all 5 runs, so it is not a challenge that breaks it"
+  },
+  {
+    "id": "p04",
+    "title": "Two discounts, one tax",
+    "plain_runs": 5,
+    "plain_failed": 0,
+    "reason": "plain Gemma passed all 5 runs, so it is not a challenge that breaks it"
+  },
+  {
+    "id": "p08",
+    "title": "Four rules, one polite reply",
+    "plain_runs": 5,
+    "plain_failed": 0,
+    "reason": "plain Gemma passed all 5 runs, so it is not a challenge that breaks it"
+  }
+]

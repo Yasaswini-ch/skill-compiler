@@ -1,0 +1,225 @@
+[
+  {
+    "id": "p01",
+    "title": "The invoice that does not add up",
+    "skill_text": "---\nname: invoice-check\ndescription: Total a supplier invoice with a threshold discount and tax.\n---\n\n1. List each line item with its quantity and unit price.\n2. Multiply the quantity by the unit price for each item, then add the results to get the subtotal.\n3. If the subtotal is more than 150.00, the discount is 12% of the subtotal, rounded to 2 decimals. Otherwise the discount is 0.00.\n4. The tax is 7.5% of (subtotal minus discount), rounded to 2 decimals.\n5. The total is subtotal minus discount plus tax.\n6. Output JSON with exactly these keys: subtotal, discount, tax, total. Write every amount as a string with exactly 2 decimals.",
+    "input": "Order 5513 from Corvin Hardware: 7 x work gloves at 8.90, 3 x tape measures at 14.75, 12 x wood screw packs at 2.35, 2 x clamps at 31.20.",
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "subtotal",
+          "discount",
+          "tax",
+          "total"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "\"subtotal\"\\s*:\\s*\"197\\.15\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "\"discount\"\\s*:\\s*\"23\\.66\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "\"tax\"\\s*:\\s*\"13\\.01\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "value": "\"total\"\\s*:\\s*\"186\\.50\"",
+        "label": "lost_track"
+      }
+    ],
+    "steps": 6,
+    "why_it_breaks": "Six chained calculations with a threshold and two roundings: one slip early carries into every later amount.",
+    "tag": "reliable",
+    "tested": {
+      "model": "gemma-4-26b-a4b-it",
+      "date": "2026-10-28",
+      "plain_runs": 5,
+      "plain_failed": 5,
+      "harness_runs": 3,
+      "harness_failed": 3,
+      "harness_mode": "adaptive",
+      "api_errors_excluded": 0
+    }
+  },
+  {
+    "id": "p05",
+    "title": "The overdraft counter",
+    "skill_text": "---\nname: balance-tracker\ndescription: Track an account balance and count overdraft fees.\n---\n\n1. Start with the opening balance.\n2. Apply the transactions one by one in the order given. A deposit adds to the balance and a withdrawal subtracts from it.\n3. After any withdrawal that leaves the balance below 0.00, subtract a fee of 12.00 immediately and count one overdraft.\n4. After the last transaction, take the final balance and the number of overdrafts.\n5. Output JSON with exactly these keys: final_balance, overdrafts. Write final_balance as a string with exactly 2 decimals and overdrafts as an integer.",
+    "input": "Opening balance 120.00. Transactions in this order: withdraw 85.50, withdraw 60.00, deposit 40.00, withdraw 30.00, deposit 100.00, withdraw 95.25.",
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "final_balance",
+          "overdrafts"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "\"final_balance\"\\s*:\\s*\"\\-46\\.75\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "\"overdrafts\"\\s*:\\s*3\\b",
+        "label": "lost_track"
+      }
+    ],
+    "steps": 5,
+    "why_it_breaks": "Order matters: every overdraft fee changes the balance that the next transaction starts from.",
+    "tag": "reliable",
+    "tested": {
+      "model": "gemma-4-26b-a4b-it",
+      "date": "2026-10-28",
+      "plain_runs": 5,
+      "plain_failed": 5,
+      "harness_runs": 3,
+      "harness_failed": 2,
+      "harness_mode": "adaptive",
+      "api_errors_excluded": 0
+    }
+  },
+  {
+    "id": "p06",
+    "title": "The grade that moves the goalposts",
+    "skill_text": "---\nname: grade-calc\ndescription: Compute a course grade from quizzes, a project and an exam.\n---\n\n1. List the three quiz scores, the project score and the exam score.\n2. Drop the lowest quiz score. Never drop the project or the exam.\n3. The quiz average is the average of the two remaining quiz scores.\n4. If the exam score is higher than the quiz average, the final grade is 20% quiz average + 30% project + 50% exam. Otherwise it is 30% quiz average + 30% project + 40% exam. Round to 1 decimal.\n5. The letter is A for 90 or more, B for 80 to 89.9, C for 70 to 79.9, D for 60 to 69.9, otherwise F.\n6. Output JSON with exactly these keys: quiz_average, final_grade, letter. Write quiz_average and final_grade as strings with exactly 1 decimal.",
+    "input": "Quizzes: 78, 92, 86. Project: 88. Exam: 94.",
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "quiz_average",
+          "final_grade",
+          "letter"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "\"quiz_average\"\\s*:\\s*\"89\\.0\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "\"final_grade\"\\s*:\\s*\"91\\.2\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "\"letter\"\\s*:\\s*\"A\"",
+        "label": "lost_track"
+      }
+    ],
+    "steps": 6,
+    "why_it_breaks": "A condition changes the formula, and the lowest quiz has to be dropped before anything is averaged.",
+    "tag": "reliable",
+    "tested": {
+      "model": "gemma-4-26b-a4b-it",
+      "date": "2026-10-28",
+      "plain_runs": 5,
+      "plain_failed": 5,
+      "harness_runs": 3,
+      "harness_failed": 2,
+      "harness_mode": "adaptive",
+      "api_errors_excluded": 1
+    }
+  },
+  {
+    "id": "p07",
+    "title": "Parcel post, every started half kilo",
+    "skill_text": "---\nname: parcel-rate\ndescription: Price a parcel by weight and distance.\n---\n\n1. Read the parcel weight in kg and the distance in km.\n2. The first 1.0 kg costs 4.50. Weight above 1.0 kg is charged 1.20 for every started 0.5 kg. The weight fee is 4.50 plus these charges.\n3. If the distance is more than 100 km, add a surcharge of 2.00. Otherwise the surcharge is 0.00.\n4. VAT is 10% of (weight fee plus surcharge), rounded to 2 decimals.\n5. The total is weight fee plus surcharge plus VAT.\n6. Output JSON with exactly these keys: weight_fee, surcharge, vat, total. Write every amount as a string with exactly 2 decimals.",
+    "input": "Parcel: 3.2 kg, travelling 140 km.",
+    "checks": [
+      {
+        "id": "c1",
+        "type": "json_valid",
+        "label": "wrong_format"
+      },
+      {
+        "id": "c2",
+        "type": "json_keys",
+        "value": [
+          "weight_fee",
+          "surcharge",
+          "vat",
+          "total"
+        ],
+        "label": "skipped_step"
+      },
+      {
+        "id": "c3",
+        "type": "regex",
+        "value": "\"weight_fee\"\\s*:\\s*\"10\\.50\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c4",
+        "type": "regex",
+        "value": "\"surcharge\"\\s*:\\s*\"2\\.00\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c5",
+        "type": "regex",
+        "value": "\"vat\"\\s*:\\s*\"1\\.25\"",
+        "label": "lost_track"
+      },
+      {
+        "id": "c6",
+        "type": "regex",
+        "value": "\"total\"\\s*:\\s*\"13\\.75\"",
+        "label": "lost_track"
+      }
+    ],
+    "steps": 6,
+    "why_it_breaks": "\"Every started 0.5 kg\" means rounding up, then a distance threshold, then VAT on the sum.",
+    "tag": "reliable",
+    "tested": {
+      "model": "gemma-4-26b-a4b-it",
+      "date": "2026-10-28",
+      "plain_runs": 5,
+      "plain_failed": 5,
+      "harness_runs": 3,
+      "harness_failed": 2,
+      "harness_mode": "adaptive",
+      "api_errors_excluded": 2
+    }
+  }
+]

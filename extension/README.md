@@ -38,6 +38,6 @@ If the server is off the panel says so and tells you the command to start it.
 | `skills/` | the bundled skills |
 | `../web/extension.py` | the server route `/extension/run` (tests: `tools/tests/test_extension.py`) |
 
-## Not yet checked
+## Checked
 
-Written and tested against the server and with a stand-in for Chrome's APIs. It has not been loaded into a real Chrome in this repo's testing: do the steps above once before relying on it.
+Loaded unpacked in Chrome on 29 Oct 2026 and run on the real API with both bundled skills (all steps passed, about 100 to 120 s each on the free tier). The downloaded events load in the X-ray logic. Not yet checked: the server-off message in a real Chrome, and the selection-too-long notice.

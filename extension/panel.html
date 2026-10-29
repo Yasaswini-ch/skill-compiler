@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Compiler</title>
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<main>
+  <h1>Run a skill on your selection</h1>
+
+  <section id="notice" hidden>
+    <p><b>Before you start.</b> The text you select is sent only to <code>http://127.0.0.1:5000</code>, the Skill Compiler server on this computer. That server calls the model with its own API key; this extension has no key. Nothing is saved.</p>
+    <button id="accept" type="button">OK, I understand</button>
+  </section>
+
+  <section id="main" hidden>
+    <label>Selected text <span id="count"></span>
+      <textarea id="input" rows="5" spellcheck="false"></textarea>
+    </label>
+    <label>Skill
+      <select id="skill"></select>
+    </label>
+    <p id="skillDesc" class="hint"></p>
+    <div class="row"><button id="run" type="button">Run</button><span id="status" role="status"></span></div>
+    <p id="err" role="alert"></p>
+
+    <ol id="steps"></ol>
+    <section id="result" hidden>
+      <h2>Final output</h2>
+      <pre id="final"></pre>
+      <div class="row">
+        <button id="download" type="button" class="ghost">Download events</button>
+        <a id="xray" href="http://127.0.0.1:5000/xray.html" target="_blank" rel="noopener">Open the X-ray page</a>
+      </div>
+      <p class="hint">In the X-ray page choose "Or load a file" and pick the downloaded events to see this run in full.</p>
+    </section>
+  </section>
+</main>
+<script src="panel-core.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>

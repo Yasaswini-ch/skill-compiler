@@ -1,0 +1,4 @@
+[
+  { "id": "email-to-action-items", "file": "email-to-action-items.md", "title": "Email to action items", "description": "Turns a pasted email or message into tasks with owners and dates. Output is JSON." },
+  { "id": "rubric-checker", "file": "rubric-checker.md", "title": "Rubric checker", "description": "Checks a short piece of writing against a four-point rubric. Output is JSON." }
+]

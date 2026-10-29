@@ -64,6 +64,10 @@ import doctor  # noqa: E402
 
 app.register_blueprint(doctor.bp)
 
+import extension  # noqa: E402
+
+app.register_blueprint(extension.bp)
+
 # Never serve attendee text or server code through the static route below.
 PRIVATE_NAMES = ("arena_log.jsonl",)
 PRIVATE_PREFIXES = ("arena_traces/",)

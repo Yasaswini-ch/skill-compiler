@@ -7,7 +7,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 NODE = shutil.which("node")
-TESTS = sorted((ROOT / "web" / "tests").glob("*.test.js"))
+TESTS = sorted((ROOT / "web" / "tests").glob("*.test.js")) + sorted((ROOT / "extension" / "tests").glob("*.test.js"))
 
 
 @pytest.mark.skipif(NODE is None, reason="node is not installed")

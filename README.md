@@ -108,6 +108,7 @@ The numbers above use the defaults. Everything below is opt-in and changes behav
 - **X-ray**: `web/xray.html`, watch a run step by step (live from the server, or a REPLAY of a recording). **Download report** saves one self-contained HTML proof file for any trace.
 - **Break Gemma Arena**: `web/arena.html`, try to make plain Gemma fail while the harness runs beside it. Tested challenges are scored; free play is marked UNVERIFIED and never counted. Operator notes and privacy rules: [docs/ARENA_OPERATOR.md](docs/ARENA_OPERATOR.md).
 - **Skill Doctor**: `web/doctor.html`, paste a skill to get the free lint score, the steps the harness would make, and a suggested rewrite (it lists numbers or quoted phrases the rewrite dropped). Add your own simple checks to try plain vs harness once each.
+- **Chrome extension** (not yet checked in a real Chrome): right-click selected text and run a skill through your local server, no API key in the extension. See [extension/README.md](extension/README.md).
 - **Live mode**: `web/live.html`, run plain and harness side by side.
 - **Dataset**: [`benchmark/dataset/`](benchmark/dataset/) and its card [`DATASET_CARD.md`](benchmark/DATASET_CARD.md).
 - **Harness details**: [docs/HARNESS.md](docs/HARNESS.md).

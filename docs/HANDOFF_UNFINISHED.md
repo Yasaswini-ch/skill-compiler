@@ -18,7 +18,7 @@ This lists only what is NOT done. What is done is on `main`.
 2. **After the event:** read `web/arena_log.jsonl` by hand (it holds attendee text; never commit it) before adding any confirmed failures to the dataset.
 3. **Friday integration and freeze; Sunday tag `v1.0`; git identity.**
 4. **Backup demo video** (2 minutes; shot list in `docs/DEMO_SCRIPT.md`).
-5. **C6, the Chrome extension** (stretch goal, not started; skip if time is short).
+5. **C6, the Chrome extension**: built (`extension/`, server route `web/extension.py`, tests pass, run on the real API once) but **not yet loaded into a real Chrome**. Someone should follow `extension/README.md` once and fix anything that breaks.
 6. Optional: decide after more runs whether adaptive mode or the copy rule should ever become a default. Tonight's numbers say no.
 
 ## Everyone, before Friday night

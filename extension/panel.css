@@ -1,0 +1,25 @@
+:root { --bg: #0b0e14; --surface: #131824; --ink: #e8ecf4; --muted: #8a94a8; --line: #2a3347; --pass: #3ecf8e; --rep: #f5b94a; --fail: #ff6b6b; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 system-ui, sans-serif; }
+main { padding: 16px; }
+h1 { font-size: 17px; margin: 0 0 12px; }
+h2 { font-size: 14px; margin: 16px 0 6px; }
+label { display: block; margin: 10px 0; font-weight: 600; }
+textarea, select { display: block; width: 100%; margin-top: 4px; padding: 8px; font: 13px/1.4 ui-monospace, monospace; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+button { font: inherit; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--pass); background: var(--pass); color: #04130b; cursor: pointer; }
+button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+button:disabled { opacity: .5; cursor: default; }
+a { color: var(--ink); }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+.hint, #status { color: var(--muted); font-size: 12px; }
+#err { color: var(--fail); min-height: 1em; }
+#notice { border: 1px solid var(--rep); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+#steps { list-style: none; padding: 0; margin: 12px 0; }
+#steps li { border-left: 5px solid var(--line); background: var(--surface); padding: 8px 10px; margin: 6px 0; border-radius: 0 6px 6px 0; }
+#steps li[data-state="running"] { border-color: var(--muted); }
+#steps li[data-state="pass"] { border-color: var(--pass); }
+#steps li[data-state="repaired"] { border-color: var(--rep); }
+#steps li[data-state="fail"] { border-color: var(--fail); }
+.badge { font: 700 11px ui-monospace, monospace; text-transform: uppercase; margin-left: 6px; }
+.note { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px; max-height: 14em; overflow: auto; }

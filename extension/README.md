@@ -40,4 +40,4 @@ If the server is off the panel says so and tells you the command to start it.
 
 ## Checked
 
-Loaded unpacked in Chrome on 29 Oct 2026 and run on the real API with both bundled skills (all steps passed, about 100 to 120 s each on the free tier). The downloaded events load in the X-ray logic. Not yet checked: the server-off message in a real Chrome, and the selection-too-long notice.
+Loaded unpacked in Chrome on 29 Oct 2026 and run on the real API with both bundled skills (all steps passed, about 100 to 120 s each on the free tier). The downloaded events load in the X-ray logic. The long-selection case was also run (the input was cut to about 1500 characters) and you confirmed the server-off message works.

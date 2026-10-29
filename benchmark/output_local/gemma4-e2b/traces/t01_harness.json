@@ -1,0 +1,129 @@
+{
+  "run_id": "r-3387a607",
+  "mode": "harness",
+  "mock": false,
+  "model": "gemma4:e2b",
+  "skill": "bug-report-triage",
+  "input": "Since I updated to version 2.4.1 on Android 13, the app crashes every time I tap Pay on the checkout page. Nobody on my team can place orders now, so our whole sales desk is blocked.",
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Summarize the bug",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Tapping Pay on the checkout page causes the app to crash on Android 13.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output is a single sentence, under 15 words, and accurately summarizes the crash described in the information.",
+          "latency_ms": 69653
+        }
+      ]
+    },
+    {
+      "step_id": 2,
+      "title": "Summarize user impact",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "The sales team cannot place orders because the app crashes during payment.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output meets all length and content requirements.",
+          "latency_ms": 52699
+        }
+      ]
+    },
+    {
+      "step_id": 3,
+      "title": "Extract app version",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "v2.4.1",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output correctly extracts the version and formats it as requested (vX.Y.Z).",
+          "latency_ms": 55022
+        }
+      ]
+    },
+    {
+      "step_id": 4,
+      "title": "Extract operating system",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Android 13 version 2.4.1",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output correctly extracts the full OS name and version number.",
+          "latency_ms": 25217
+        }
+      ]
+    },
+    {
+      "step_id": 5,
+      "title": "Classify severity",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "critical",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output is one of the required severity levels and accurately reflects the severity of the described issue.",
+          "latency_ms": 21582
+        }
+      ]
+    },
+    {
+      "step_id": 6,
+      "title": "Classify component",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "payments",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The assistant correctly identified the component as payments based on the description of tapping \"Pay\" on the checkout page.",
+          "latency_ms": 25188
+        }
+      ]
+    },
+    {
+      "step_id": 7,
+      "title": "Suggest a fix",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "Fix the payment button crash reported on Android 13 devices.",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The sentence is concise, under 12 words, and avoids the forbidden word.",
+          "latency_ms": 89852
+        }
+      ]
+    },
+    {
+      "step_id": 8,
+      "title": "Output final JSON",
+      "status": "pass",
+      "attempts": [
+        {
+          "output": "```json\n{\n  \"bug\": \"Tapping Pay on the checkout page causes the app to crash on Android 13.\",\n  \"impact\": \"The sales team cannot place orders because the app crashes during payment.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Fix the payment button crash reported on Android 13 devices.\"\n}\n```",
+          "format_ok": true,
+          "verified": true,
+          "checker_note": "The output is a complete JSON object with all required keys and accurately reflects the step outputs.",
+          "latency_ms": 85369
+        }
+      ]
+    }
+  ],
+  "final_output": "```json\n{\n  \"bug\": \"Tapping Pay on the checkout page causes the app to crash on Android 13.\",\n  \"impact\": \"The sales team cannot place orders because the app crashes during payment.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Fix the payment button crash reported on Android 13 devices.\"\n}\n```",
+  "totals": {
+    "llm_calls": 18,
+    "latency_ms": 678953,
+    "retries": 0,
+    "cache_hits": 0
+  }
+}

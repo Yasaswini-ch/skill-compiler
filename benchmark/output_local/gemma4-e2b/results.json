@@ -1,0 +1,68 @@
+{
+  "model": "gemma4:e2b",
+  "provider": "openai-compatible",
+  "base_url": "http://127.0.0.1:11500/v1",
+  "generated_at": "2026-10-29T00:56:19+05:30",
+  "tasks_sha256": "53351f62f15b026cb6c653e43c591c60ce1b4877ba9f3522b1c6fba1f427bfd2",
+  "harness_is_mock": false,
+  "gemma_thinking": "n/a (openai-compatible provider)",
+  "verifier": "on",
+  "cache_used": false,
+  "summary": {
+    "plain": {
+      "passed": 1,
+      "total": 1
+    },
+    "harness": {
+      "passed": 1,
+      "total": 1
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "t01",
+      "title": "Bug triage: similar summary steps, strict JSON (checkout crash)",
+      "plain": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 1,
+        "latency_ms": 65403,
+        "output_excerpt": "```json\n{\n  \"bug\": \"The application crashes when users tap 'Pay' on the checkout page.\",\n  \"impact\": \"Sales desk staff cannot place orders due to the ongoing application crashes.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Investig...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        }
+      },
+      "harness": {
+        "passed": true,
+        "failed_checks": [],
+        "failure_label": null,
+        "llm_calls": 18,
+        "latency_ms": 678953,
+        "output_excerpt": "```json\n{\n  \"bug\": \"Tapping Pay on the checkout page causes the app to crash on Android 13.\",\n  \"impact\": \"The sales team cannot place orders because the app crashes during payment.\",\n  \"version\": \"v2.4.1\",\n  \"os\": \"Android 13\",\n  \"severity\": \"critical\",\n  \"component\": \"payments\",\n  \"fix\": \"Fix t...",
+        "details": {
+          "c1": "ok",
+          "c2": "ok",
+          "c3": "ok",
+          "c4": "ok",
+          "c5": "ok",
+          "c6": "ok",
+          "c7": "ok"
+        },
+        "retries": 0,
+        "steps": {
+          "pass": 8,
+          "repaired": 0,
+          "fail": 0
+        },
+        "mock": false
+      }
+    }
+  ]
+}

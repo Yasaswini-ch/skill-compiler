@@ -14,10 +14,10 @@ This lists only what is NOT done. What is done is on `main`.
 
 ## Still open
 
-1. **Local-model run.** `run_compare` now supports a local provider, but no local-model results exist yet (`experiment_results.json` has only the two Gemini rows). Run the 10 tasks, plain and harness, with a small local Gemma (for example `gemma4:e2b` through Ollama) into a NEW output folder, never `benchmark/output/`. Check `python -m benchmark.run_compare --help` for the flags. Report pass counts and the model name. This is the fallback if the API is down at the event.
+1. **Local-model run (Sriya).** `run_compare` now supports a local provider, but no local-model results exist yet (`experiment_results.json` has only the two Gemini rows). Run the 10 tasks, plain and harness, with a small local Gemma (for example `gemma4:e2b` through Ollama) into a NEW output folder, never `benchmark/output/`. Check `python -m benchmark.run_compare --help` for the flags. Report pass counts and the model name. This is the fallback if the API is down at the event.
 2. **After the event:** read `web/arena_log.jsonl` by hand (it holds attendee text; never commit it) before adding any confirmed failures to the dataset.
 3. **Friday integration and freeze; Sunday tag `v1.0`; git identity.**
-4. **Backup demo video** (2 minutes; shot list in `docs/DEMO_SCRIPT.md`).
+4. **Backup demo video (Likhitha)** (2 minutes; shot list in `docs/DEMO_SCRIPT.md`).
 5. **C6, the Chrome extension**: done and checked in a real Chrome (`extension/`). The server-off message and the long-selection case were also tried and work.
 6. Optional: decide after more runs whether adaptive mode or the copy rule should ever become a default. Tonight's numbers say no.
 
